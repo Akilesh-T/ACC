@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">QACC</string>
+    <string name="app_name_full">Accent Colour Creator</string>
+    <string name="color_light">"Accent colour (light  theme) "</string>
+    <string name="set_color_light">Tap to set accent colour for light theme</string>
+    <string name="color_dark">Accent colour (dark theme)</string>
+    <string name="set_color_dark">Tap to set accent colour for dark theme</string>
+    <string name="color_name">Name your accent colour</string>
+    <string name="create">Create accent colour</string>
+</resources>

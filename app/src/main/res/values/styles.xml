@@ -1,0 +1,61 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="buttonBarButtonStyle">@style/Button</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.MaterialComponents.NoActionBar">
+
+        <item name="android:windowBackground">@drawable/splash</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Button" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_margin">4dp</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="Cards" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">12.0dip</item>
+        <item name="android:layout_marginStart">12.0dip</item>
+        <item name="android:layout_marginEnd">12.0dip</item>
+        <item name="cardCornerRadius">8.0dip</item>
+        <item name="cardElevation">2.0dip</item>
+        <item name="strokeWidth">0.1dp</item>
+        <item name="strokeColor">@color/colorPrimaryDark</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="CardHeaders" parent="@style/TextAppearance.MaterialComponents.Button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@drawable/rounded_corners</item>
+        <item name="android:paddingTop">6.0dip</item>
+        <item name="android:paddingBottom">6.0dip</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">8.0dip</item>
+        <item name="android:paddingEnd">12.0dip</item>
+        <item name="android:layout_marginStart">24.0dip</item>
+        <item name="android:elevation">4.0dip</item>
+        <item name="android:drawablePadding">8.0dip</item>
+    </style>
+
+    <style name="Text" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">30dp</item>
+    </style>
+</resources>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:clipChildren="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_gravity="center"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                    android:text="@string/app_name_full"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:clipChildren="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16.0dip">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    app:boxStrokeColor="@color/colorPrimaryDark"
+                    app:boxStrokeWidth="1dp"
+                    android:importantForAutofill="noExcludeDescendants"
+                    android:hint="@string/color_name">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </FrameLayout>
+
+
+            <FrameLayout
+                android:clipChildren="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    style="@style/CardHeaders"
+                    android:textColor="@android:color/white"
+                    android:text="@string/color_light" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/light"
+                    style="@style/Cards">
+                    <com.google.android.material.textview.MaterialTextView
+                        style="@style/Text"
+                        android:id="@+id/lightText"
+                        android:text="@string/set_color_light"/>
+                </com.google.android.material.card.MaterialCardView>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:clipChildren="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    style="@style/CardHeaders"
+                    android:textColor="@android:color/white"
+                    android:text="@string/color_dark" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/dark"
+                    style="@style/Cards">
+                    <com.google.android.material.textview.MaterialTextView
+                        style="@style/Text"
+                        android:id="@+id/darkText"
+                        android:text="@string/set_color_dark"/>
+                </com.google.android.material.card.MaterialCardView>
+
+            </FrameLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:text="@string/create"
+                android:textAllCaps="false"
+                android:layout_gravity="center"
+                android:id="@+id/button"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

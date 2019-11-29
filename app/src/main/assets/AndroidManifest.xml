@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:compileSdkVersion="29"
+    android:compileSdkVersionCodename="10"
+    package="com.android.theme.color.custom"
+    platformBuildVersionCode="29"
+    platformBuildVersionName="10">
+
+    <overlay
+        android:category="android.theme.customization.accent_color"
+        android:priority="1"
+        android:targetPackage="android"/>
+
+    <application
+        android:extractNativeLibs="false"
+        android:hasCode="false"
+        android:label="@string/accent_color_custom_overlay"/>
+</manifest>
