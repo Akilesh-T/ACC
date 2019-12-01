@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
 
-            R.id.light -> {
+            binding.light.id -> {
 
                 ChromaDialog.Builder()
                     .initialColor(Color.parseColor("#FF2800"))
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             }
 
-            R.id.dark -> {
+            binding.dark.id -> {
 
                 ChromaDialog.Builder()
                     .initialColor(Color.parseColor("#FF2800"))
@@ -134,14 +134,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             }
 
-            R.id.button -> {
+            binding.button.id -> {
                 accentName = binding.name.text.toString()
                 if (f1 && f2 && accentName.isNotBlank()) {
 
                     if (!Shell.rootAccess())
                         Shell.su("cd /").exec()
 
-                    Shell.su(
+                    val xmlRes = Shell.su(
                         "cd ${filesDir.absolutePath}",
                         "chmod +x xmlstarlet",
                         "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_light\"]' -v \"$accentLight\" src/values/colors.xml",
@@ -150,33 +150,69 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         "cd /"
                     ).exec()
 
-                    //Toast.makeText(this, "Building overlay apk", Toast.LENGTH_SHORT).show()
+                    if (!xmlRes.isSuccess)
+                        Toast.makeText(
+                            this,
+                            "Error: couldn't set new values",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    else {
+                        //Toast.makeText(this, "Building overlay apk", Toast.LENGTH_SHORT).show()
 
-                    Shell.su(resources.openRawResource(R.raw.create_overlay)).exec()
+                        val ovrRes = Shell.su(resources.openRawResource(R.raw.create_overlay)).exec()
+                        if (!ovrRes.isSuccess)
+                            Toast.makeText(
+                                this,
+                                "Error: couldn't create overlay apk",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        else {
+                            val certFile = assets.open("testkey.x509.pem")
+                            val keyFile = assets.open("testkey.pk8")
+                            val out = FileOutputStream(File(filesDir, "signed.apk").absolutePath)
 
-                    val certFile = assets.open("testkey.x509.pem")
-                    val keyFile = assets.open( "testkey.pk8")
-                    val out = FileOutputStream(File(filesDir, "signed.apk").absolutePath)
+                            val cert = readCertificate(certFile)
+                            val key = readPrivateKey(keyFile)
 
-                    val cert = readCertificate(certFile)
-                    val key = readPrivateKey(keyFile)
+                            val jar = JarMap.open("$filesDir/qacc.apk")
 
-                    val jar = JarMap.open("$filesDir/qacc.apk")
+                            SignAPK.sign(cert, key, jar, out.buffered())
 
-                    SignAPK.sign(cert, key, jar, out.buffered())
+                            val zipalignRes = Shell.su(resources.openRawResource(R.raw.zipalign)).exec()
 
-                    Shell.su(resources.openRawResource(R.raw.zipalign)).exec()
-
-                    //Toast.makeText(this, "Creating Magisk module", Toast.LENGTH_SHORT).show()
-                    val result = Shell.su(resources.openRawResource(R.raw.create_module)).exec()
-                    if (result.isSuccess)
-                        filesDir.deleteRecursively()
-                        Snackbar.make(binding.root, "$accentName created!", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Reboot") {
-                                    Shell.su("/system/bin/svc power reboot || /system/bin/reboot").submit()
+                            if (!zipalignRes.isSuccess)
+                                Toast.makeText(
+                                    this,
+                                    "Error: couldn't zip align apk",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            else {
+                                //Toast.makeText(this, "Creating Magisk module", Toast.LENGTH_SHORT).show()
+                                val result =
+                                    Shell.su(resources.openRawResource(R.raw.create_module)).exec()
+                                if (result.isSuccess) {
+                                    filesDir.deleteRecursively()
+                                    Snackbar.make(
+                                        binding.root,
+                                        "$accentName created!",
+                                        Snackbar.LENGTH_INDEFINITE
+                                    )
+                                        .setAction("Reboot") {
+                                            Shell.su("/system/bin/svc power reboot || /system/bin/reboot")
+                                                .submit()
+                                        }
+                                        .show()
+                                }
+                                else
+                                    Toast.makeText(
+                                        this,
+                                        "Error: couldn't create Magisk module",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                             }
-                            .show()
+                        }
 
+                    }
                 }
 
                 else {
