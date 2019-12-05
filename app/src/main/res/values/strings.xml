@@ -7,4 +7,16 @@
     <string name="set_color_dark">Tap to set accent colour for dark theme</string>
     <string name="color_name">Name your accent colour</string>
     <string name="create">Create accent colour</string>
+    <string name="color_wallpaper">Wallpaper colours</string>
+    <string name="color_wallpaper_primary">Primary: %1$s</string>
+    <string name="color_wallpaper_secondary">Secondary: %1$s</string>
+    <string name="color_wallpaper_tertiary">Tertiary: %1$s</string>
+    <string name="enable">Tap to enable custom accent</string>
+    <string name="current_accent">Currently installed</string>
+    <string name="accent_name">accent_name</string>
+    <string name="accent_light">accent_light</string>
+    <string name="accent_dark">accent_dark</string>
+    <string name="current_accent_name">Name: %1$s</string>
+    <string name="current_accent_light">Light: %1$s</string>
+    <string name="current_accent_dark">Dark: %1$s</string>
 </resources>

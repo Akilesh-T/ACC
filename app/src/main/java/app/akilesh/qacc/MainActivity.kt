@@ -1,5 +1,8 @@
 package app.akilesh.qacc
 
+import android.app.WallpaperColors
+import android.app.WallpaperManager
+import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
@@ -14,6 +17,9 @@ import app.akilesh.qacc.databinding.ActivityMainBinding
 import app.akilesh.qacc.signing.ByteArrayStream
 import app.akilesh.qacc.signing.JarMap
 import app.akilesh.qacc.signing.SignAPK
+import com.afollestad.assent.Permission
+import com.afollestad.assent.rationale.createDialogRationale
+import com.afollestad.assent.runWithPermissions
 import com.google.android.material.snackbar.Snackbar
 import com.topjohnwu.superuser.Shell
 import me.priyesh.chroma.ChromaDialog
@@ -53,8 +59,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var accentName = ""
     private var f1 = false
     private var f2 = false
+    private var primaryHex = "#FF2800"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -83,6 +91,76 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.light.setOnClickListener(this)
         binding.dark.setOnClickListener(this)
         binding.button.setOnClickListener(this)
+
+        val rationaleHandler = createDialogRationale(R.string.app_name_full) {
+            onPermission(Permission.READ_EXTERNAL_STORAGE, "Storage permission is required to get wallpaper colours.")
+        }
+
+        runWithPermissions(Permission.READ_EXTERNAL_STORAGE, rationaleHandler = rationaleHandler) {
+            if (it.isAllGranted()) {
+                val wallpaperManager = WallpaperManager.getInstance(this)
+                val wallDrawable = wallpaperManager.drawable
+                val wallColors = WallpaperColors.fromDrawable(wallDrawable)
+
+                val primary = wallColors.primaryColor.toArgb()
+                primaryHex = toHex(primary)
+                val secondary = wallColors.secondaryColor?.toArgb()
+                val secondaryHex = secondary?.let { it1 -> toHex(it1) }
+                val tertiary = wallColors.tertiaryColor?.toArgb()
+                val tertiaryHex = tertiary?.let { it1 -> toHex(it1) }
+
+                binding.wallFrame.visibility = View.VISIBLE
+                binding.wallColorPrimary.text =
+                    String.format(resources.getString(R.string.color_wallpaper_primary), primaryHex)
+                binding.wallColorSecondary.text = String.format(
+                    resources.getString(R.string.color_wallpaper_secondary),
+                    secondaryHex
+                )
+                binding.wallColorTertiary.text = String.format(
+                    resources.getString(R.string.color_wallpaper_tertiary),
+                    tertiaryHex
+                )
+
+                binding.previewPrimary.setColorFilter(primary)
+                if (secondary != null)
+                    binding.previewSecondary.setColorFilter(secondary)
+
+                if (tertiary != null)
+                    binding.previewTertiary.setColorFilter(tertiary)
+
+            }
+        }
+
+        if (isOverlayInstalled()) {
+            val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+            val currentAccent = sharedPref.getString(getString(R.string.accent_name), "")
+            if (currentAccent != "") {
+                binding.current.visibility = View.VISIBLE
+                val currentAccentLight = sharedPref.getString(getString(R.string.accent_light), "")
+                val currentAccentDark = sharedPref.getString(getString(R.string.accent_dark), "")
+                binding.currentAccent.text =
+                    String.format(resources.getString(R.string.current_accent_name), currentAccent)
+                binding.currentAccent.append("\n")
+                binding.currentAccent.append(
+                    String.format(
+                        resources.getString(R.string.current_accent_light),
+                        currentAccentLight
+                    )
+                )
+                binding.currentAccent.append("\n")
+                binding.currentAccent.append(
+                    String.format(
+                        resources.getString(R.string.current_accent_dark),
+                        currentAccentDark
+                    )
+                )
+                binding.currentAccent.append("\n")
+                binding.currentAccent.append(String.format(resources.getString(R.string.enable)))
+                binding.enableAccent.setOnClickListener {
+                    Shell.su("cmd overlay enable com.android.theme.color.custom").exec()
+                }
+            }
+        }
     }
 
     private fun copyFile(filename: String) {
@@ -101,13 +179,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             binding.light.id -> {
 
                 ChromaDialog.Builder()
-                    .initialColor(Color.parseColor("#FF2800"))
+                    .initialColor(Color.parseColor(primaryHex))
                     .colorMode(ColorMode.RGB)
                     .onColorSelected(object : ColorSelectListener {
                         override fun onColorSelected(color: Int) {
-                            accentLight = String.format("#%06X", 0xFFFFFF and color)
+                            accentLight = toHex(color)
                             binding.lightText.text = accentLight
-                            binding.lightText.setTextColor(Color.parseColor(accentLight))
+                            binding.previewLight.setColorFilter(color)
                             f1 = true
                         }
                     })
@@ -119,13 +197,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             binding.dark.id -> {
 
                 ChromaDialog.Builder()
-                    .initialColor(Color.parseColor("#FF2800"))
+                    .initialColor(Color.parseColor(primaryHex))
                     .colorMode(ColorMode.RGB)
                     .onColorSelected(object : ColorSelectListener {
                         override fun onColorSelected(color: Int) {
-                            accentDark = String.format("#%06X", 0xFFFFFF and color)
+                            accentDark = toHex(color)
                             binding.darkText.text = accentDark
-                            binding.darkText.setTextColor(Color.parseColor(accentDark))
+                            binding.previewDark.setColorFilter(color)
                             f2 = true
                         }
                     })
@@ -192,6 +270,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                     Shell.su(resources.openRawResource(R.raw.create_module)).exec()
                                 if (result.isSuccess) {
                                     filesDir.deleteRecursively()
+
+                                    val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+                                    with (sharedPref.edit()) {
+                                        putString(getString(R.string.accent_name), accentName)
+                                        putString(getString(R.string.accent_light), accentLight)
+                                        putString(getString(R.string.accent_dark), accentDark)
+                                        commit()
+                                    }
+
                                     Snackbar.make(
                                         binding.root,
                                         "$accentName created!",
@@ -224,6 +311,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun toHex(color: Int): String {
+        return String.format("#%06X", (0xFFFFFF and color))
+    }
 
     @Throws(IOException::class, GeneralSecurityException::class)
     fun readCertificate(input: InputStream): X509Certificate {
@@ -257,6 +347,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun isOverlayInstalled(): Boolean {
+        return try {
+            packageManager.getPackageInfo("com.android.theme.color.custom", 0)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
 }
+
 
 
