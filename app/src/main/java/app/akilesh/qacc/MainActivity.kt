@@ -5,22 +5,34 @@ import android.app.WallpaperManager
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.O
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
+import androidx.core.widget.NestedScrollView
 import app.akilesh.qacc.databinding.ActivityMainBinding
+import app.akilesh.qacc.databinding.LayoutPresetColorsBinding
+import app.akilesh.qacc.databinding.LayoutWallpaperColorsBinding
 import app.akilesh.qacc.signing.ByteArrayStream
 import app.akilesh.qacc.signing.JarMap
 import app.akilesh.qacc.signing.SignAPK
 import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textview.MaterialTextView
 import com.topjohnwu.superuser.Shell
 import me.priyesh.chroma.ChromaDialog
 import me.priyesh.chroma.ColorMode
@@ -54,18 +66,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     )
 
     private lateinit var binding: ActivityMainBinding
-    private var accentLight = ""
-    private var accentDark = ""
+    private var accentColor = ""
     private var accentName = ""
-    private var f1 = false
-    private var f2 = false
-    private var primaryHex = "#FF2800"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (SDK_INT == O)
+            binding.wallFrame.visibility = View.GONE
 
         val decorView = window.decorView
         decorView.systemUiVisibility = FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
@@ -89,73 +101,34 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             copyFile(it)
         }
         binding.light.setOnClickListener(this)
-        binding.dark.setOnClickListener(this)
-        binding.button.setOnClickListener(this)
+        binding.preset.setOnClickListener(this)
+        binding.create.setOnClickListener(this)
+        if (SDK_INT > O) binding.wallColors.setOnClickListener(this)
 
-        val rationaleHandler = createDialogRationale(R.string.app_name_full) {
-            onPermission(Permission.READ_EXTERNAL_STORAGE, "Storage permission is required to get wallpaper colours.")
-        }
+        binding.name.setOnKeyListener { _, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
 
-        runWithPermissions(Permission.READ_EXTERNAL_STORAGE, rationaleHandler = rationaleHandler) {
-            if (it.isAllGranted()) {
-                val wallpaperManager = WallpaperManager.getInstance(this)
-                val wallDrawable = wallpaperManager.drawable
-                val wallColors = WallpaperColors.fromDrawable(wallDrawable)
+                if (binding.name.text.isNullOrBlank())
+                    binding.name.error = "Name can't be blank"
 
-                val primary = wallColors.primaryColor.toArgb()
-                primaryHex = toHex(primary)
-                val secondary = wallColors.secondaryColor?.toArgb()
-                val secondaryHex = secondary?.let { it1 -> toHex(it1) }
-                val tertiary = wallColors.tertiaryColor?.toArgb()
-                val tertiaryHex = tertiary?.let { it1 -> toHex(it1) }
-
-                binding.wallFrame.visibility = View.VISIBLE
-                binding.wallColorPrimary.text =
-                    String.format(resources.getString(R.string.color_wallpaper_primary), primaryHex)
-                binding.wallColorSecondary.text = String.format(
-                    resources.getString(R.string.color_wallpaper_secondary),
-                    secondaryHex
-                )
-                binding.wallColorTertiary.text = String.format(
-                    resources.getString(R.string.color_wallpaper_tertiary),
-                    tertiaryHex
-                )
-
-                binding.previewPrimary.setColorFilter(primary)
-                if (secondary != null)
-                    binding.previewSecondary.setColorFilter(secondary)
-
-                if (tertiary != null)
-                    binding.previewTertiary.setColorFilter(tertiary)
-
+                else {
+                    accentName = binding.name.text.toString().trim()
+                    val selected = "$accentName - $accentColor"
+                    binding.previewSelectedText.text = selected
+                    return@setOnKeyListener true
+                }
             }
+            return@setOnKeyListener false
         }
 
         if (isOverlayInstalled()) {
             val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
-            val currentAccent = sharedPref.getString(getString(R.string.accent_name), "")
-            if (currentAccent != "") {
+            val currentAccentName = sharedPref.getString(getString(R.string.accent_name), "")
+            if (currentAccentName != "") {
                 binding.current.visibility = View.VISIBLE
-                val currentAccentLight = sharedPref.getString(getString(R.string.accent_light), "")
-                val currentAccentDark = sharedPref.getString(getString(R.string.accent_dark), "")
-                binding.currentAccent.text =
-                    String.format(resources.getString(R.string.current_accent_name), currentAccent)
-                binding.currentAccent.append("\n")
-                binding.currentAccent.append(
-                    String.format(
-                        resources.getString(R.string.current_accent_light),
-                        currentAccentLight
-                    )
-                )
-                binding.currentAccent.append("\n")
-                binding.currentAccent.append(
-                    String.format(
-                        resources.getString(R.string.current_accent_dark),
-                        currentAccentDark
-                    )
-                )
-                binding.currentAccent.append("\n")
-                binding.currentAccent.append(String.format(resources.getString(R.string.enable)))
+                val currentAccentColor = sharedPref.getString(getString(R.string.accent_light), "")
+                binding.previewCurrent.setColorFilter(Color.parseColor(currentAccentColor))
+                binding.currentAccent.text = String.format("$currentAccentName - $currentAccentColor")
                 binding.enableAccent.setOnClickListener {
                     Shell.su("cmd overlay enable com.android.theme.color.custom").exec()
                 }
@@ -179,42 +152,154 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             binding.light.id -> {
 
                 ChromaDialog.Builder()
-                    .initialColor(Color.parseColor(primaryHex))
+                    .initialColor(Color.parseColor("#FF2800"))
                     .colorMode(ColorMode.RGB)
                     .onColorSelected(object : ColorSelectListener {
                         override fun onColorSelected(color: Int) {
-                            accentLight = toHex(color)
-                            binding.lightText.text = accentLight
+                            accentColor = toHex(color)
+                            binding.lightText.text = accentColor
                             binding.previewLight.setColorFilter(color)
-                            f1 = true
+                            binding.previewLight.visibility = View.VISIBLE
+                            binding.previewSelected.setColorFilter(color)
+                            val selected = "$accentName - $accentColor"
+                            binding.previewSelectedText.text = selected
                         }
                     })
                     .create()
-                    .show(supportFragmentManager, "ChromaDialogLight")
+                    .show(supportFragmentManager, "ChromaDialog")
 
             }
 
-            binding.dark.id -> {
 
-                ChromaDialog.Builder()
-                    .initialColor(Color.parseColor(primaryHex))
-                    .colorMode(ColorMode.RGB)
-                    .onColorSelected(object : ColorSelectListener {
-                        override fun onColorSelected(color: Int) {
-                            accentDark = toHex(color)
-                            binding.darkText.text = accentDark
-                            binding.previewDark.setColorFilter(color)
-                            f2 = true
+            binding.preset.id -> {
+
+                val layoutPresetColorsBinding = LayoutPresetColorsBinding.inflate(layoutInflater)
+
+                val builder = MaterialAlertDialogBuilder(this)
+                    .setTitle("Presets")
+                    .setView(layoutPresetColorsBinding.root)
+                val dialog = builder.create()
+                dialog.show()
+
+                val nestedScrollView = layoutPresetColorsBinding.root as NestedScrollView
+                val linearLayoutCompat = nestedScrollView.getChildAt(0) as LinearLayoutCompat
+
+                linearLayoutCompat.children.forEach { linearViews ->
+                    linearViews as LinearLayoutCompat
+                    linearViews.setOnClickListener {
+                        val appCompatImageView = linearViews.getChildAt(0) as AppCompatImageView
+                        val textView = linearViews.getChildAt(1) as MaterialTextView
+                        val color = appCompatImageView.imageTintList?.defaultColor
+                        if (color != null) {
+                            accentColor = toHex(color)
+                            binding.previewPreset.setColorFilter(color)
+                            binding.previewPreset.visibility = View.VISIBLE
+                            binding.previewSelected.setColorFilter(color)
+                            accentName = textView.text as String
+                            val selected = "$accentName - $accentColor"
+                            binding.previewSelectedText.text = selected
                         }
-                    })
-                    .create()
-                    .show(supportFragmentManager, "ChromaDialogDark")
-
+                        binding.presetText.text = textView.text
+                        binding.name.setText(textView.text)
+                        dialog.cancel()
+                    }
+                }
             }
 
-            binding.button.id -> {
-                accentName = binding.name.text.toString()
-                if (f1 && f2 && accentName.isNotBlank()) {
+            binding.wallColors.id -> {
+
+                if (SDK_INT > O) {
+
+                    val rationaleHandler = createDialogRationale(R.string.app_name_full) {
+                        onPermission(
+                            Permission.READ_EXTERNAL_STORAGE,
+                            "Storage permission is required to get wallpaper colours."
+                        )
+                    }
+
+                    runWithPermissions(
+                        Permission.READ_EXTERNAL_STORAGE,
+                        rationaleHandler = rationaleHandler
+                    ) {
+                        if (it.isAllGranted()) {
+                            val wallpaperManager = WallpaperManager.getInstance(this)
+                            val wallDrawable = wallpaperManager.drawable
+                            val wallColors = WallpaperColors.fromDrawable(wallDrawable)
+
+                            val primary = wallColors.primaryColor.toArgb()
+                            val secondary = wallColors.secondaryColor?.toArgb()
+                            val tertiary = wallColors.tertiaryColor?.toArgb()
+
+                            val layoutWallpaperColorsBinding =
+                                LayoutWallpaperColorsBinding.inflate(layoutInflater)
+                            val primaryImage =
+                                layoutWallpaperColorsBinding.primary.getChildAt(0) as ImageView
+                            primaryImage.setColorFilter(primary)
+
+                            if (secondary != null) {
+                                val secondaryImage =
+                                    layoutWallpaperColorsBinding.secondary.getChildAt(0) as ImageView
+                                secondaryImage.setColorFilter(secondary)
+                            }
+                            if (tertiary != null) {
+                                val tertiaryImage =
+                                    layoutWallpaperColorsBinding.tertiary.getChildAt(0) as ImageView
+                                tertiaryImage.setColorFilter(tertiary)
+                            }
+
+                            val builder = MaterialAlertDialogBuilder(this)
+                                .setTitle("Wallpaper colours")
+                                .setView(layoutWallpaperColorsBinding.root)
+                            val dialog = builder.create()
+                            dialog.show()
+
+                            layoutWallpaperColorsBinding.primary.setOnClickListener {
+                                binding.previewWall.setColorFilter(primary)
+                                accentColor = toHex(primary)
+                                binding.previewWall.visibility = View.VISIBLE
+                                binding.wallText.text =
+                                    String.format(resources.getString(R.string.wallpaper_primary))
+                                binding.previewSelected.setColorFilter(primary)
+                                val selected = "$accentName - $accentColor"
+                                binding.previewSelectedText.text = selected
+                                dialog.cancel()
+                            }
+
+                            if (secondary != null) {
+                                layoutWallpaperColorsBinding.secondary.setOnClickListener {
+                                    binding.previewWall.setColorFilter(secondary)
+                                    accentColor = toHex(secondary)
+                                    binding.previewWall.visibility = View.VISIBLE
+                                    binding.wallText.text =
+                                        String.format(resources.getString(R.string.wallpaper_secondary))
+                                    binding.previewSelected.setColorFilter(secondary)
+                                    val selected = "$accentName - $accentColor"
+                                    binding.previewSelectedText.text = selected
+                                    dialog.cancel()
+                                }
+                            }
+
+                            if (tertiary != null) {
+                                layoutWallpaperColorsBinding.tertiary.setOnClickListener {
+                                    binding.previewWall.setColorFilter(tertiary)
+                                    accentColor = toHex(tertiary)
+                                    binding.previewWall.visibility = View.VISIBLE
+                                    binding.wallText.text =
+                                        String.format(resources.getString(R.string.wallpaper_tertiary))
+                                    binding.previewSelected.setColorFilter(tertiary)
+                                    val selected = "$accentName - $accentColor"
+                                    binding.previewSelectedText.text = selected
+                                    dialog.cancel()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            binding.create.id -> {
+
+                if (accentColor.isNotBlank() && accentName.isNotBlank()) {
 
                     if (!Shell.rootAccess())
                         Shell.su("cd /").exec()
@@ -222,8 +307,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     val xmlRes = Shell.su(
                         "cd ${filesDir.absolutePath}",
                         "chmod +x xmlstarlet",
-                        "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_light\"]' -v \"$accentLight\" src/values/colors.xml",
-                        "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_dark\"]' -v \"$accentDark\" src/values/colors.xml",
+                        "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_light\"]' -v \"$accentColor\" src/values/colors.xml",
+                        "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_dark\"]' -v \"$accentColor\" src/values/colors.xml",
                         "./xmlstarlet ed -L -u '/resources/string[@name=\"accent_color_custom_overlay\"]' -v \"$accentName\" src/values/strings.xml",
                         "cd /"
                     ).exec()
@@ -274,8 +359,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                     val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
                                     with (sharedPref.edit()) {
                                         putString(getString(R.string.accent_name), accentName)
-                                        putString(getString(R.string.accent_light), accentLight)
-                                        putString(getString(R.string.accent_dark), accentDark)
+                                        putString(getString(R.string.accent_light), accentColor)
+                                       // putString(getString(R.string.accent_dark), accentDark)
                                         commit()
                                     }
 
@@ -298,13 +383,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                     ).show()
                             }
                         }
-
                     }
                 }
 
                 else {
-                    if (!f1) Toast.makeText(this, "Accent color for light theme is not set", Toast.LENGTH_SHORT).show()
-                    if (!f2) Toast.makeText(this, "Accent color for dark theme is not set", Toast.LENGTH_SHORT).show()
+                    if (accentColor.isBlank()) Toast.makeText(this, "Accent color is not set", Toast.LENGTH_SHORT).show()
                     if (accentName.isBlank()) Toast.makeText(this, "Accent color name is not set", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -355,7 +438,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             false
         }
     }
-
 }
 
 

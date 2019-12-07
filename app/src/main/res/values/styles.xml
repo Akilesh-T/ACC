@@ -33,7 +33,6 @@
         <item name="strokeWidth">0.1dp</item>
         <item name="strokeColor">@color/colorPrimaryDark</item>
         <item name="cardUseCompatPadding">true</item>
-        <item name="android:clickable">true</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
 
