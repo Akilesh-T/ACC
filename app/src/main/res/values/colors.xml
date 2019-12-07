@@ -5,4 +5,29 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="colorDefaultDark">#121212</color>
     <color name="white">#FFFFFF</color>
+
+    <!-- Preset colours from AEX -->
+    <color name="amber">#FFFFC107</color>
+    <color name="blue">#FF448AFF</color>
+    <color name="blue_grey">#FF607D8B</color>
+    <color name="brown">#FF795548</color>
+    <color name="candy_red">#FFFF1744</color>
+    <color name="cyan">#FF00BCD4</color>
+    <color name="deep_orange">#FFFF5722</color>
+    <color name="deep_purple">#FF7C4DFF</color>
+    <color name="elegant_green">#FF47ae84</color>
+    <color name="extended_green">#FF21ef8b</color>
+    <color name="grey">#FF9E9E9E</color>
+    <color name="indigo">#FF536DFE</color>
+    <color name="jade_green">#FF9ABC98</color>
+    <color name="light_blue">#FF03A9F4</color>
+    <color name="light_green">#FF8BC34A</color>
+    <color name="lime">#FFCDDC39</color>
+    <color name="orange">#FFFF9800</color>
+    <color name="pale_blue">#FFA1B6ED</color>
+    <color name="pale_red">#FFF05361</color>
+    <color name="pink">#FFFF4081</color>
+    <color name="red">#FFFF5252</color>
+    <color name="teal">#FF009688</color>
+    <color name="yellove">#FFFFEB3B</color> <!-- not a typo -->
 </resources>
