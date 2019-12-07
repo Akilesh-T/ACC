@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">QACC</string>
+    <string name="app_name">ACC</string>
     <string name="app_name_full">Accent Colour Creator</string>
 
     <!-- Preset colours from AEX -->
