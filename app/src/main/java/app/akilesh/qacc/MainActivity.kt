@@ -320,7 +320,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                     else {
                         //Toast.makeText(this, "Building overlay apk", Toast.LENGTH_SHORT).show()
-
+                        Shell.su("cd ${filesDir.absolutePath}").exec()
                         val ovrRes = Shell.su(resources.openRawResource(R.raw.create_overlay)).exec()
                         if (!ovrRes.isSuccess)
                            Log.e("ACC-ovr", ovrRes.out.toString())
@@ -336,6 +336,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                             SignAPK.sign(cert, key, jar, out.buffered())
 
+                            Shell.su("cd ${filesDir.absolutePath}").exec()
                             val zipalignRes = Shell.su(resources.openRawResource(R.raw.zipalign)).exec()
 
                             if (!zipalignRes.isSuccess)
