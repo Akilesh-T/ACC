@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     init {
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR)
+        Shell.Config.setFlags(Shell.FLAG_VERBOSE_LOGGING)
         Shell.Config.verboseLogging(true)
         Shell.Config.setTimeout(10)
     }
@@ -314,21 +316,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     ).exec()
 
                     if (!xmlRes.isSuccess)
-                        Toast.makeText(
-                            this,
-                            "Error: couldn't set new values",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.e("ACC-xml", xmlRes.out.toString())
+
                     else {
                         //Toast.makeText(this, "Building overlay apk", Toast.LENGTH_SHORT).show()
 
                         val ovrRes = Shell.su(resources.openRawResource(R.raw.create_overlay)).exec()
                         if (!ovrRes.isSuccess)
-                            Toast.makeText(
-                                this,
-                                "Error: couldn't create overlay apk",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                           Log.e("ACC-ovr", ovrRes.out.toString())
                         else {
                             val certFile = assets.open("testkey.x509.pem")
                             val keyFile = assets.open("testkey.pk8")
@@ -344,11 +339,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             val zipalignRes = Shell.su(resources.openRawResource(R.raw.zipalign)).exec()
 
                             if (!zipalignRes.isSuccess)
-                                Toast.makeText(
-                                    this,
-                                    "Error: couldn't zip align apk",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                               Log.e("ACC-zip", zipalignRes.out.toString())
                             else {
                                 //Toast.makeText(this, "Creating Magisk module", Toast.LENGTH_SHORT).show()
                                 val result =
@@ -376,11 +367,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                         .show()
                                 }
                                 else
-                                    Toast.makeText(
-                                        this,
-                                        "Error: couldn't create Magisk module",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                   Log.e("ACC-MM", result.out.toString())
                             }
                         }
                     }
