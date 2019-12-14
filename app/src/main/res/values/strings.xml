@@ -48,5 +48,8 @@
     <string name="set_preset_color">Tap to use preset colours</string>
     <string name="set_wallpaper_color">Tap to use colours from your wallpaper</string>
     <string name="selected">Selected colour</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="display_header">Display</string>
+    <string name="display_title">Dark theme</string>
 
 </resources>

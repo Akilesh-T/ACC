@@ -28,6 +28,16 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content" />
 
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    app:fabSize="mini"
+                    app:srcCompat="@drawable/ic_settings"
+                    app:tint="?colorOnPrimary"
+                    android:layout_marginEnd="8dp"/>
+
             </FrameLayout>
 
             <FrameLayout
