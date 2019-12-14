@@ -3,8 +3,10 @@ package app.akilesh.qacc
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
 import android.os.Bundle
@@ -51,32 +53,33 @@ import java.security.spec.PKCS8EncodedKeySpec
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
-    init {
-        Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR)
-        Shell.Config.setFlags(Shell.FLAG_VERBOSE_LOGGING)
-        Shell.Config.verboseLogging(true)
-        Shell.Config.setTimeout(10)
-    }
-
-    private val assetFiles = listOf(
-        "aapt",
+    private val assetFiles = mutableListOf(
         "AndroidManifest.xml",
         "src/values/colors.xml",
-        "src/values/strings.xml",
-        "xmlstarlet",
-        "zipalign"
+        "src/values/strings.xml"
     )
 
     private lateinit var binding: ActivityMainBinding
     private var accentColor = ""
     private var accentName = ""
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val arch = if ( listOf(Build.SUPPORTED_64_BIT_ABIS).isNotEmpty() )  "arm64" else "arm"
+        if (arch == "arm64")
+            assetFiles.addAll( listOf("aapt64", "xmlstarlet64", "zipalign64") )
+        else
+            assetFiles.addAll( listOf("aapt", "xmlstarlet", "zipalign") )
+
+        assetFiles.forEach {
+            val file = if (it.contains("64")) it.dropLast(2) else it
+            if(!File(filesDir, file).exists())
+                copyFromAsset(file)
+        }
 
         if (SDK_INT == O)
             binding.wallFrame.visibility = View.GONE
@@ -98,14 +101,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-        assetFiles.forEach {
-            if(!File(filesDir, it).exists())
-            copyFile(it)
-        }
         binding.light.setOnClickListener(this)
         binding.preset.setOnClickListener(this)
         binding.create.setOnClickListener(this)
         if (SDK_INT > O) binding.wallColors.setOnClickListener(this)
+        binding.fab.setOnClickListener(this)
 
         binding.name.setOnKeyListener { _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun copyFile(filename: String) {
+    private fun copyFromAsset(filename: String) {
         if( !File("$filesDir/src/values").exists() )
             File("$filesDir/src/values").mkdirs()
         assets.open(filename).use { stream ->
@@ -150,6 +150,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when(v?.id){
+
+            binding.fab.id -> {
+                val settingsIntent = Intent(this, SettingsActivity::class.java)
+                startActivity(settingsIntent)
+            }
 
             binding.light.id -> {
 
@@ -303,9 +308,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 if (accentColor.isNotBlank() && accentName.isNotBlank()) {
 
-                    if (!Shell.rootAccess())
-                        Shell.su("cd /").exec()
-
                     val xmlRes = Shell.su(
                         "cd ${filesDir.absolutePath}",
                         "chmod +x xmlstarlet",
@@ -314,17 +316,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         "./xmlstarlet ed -L -u '/resources/string[@name=\"accent_color_custom_overlay\"]' -v \"$accentName\" src/values/strings.xml",
                         "cd /"
                     ).exec()
+                    Log.d("ACC-xml", xmlRes.out.toString())
 
-                    if (!xmlRes.isSuccess)
-                        Log.e("ACC-xml", xmlRes.out.toString())
-
-                    else {
+                    if (xmlRes.isSuccess) {
                         //Toast.makeText(this, "Building overlay apk", Toast.LENGTH_SHORT).show()
                         Shell.su("cd ${filesDir.absolutePath}").exec()
                         val ovrRes = Shell.su(resources.openRawResource(R.raw.create_overlay)).exec()
-                        if (!ovrRes.isSuccess)
-                           Log.e("ACC-ovr", ovrRes.out.toString())
-                        else {
+                        Log.d("ACC-ovr", ovrRes.out.toString())
+
+                        if (ovrRes.isSuccess) {
                             val certFile = assets.open("testkey.x509.pem")
                             val keyFile = assets.open("testkey.pk8")
                             val out = FileOutputStream(File(filesDir, "signed.apk").absolutePath)
@@ -338,13 +338,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                             Shell.su("cd ${filesDir.absolutePath}").exec()
                             val zipalignRes = Shell.su(resources.openRawResource(R.raw.zipalign)).exec()
+                            Log.d("ACC-zip", zipalignRes.out.toString())
 
-                            if (!zipalignRes.isSuccess)
-                               Log.e("ACC-zip", zipalignRes.out.toString())
-                            else {
+                            if (zipalignRes.isSuccess) {
                                 //Toast.makeText(this, "Creating Magisk module", Toast.LENGTH_SHORT).show()
                                 val result =
                                     Shell.su(resources.openRawResource(R.raw.create_module)).exec()
+                                Log.d("ACC-MM", result.out.toString())
+
                                 if (result.isSuccess) {
                                     filesDir.deleteRecursively()
 
@@ -352,7 +353,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                     with (sharedPref.edit()) {
                                         putString(getString(R.string.accent_name), accentName)
                                         putString(getString(R.string.accent_light), accentColor)
-                                       // putString(getString(R.string.accent_dark), accentDark)
+                                        // putString(getString(R.string.accent_dark), accentDark)
                                         commit()
                                     }
 
@@ -367,8 +368,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                                         }
                                         .show()
                                 }
-                                else
-                                   Log.e("ACC-MM", result.out.toString())
                             }
                         }
                     }
