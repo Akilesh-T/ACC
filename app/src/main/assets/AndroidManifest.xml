@@ -5,7 +5,8 @@
     package="com.android.theme.color.custom"
     platformBuildVersionCode="29"
     platformBuildVersionName="10"
-    android:versionName="1.0">
+    android:versionName="1.0"
+    android:versionCode="1">
 
     <overlay
         android:category="android.theme.customization.accent_color"

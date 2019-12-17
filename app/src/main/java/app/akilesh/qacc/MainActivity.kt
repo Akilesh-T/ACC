@@ -2,16 +2,15 @@ package app.akilesh.qacc
 
 import android.app.WallpaperColors
 import android.app.WallpaperManager
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
+import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -24,12 +23,21 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.widget.NestedScrollView
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.databinding.ActivityMainBinding
 import app.akilesh.qacc.databinding.LayoutPresetColorsBinding
 import app.akilesh.qacc.databinding.LayoutWallpaperColorsBinding
+import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.signing.ByteArrayStream
 import app.akilesh.qacc.signing.JarMap
 import app.akilesh.qacc.signing.SignAPK
+import app.akilesh.qacc.utils.SwipeToDeleteCallback
+import app.akilesh.qacc.viewmodel.AccentViewModel
 import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
@@ -46,12 +54,13 @@ import java.io.*
 import java.security.GeneralSecurityException
 import java.security.KeyFactory
 import java.security.PrivateKey
+import java.security.SecureRandom
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import java.security.spec.PKCS8EncodedKeySpec
 
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity() {
 
     private val assetFiles = mutableListOf(
         "AndroidManifest.xml",
@@ -60,8 +69,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     )
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var accentViewModel: AccentViewModel
+    private lateinit var path: String
     private var accentColor = ""
     private var accentName = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -69,17 +81,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val arch = if ( listOf(Build.SUPPORTED_64_BIT_ABIS).isNotEmpty() )  "arm64" else "arm"
-        if (arch == "arm64")
-            assetFiles.addAll( listOf("aapt64", "xmlstarlet64", "zipalign64") )
-        else
-            assetFiles.addAll( listOf("aapt", "xmlstarlet", "zipalign") )
+        copyAssets()
+        path = if (SDK_INT == Q) "/data/adb/modules/qacc-mobile/system/product/overlay"
+            else "/data/adb/modules/qacc-mobile/system/vendor/overlay"
 
-        assetFiles.forEach {
-            val file = if (it.contains("64")) it.dropLast(2) else it
-            if(!File(filesDir, file).exists())
-                copyFromAsset(file)
+        val adapter = AccentListAdapter(this)
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+
+        accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+        accentViewModel.allAccents.observe(this, Observer { accents ->
+            accents?.let { adapter.setAccents(it) }
+        })
+
+        val swipeHandler = object : SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val accent = adapter.getAccentAndRemoveAt(viewHolder.adapterPosition)
+                accentViewModel.delete(accent)
+                val appName = accent.pkgName.substring(accent.pkgName.lastIndexOf(".") + 1)
+                val result = Shell.su("rm -f $path/$appName.apk").exec()
+                if (result.isSuccess)
+                    showSnackbar("${accent.name} removed.")
+            }
         }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
         if (SDK_INT == O)
             binding.wallFrame.visibility = View.GONE
@@ -101,40 +127,35 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-        binding.light.setOnClickListener(this)
-        binding.preset.setOnClickListener(this)
-        binding.create.setOnClickListener(this)
-        if (SDK_INT > O) binding.wallColors.setOnClickListener(this)
-        binding.fab.setOnClickListener(this)
+        binding.custom.setOnClickListener { setCustomColor() }
+        binding.preset.setOnClickListener { chooseFromPresets() }
+        binding.create.setOnClickListener { createAccent() }
+        if (SDK_INT > O) binding.wallColors.setOnClickListener { chooseFromWallpaperColors() }
 
-        binding.name.setOnKeyListener { _, keyCode, event ->
-            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-
-                if (binding.name.text.isNullOrBlank())
-                    binding.name.error = "Name can't be blank"
-
-                else {
-                    accentName = binding.name.text.toString().trim()
-                    val selected = "$accentName - $accentColor"
-                    binding.previewSelectedText.text = selected
-                    return@setOnKeyListener true
-                }
-            }
-            return@setOnKeyListener false
+        binding.fab.setOnClickListener {
+            val settingsIntent = Intent(this, SettingsActivity::class.java)
+            startActivity(settingsIntent)
         }
 
-        if (isOverlayInstalled()) {
-            val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
-            val currentAccentName = sharedPref.getString(getString(R.string.accent_name), "")
-            if (currentAccentName != "") {
-                binding.current.visibility = View.VISIBLE
-                val currentAccentColor = sharedPref.getString(getString(R.string.accent_light), "")
-                binding.previewCurrent.setColorFilter(Color.parseColor(currentAccentColor))
-                binding.currentAccent.text = String.format("$currentAccentName - $currentAccentColor")
-                binding.enableAccent.setOnClickListener {
-                    Shell.su("cmd overlay enable com.android.theme.color.custom").exec()
-                }
-            }
+        binding.name.doAfterTextChanged {
+            accentName = it.toString().trim()
+            val selected = "$accentName - $accentColor"
+            binding.previewSelectedText.text = selected
+        }
+
+    }
+
+    private fun copyAssets() {
+        val arch = if ( listOf(Build.SUPPORTED_64_BIT_ABIS).isNotEmpty() )  "arm64" else "arm"
+        if (arch == "arm64")
+            assetFiles.addAll( listOf("aapt64", "xmlstarlet64", "zipalign64") )
+        else
+            assetFiles.addAll( listOf("aapt", "xmlstarlet", "zipalign") )
+
+        Log.d("assets", assetFiles.toString())
+        assetFiles.forEach {
+            val file = it.removeSuffix("64")
+            copyFromAsset(file)
         }
     }
 
@@ -148,261 +169,274 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onClick(v: View?) {
-        when(v?.id){
+    private fun setCustomColor() {
 
-            binding.fab.id -> {
-                val settingsIntent = Intent(this, SettingsActivity::class.java)
-                startActivity(settingsIntent)
+        ChromaDialog.Builder()
+            .initialColor(Color.parseColor("#FF2800"))
+            .colorMode(ColorMode.RGB)
+            .onColorSelected(object : ColorSelectListener {
+                override fun onColorSelected(color: Int) {
+                    accentColor = toHex(color)
+                    binding.customText.text = accentColor
+                    binding.previewCustom.setColorFilter(color)
+                    binding.previewCustom.visibility = View.VISIBLE
+                    binding.previewSelected.setColorFilter(color)
+                    val selected = "$accentName - $accentColor"
+                    binding.previewSelectedText.text = selected
+                }
+            })
+            .create()
+            .show(supportFragmentManager, "ChromaDialog")
+
+    }
+
+    private fun chooseFromPresets() {
+        val layoutPresetColorsBinding = LayoutPresetColorsBinding.inflate(layoutInflater)
+
+        val builder = MaterialAlertDialogBuilder(this)
+            .setTitle("Presets")
+            .setView(layoutPresetColorsBinding.root)
+        val dialog = builder.create()
+        dialog.show()
+
+        val nestedScrollView = layoutPresetColorsBinding.root as NestedScrollView
+        val linearLayoutCompat = nestedScrollView.getChildAt(0) as LinearLayoutCompat
+
+        linearLayoutCompat.children.forEach { linearViews ->
+            linearViews as LinearLayoutCompat
+            linearViews.setOnClickListener {
+                val appCompatImageView = linearViews.getChildAt(0) as AppCompatImageView
+                val textView = linearViews.getChildAt(1) as MaterialTextView
+                val color = appCompatImageView.imageTintList?.defaultColor
+                if (color != null) {
+                    accentColor = toHex(color)
+                    binding.previewPreset.setColorFilter(color)
+                    binding.previewPreset.visibility = View.VISIBLE
+                    binding.previewSelected.setColorFilter(color)
+                    accentName = textView.text as String
+                    val selected = "$accentName - $accentColor"
+                    binding.previewSelectedText.text = selected
+                }
+                binding.presetText.text = textView.text
+                binding.name.setText(textView.text)
+                dialog.cancel()
+            }
+        }
+    }
+
+    private fun chooseFromWallpaperColors() {
+        if (SDK_INT > O) {
+
+            val rationaleHandler = createDialogRationale(R.string.app_name_full) {
+                onPermission(
+                    Permission.READ_EXTERNAL_STORAGE,
+                    "Storage permission is required to get wallpaper colours."
+                )
             }
 
-            binding.light.id -> {
+            runWithPermissions(
+                Permission.READ_EXTERNAL_STORAGE,
+                rationaleHandler = rationaleHandler
+            ) {
+                if (it.isAllGranted()) {
+                    val wallpaperManager = WallpaperManager.getInstance(this)
+                    val wallDrawable = wallpaperManager.drawable
+                    val wallColors = WallpaperColors.fromDrawable(wallDrawable)
 
-                ChromaDialog.Builder()
-                    .initialColor(Color.parseColor("#FF2800"))
-                    .colorMode(ColorMode.RGB)
-                    .onColorSelected(object : ColorSelectListener {
-                        override fun onColorSelected(color: Int) {
-                            accentColor = toHex(color)
-                            binding.lightText.text = accentColor
-                            binding.previewLight.setColorFilter(color)
-                            binding.previewLight.visibility = View.VISIBLE
-                            binding.previewSelected.setColorFilter(color)
-                            val selected = "$accentName - $accentColor"
-                            binding.previewSelectedText.text = selected
-                        }
-                    })
-                    .create()
-                    .show(supportFragmentManager, "ChromaDialog")
+                    val primary = wallColors.primaryColor.toArgb()
+                    val secondary = wallColors.secondaryColor?.toArgb()
+                    val tertiary = wallColors.tertiaryColor?.toArgb()
 
-            }
+                    val layoutWallpaperColorsBinding =
+                        LayoutWallpaperColorsBinding.inflate(layoutInflater)
+                    val primaryImage =
+                        layoutWallpaperColorsBinding.primary.getChildAt(0) as ImageView
+                    primaryImage.setColorFilter(primary)
 
+                    if (secondary != null) {
+                        val secondaryImage =
+                            layoutWallpaperColorsBinding.secondary.getChildAt(0) as ImageView
+                        secondaryImage.setColorFilter(secondary)
+                    }
+                    if (tertiary != null) {
+                        val tertiaryImage =
+                            layoutWallpaperColorsBinding.tertiary.getChildAt(0) as ImageView
+                        tertiaryImage.setColorFilter(tertiary)
+                    }
 
-            binding.preset.id -> {
+                    val builder = MaterialAlertDialogBuilder(this)
+                        .setTitle("Wallpaper colours")
+                        .setView(layoutWallpaperColorsBinding.root)
+                    val dialog = builder.create()
+                    dialog.show()
 
-                val layoutPresetColorsBinding = LayoutPresetColorsBinding.inflate(layoutInflater)
-
-                val builder = MaterialAlertDialogBuilder(this)
-                    .setTitle("Presets")
-                    .setView(layoutPresetColorsBinding.root)
-                val dialog = builder.create()
-                dialog.show()
-
-                val nestedScrollView = layoutPresetColorsBinding.root as NestedScrollView
-                val linearLayoutCompat = nestedScrollView.getChildAt(0) as LinearLayoutCompat
-
-                linearLayoutCompat.children.forEach { linearViews ->
-                    linearViews as LinearLayoutCompat
-                    linearViews.setOnClickListener {
-                        val appCompatImageView = linearViews.getChildAt(0) as AppCompatImageView
-                        val textView = linearViews.getChildAt(1) as MaterialTextView
-                        val color = appCompatImageView.imageTintList?.defaultColor
-                        if (color != null) {
-                            accentColor = toHex(color)
-                            binding.previewPreset.setColorFilter(color)
-                            binding.previewPreset.visibility = View.VISIBLE
-                            binding.previewSelected.setColorFilter(color)
-                            accentName = textView.text as String
-                            val selected = "$accentName - $accentColor"
-                            binding.previewSelectedText.text = selected
-                        }
-                        binding.presetText.text = textView.text
-                        binding.name.setText(textView.text)
+                    layoutWallpaperColorsBinding.primary.setOnClickListener {
+                        binding.previewWall.setColorFilter(primary)
+                        accentColor = toHex(primary)
+                        binding.previewWall.visibility = View.VISIBLE
+                        binding.wallText.text =
+                            String.format(resources.getString(R.string.wallpaper_primary))
+                        binding.previewSelected.setColorFilter(primary)
+                        val selected = "$accentName - $accentColor"
+                        binding.previewSelectedText.text = selected
                         dialog.cancel()
                     }
-                }
-            }
 
-            binding.wallColors.id -> {
-
-                if (SDK_INT > O) {
-
-                    val rationaleHandler = createDialogRationale(R.string.app_name_full) {
-                        onPermission(
-                            Permission.READ_EXTERNAL_STORAGE,
-                            "Storage permission is required to get wallpaper colours."
-                        )
-                    }
-
-                    runWithPermissions(
-                        Permission.READ_EXTERNAL_STORAGE,
-                        rationaleHandler = rationaleHandler
-                    ) {
-                        if (it.isAllGranted()) {
-                            val wallpaperManager = WallpaperManager.getInstance(this)
-                            val wallDrawable = wallpaperManager.drawable
-                            val wallColors = WallpaperColors.fromDrawable(wallDrawable)
-
-                            val primary = wallColors.primaryColor.toArgb()
-                            val secondary = wallColors.secondaryColor?.toArgb()
-                            val tertiary = wallColors.tertiaryColor?.toArgb()
-
-                            val layoutWallpaperColorsBinding =
-                                LayoutWallpaperColorsBinding.inflate(layoutInflater)
-                            val primaryImage =
-                                layoutWallpaperColorsBinding.primary.getChildAt(0) as ImageView
-                            primaryImage.setColorFilter(primary)
-
-                            if (secondary != null) {
-                                val secondaryImage =
-                                    layoutWallpaperColorsBinding.secondary.getChildAt(0) as ImageView
-                                secondaryImage.setColorFilter(secondary)
-                            }
-                            if (tertiary != null) {
-                                val tertiaryImage =
-                                    layoutWallpaperColorsBinding.tertiary.getChildAt(0) as ImageView
-                                tertiaryImage.setColorFilter(tertiary)
-                            }
-
-                            val builder = MaterialAlertDialogBuilder(this)
-                                .setTitle("Wallpaper colours")
-                                .setView(layoutWallpaperColorsBinding.root)
-                            val dialog = builder.create()
-                            dialog.show()
-
-                            layoutWallpaperColorsBinding.primary.setOnClickListener {
-                                binding.previewWall.setColorFilter(primary)
-                                accentColor = toHex(primary)
-                                binding.previewWall.visibility = View.VISIBLE
-                                binding.wallText.text =
-                                    String.format(resources.getString(R.string.wallpaper_primary))
-                                binding.previewSelected.setColorFilter(primary)
-                                val selected = "$accentName - $accentColor"
-                                binding.previewSelectedText.text = selected
-                                dialog.cancel()
-                            }
-
-                            if (secondary != null) {
-                                layoutWallpaperColorsBinding.secondary.setOnClickListener {
-                                    binding.previewWall.setColorFilter(secondary)
-                                    accentColor = toHex(secondary)
-                                    binding.previewWall.visibility = View.VISIBLE
-                                    binding.wallText.text =
-                                        String.format(resources.getString(R.string.wallpaper_secondary))
-                                    binding.previewSelected.setColorFilter(secondary)
-                                    val selected = "$accentName - $accentColor"
-                                    binding.previewSelectedText.text = selected
-                                    dialog.cancel()
-                                }
-                            }
-
-                            if (tertiary != null) {
-                                layoutWallpaperColorsBinding.tertiary.setOnClickListener {
-                                    binding.previewWall.setColorFilter(tertiary)
-                                    accentColor = toHex(tertiary)
-                                    binding.previewWall.visibility = View.VISIBLE
-                                    binding.wallText.text =
-                                        String.format(resources.getString(R.string.wallpaper_tertiary))
-                                    binding.previewSelected.setColorFilter(tertiary)
-                                    val selected = "$accentName - $accentColor"
-                                    binding.previewSelectedText.text = selected
-                                    dialog.cancel()
-                                }
-                            }
+                    if (secondary != null) {
+                        layoutWallpaperColorsBinding.secondary.setOnClickListener {
+                            binding.previewWall.setColorFilter(secondary)
+                            accentColor = toHex(secondary)
+                            binding.previewWall.visibility = View.VISIBLE
+                            binding.wallText.text =
+                                String.format(resources.getString(R.string.wallpaper_secondary))
+                            binding.previewSelected.setColorFilter(secondary)
+                            val selected = "$accentName - $accentColor"
+                            binding.previewSelectedText.text = selected
+                            dialog.cancel()
                         }
                     }
-                }
-            }
 
-            binding.create.id -> {
-
-                if (accentColor.isNotBlank() && accentName.isNotBlank()) {
-
-                    val xmlRes = Shell.su(
-                        "cd ${filesDir.absolutePath}",
-                        "chmod +x xmlstarlet",
-                        "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_light\"]' -v \"$accentColor\" src/values/colors.xml",
-                        "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_dark\"]' -v \"$accentColor\" src/values/colors.xml",
-                        "./xmlstarlet ed -L -u '/resources/string[@name=\"accent_color_custom_overlay\"]' -v \"$accentName\" src/values/strings.xml",
-                        "cd /"
-                    ).exec()
-                    Log.d("ACC-xml", xmlRes.out.toString())
-
-                    if (xmlRes.isSuccess) {
-                        //Toast.makeText(this, "Building overlay apk", Toast.LENGTH_SHORT).show()
-                        Shell.su("cd ${filesDir.absolutePath}").exec()
-                        val ovrRes = Shell.su(resources.openRawResource(R.raw.create_overlay)).exec()
-                        Log.d("ACC-ovr", ovrRes.out.toString())
-
-                        if (ovrRes.isSuccess) {
-                            val certFile = assets.open("testkey.x509.pem")
-                            val keyFile = assets.open("testkey.pk8")
-                            val out = FileOutputStream(File(filesDir, "signed.apk").absolutePath)
-
-                            val cert = readCertificate(certFile)
-                            val key = readPrivateKey(keyFile)
-
-                            val jar = JarMap.open("$filesDir/qacc.apk")
-
-                            SignAPK.sign(cert, key, jar, out.buffered())
-
-                            Shell.su("cd ${filesDir.absolutePath}").exec()
-                            val zipalignRes = Shell.su(resources.openRawResource(R.raw.zipalign)).exec()
-                            Log.d("ACC-zip", zipalignRes.out.toString())
-
-                            if (zipalignRes.isSuccess) {
-                                //Toast.makeText(this, "Creating Magisk module", Toast.LENGTH_SHORT).show()
-                                val result =
-                                    Shell.su(resources.openRawResource(R.raw.create_module)).exec()
-                                Log.d("ACC-MM", result.out.toString())
-
-                                if (result.isSuccess) {
-                                    filesDir.deleteRecursively()
-
-                                    val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
-                                    with (sharedPref.edit()) {
-                                        putString(getString(R.string.accent_name), accentName)
-                                        putString(getString(R.string.accent_light), accentColor)
-                                        // putString(getString(R.string.accent_dark), accentDark)
-                                        commit()
-                                    }
-
-                                    Snackbar.make(
-                                        binding.root,
-                                        "$accentName created!",
-                                        Snackbar.LENGTH_INDEFINITE
-                                    )
-                                        .setAction("Reboot") {
-                                            Shell.su("/system/bin/svc power reboot || /system/bin/reboot")
-                                                .submit()
-                                        }
-                                        .show()
-                                }
-                            }
+                    if (tertiary != null) {
+                        layoutWallpaperColorsBinding.tertiary.setOnClickListener {
+                            binding.previewWall.setColorFilter(tertiary)
+                            accentColor = toHex(tertiary)
+                            binding.previewWall.visibility = View.VISIBLE
+                            binding.wallText.text =
+                                String.format(resources.getString(R.string.wallpaper_tertiary))
+                            binding.previewSelected.setColorFilter(tertiary)
+                            val selected = "$accentName - $accentColor"
+                            binding.previewSelectedText.text = selected
+                            dialog.cancel()
                         }
                     }
-                }
-
-                else {
-                    if (accentColor.isBlank()) Toast.makeText(this, "Accent color is not set", Toast.LENGTH_SHORT).show()
-                    if (accentName.isBlank()) Toast.makeText(this, "Accent color name is not set", Toast.LENGTH_SHORT).show()
                 }
             }
         }
+    }
+
+    private fun createAccent() {
+        if (accentColor.isNotBlank() && accentName.isNotBlank()) {
+
+            val prefix = "com.android.theme.color.custom."
+            var suffix = accentName.filter { it.isLetter() }.filterNot { it.isWhitespace() }
+            if (suffix.isBlank()) suffix = genSuffix()
+            val pkgName = prefix + suffix
+            Log.d("pkg-name", pkgName)
+
+            val xmlRes = Shell.su(
+                "cd ${filesDir.absolutePath}",
+                "chmod +x xmlstarlet",
+                "./xmlstarlet ed -L -u '/manifest/@package' -v \"$pkgName\" AndroidManifest.xml",
+                "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_light\"]' -v \"$accentColor\" src/values/colors.xml",
+                "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_dark\"]' -v \"$accentColor\" src/values/colors.xml",
+                "./xmlstarlet ed -L -u '/resources/color[@name=\"accent_device_default_700\"]' -v \"$accentColor\" src/values/colors.xml",
+                "./xmlstarlet ed -L -u '/resources/string[@name=\"accent_color_custom_overlay\"]' -v \"$accentName\" src/values/strings.xml",
+                "cd /"
+            ).exec()
+            Log.d("ACC-xml", xmlRes.out.toString())
+
+            if (xmlRes.isSuccess) {
+                //Toast.makeText(this, "Building overlay apk", Toast.LENGTH_SHORT).show()
+                Shell.su("cd ${filesDir.absolutePath}").exec()
+                val ovrRes = Shell.su(resources.openRawResource(R.raw.create_overlay)).exec()
+                Log.d("ACC-ovr", ovrRes.out.toString())
+
+                if (ovrRes.isSuccess) {
+                    val certFile = assets.open("testkey.x509.pem")
+                    val keyFile = assets.open("testkey.pk8")
+                    val out = FileOutputStream(File(filesDir, "signed.apk").absolutePath)
+
+                    val cert = readCertificate(certFile)
+                    val key = readPrivateKey(keyFile)
+
+                    val jar = JarMap.open("$filesDir/qacc.apk")
+
+                    SignAPK.sign(cert, key, jar, out.buffered())
+
+                    Shell.su("cd ${filesDir.absolutePath}").exec()
+                    val zipalignRes = Shell.su(resources.openRawResource(R.raw.zipalign)).exec()
+                    Log.d("ACC-zip", zipalignRes.out.toString())
+
+                    if (zipalignRes.isSuccess) {
+                        //Toast.makeText(this, "Creating Magisk module", Toast.LENGTH_SHORT).show()
+
+                        Shell.su("mkdir -p $path").exec()
+                        Shell.su(resources.openRawResource(R.raw.create_module)).exec()
+                        val result = Shell.su(
+                            "cp -f $filesDir/aligned.apk $path/$suffix.apk",
+                            "chmod 644 $path/$suffix.apk"
+                        ).exec()
+                        Log.d("ACC-MM", result.out.toString())
+
+                        if (result.isSuccess) {
+
+                            val createdApks = listOf("qacc.apk", "signed.apk", "aligned.apk")
+                            createdApks.forEach {
+                                File(filesDir, it).delete()
+                            }
+                            val accent = Accent(pkgName, accentName, accentColor)
+                            accentViewModel.insert(accent)
+                            showSnackbar("$accentName created.")
+
+                        }
+                    }
+                }
+            }
+        }
+
+        else {
+            if (accentColor.isBlank()) Toast.makeText(this, "Accent color is not selected", Toast.LENGTH_SHORT).show()
+            if (accentName.isBlank()) Toast.makeText(this, "Accent name is not set", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showSnackbar(text: String) {
+
+        Snackbar.make(
+            binding.root,
+            text,
+            Snackbar.LENGTH_INDEFINITE
+        )
+            .setAction("Reboot") {
+                Shell.su("/system/bin/svc power reboot || /system/bin/reboot")
+                    .submit()
+            }
+            .show()
     }
 
     private fun toHex(color: Int): String {
         return String.format("#%06X", (0xFFFFFF and color))
     }
 
+    private fun genSuffix(): String {
+        val alphabets = "abcdefghijklmnopqrstuvwxyz"
+        val length = 7
+        val builder = StringBuilder(length)
+        val random = SecureRandom()
+        var next: Char
+        for (i in 0 until length) {
+            next = alphabets[random.nextInt(alphabets.length)]
+            builder.append(next)
+        }
+        return builder.toString()
+    }
+
     @Throws(IOException::class, GeneralSecurityException::class)
-    fun readCertificate(input: InputStream): X509Certificate {
-        try {
+    fun readCertificate(inputStream: InputStream): X509Certificate {
+        inputStream.use { stream ->
             val cf = CertificateFactory.getInstance("X.509")
-            return cf.generateCertificate(input) as X509Certificate
-        } finally {
-            input.close()
+            return cf.generateCertificate(stream) as X509Certificate
         }
     }
 
 
     @Throws(IOException::class, GeneralSecurityException::class)
-    fun readPrivateKey(input: InputStream): PrivateKey {
-        try {
+    fun readPrivateKey(inputStream: InputStream): PrivateKey {
+        inputStream.use { stream ->
             val buf = ByteArrayStream()
-            buf.readFrom(input)
+            buf.readFrom(stream)
             val bytes = buf.toByteArray()
-            /* Check to see if this is in an EncryptedPrivateKeyInfo structure. */
+            // Check to see if this is in an EncryptedPrivateKeyInfo structure.
             val spec = PKCS8EncodedKeySpec(bytes)
             /*
              * Now it's in a PKCS#8 PrivateKeyInfo structure. Read its Algorithm
@@ -412,17 +446,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             val pki = PrivateKeyInfo.getInstance(bIn.readObject())
             val algOid = pki.privateKeyAlgorithm.algorithm.id
             return KeyFactory.getInstance(algOid).generatePrivate(spec)
-        } finally {
-            input.close()
-        }
-    }
-
-    private fun isOverlayInstalled(): Boolean {
-        return try {
-            packageManager.getPackageInfo("com.android.theme.color.custom", 0)
-            true
-        } catch (e: Exception) {
-            false
         }
     }
 }
