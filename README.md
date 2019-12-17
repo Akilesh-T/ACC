@@ -1,11 +1,19 @@
-# QACC
-**Custom accent colour creator for Android 10**
+# ACC
+**Custom accent colour creator** 
 
 Set any colour as your system accent! The app gets your choice of colours (along with a name) and creates an overlay targeting android (framework-res). A Magisk module is created by the app, which injects the created overlay to the system.
 
+**Features**
+
+* You can select colours from your wallpaper, presets in the app or set your own custom colour.
+* Multiple accents can be created.
+* Enable/disable accents.
+* Remove created accents (swipe left).
+
 **Requirements**
 
-* Android 10
+* Android 9+
 * Magisk  
 
-[Screenshots](https://forum.xda-developers.com/devdb/project/?id=35917#screenshots) | [Downloads](https://github.com/Akilesh-T/QACC/releases/latest) | [XDA thread](https://forum.xda-developers.com/android/apps-games/app-magisk-module-qacc-custom-accent-t4011747)
+[![Downloads](https://img.shields.io/github/v/release/Akilesh-T/ACC.svg?logo=github)](https://github.com/Akilesh-T/QACC/releases/latest) | [Screenshots](https://forum.xda-developers.com/devdb/project/?id=35917#screenshots) | [XDA thread](https://forum.xda-developers.com/android/apps-games/app-magisk-module-qacc-custom-accent-t4011747)
+
