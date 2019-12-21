@@ -2,6 +2,7 @@ package app.akilesh.qacc
 
 import android.app.WallpaperColors
 import android.app.WallpaperManager
+import android.app.WallpaperManager.FLAG_SYSTEM
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
@@ -10,6 +11,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
 import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
@@ -241,7 +243,12 @@ class MainActivity : AppCompatActivity() {
                 if (it.isAllGranted()) {
                     val wallpaperManager = WallpaperManager.getInstance(this)
                     val wallDrawable = wallpaperManager.drawable
-                    val wallColors = WallpaperColors.fromDrawable(wallDrawable)
+                    var wallColors = wallpaperManager.getWallpaperColors(FLAG_SYSTEM)!!
+
+                    val colorsChangedListener = WallpaperManager.OnColorsChangedListener { colors, _ ->
+                        wallColors = colors ?: WallpaperColors.fromDrawable(wallDrawable)
+                    }
+                    wallpaperManager.addOnColorsChangedListener(colorsChangedListener, Handler())
 
                     val primary = wallColors.primaryColor.toArgb()
                     val secondary = wallColors.secondaryColor?.toArgb()
@@ -251,18 +258,16 @@ class MainActivity : AppCompatActivity() {
                         LayoutWallpaperColorsBinding.inflate(layoutInflater)
                     val primaryImage =
                         layoutWallpaperColorsBinding.primary.getChildAt(0) as ImageView
-                    primaryImage.setColorFilter(primary)
+                    val secondaryImage =
+                        layoutWallpaperColorsBinding.secondary.getChildAt(0) as ImageView
+                    val tertiaryImage =
+                        layoutWallpaperColorsBinding.tertiary.getChildAt(0) as ImageView
 
-                    if (secondary != null) {
-                        val secondaryImage =
-                            layoutWallpaperColorsBinding.secondary.getChildAt(0) as ImageView
-                        secondaryImage.setColorFilter(secondary)
-                    }
-                    if (tertiary != null) {
-                        val tertiaryImage =
-                            layoutWallpaperColorsBinding.tertiary.getChildAt(0) as ImageView
-                        tertiaryImage.setColorFilter(tertiary)
-                    }
+                    primaryImage.setColorFilter(primary)
+                    if (secondary != null) secondaryImage.setColorFilter(secondary)
+                    else layoutWallpaperColorsBinding.secondary.visibility = View.GONE
+                    if (tertiary != null) tertiaryImage.setColorFilter(tertiary)
+                    else layoutWallpaperColorsBinding.tertiary.visibility = View.GONE
 
                     val builder = MaterialAlertDialogBuilder(this)
                         .setTitle("Wallpaper colours")
