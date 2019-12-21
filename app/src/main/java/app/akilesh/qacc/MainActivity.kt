@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var accentViewModel: AccentViewModel
     private lateinit var path: String
+    private val prefix = "com.android.theme.color.custom."
     private var accentColor = ""
     private var accentName = ""
 
@@ -100,7 +101,7 @@ class MainActivity : AppCompatActivity() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val accent = adapter.getAccentAndRemoveAt(viewHolder.adapterPosition)
                 accentViewModel.delete(accent)
-                val appName = accent.pkgName.substring(accent.pkgName.lastIndexOf(".") + 1)
+                val appName = accent.pkgName.substringAfter(prefix)
                 val result = Shell.su("rm -f $path/$appName.apk").exec()
                 if (result.isSuccess)
                     showSnackbar("${accent.name} removed.")
@@ -322,9 +323,7 @@ class MainActivity : AppCompatActivity() {
     private fun createAccent() {
         if (accentColor.isNotBlank() && accentName.isNotBlank()) {
 
-            val prefix = "com.android.theme.color.custom."
-            var suffix = accentName.filter { it.isLetter() }.filterNot { it.isWhitespace() }
-            if (suffix.isBlank()) suffix = genSuffix()
+            val suffix = genSuffix()
             val pkgName = prefix + suffix
             Log.d("pkg-name", pkgName)
 
@@ -414,14 +413,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun genSuffix(): String {
-        val alphabets = "abcdefghijklmnopqrstuvwxyz"
-        val length = 7
+        val alphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        val numbers = "0123456789"
+        val alphaNum = alphabets + numbers
+        val alphaNumDots = "$alphaNum............"
+        val length = 10
         val builder = StringBuilder(length)
         val random = SecureRandom()
         var next: Char
+        var prev = '.'
         for (i in 0 until length) {
-            next = alphabets[random.nextInt(alphabets.length)]
+            next = if (prev == '.' || i == length - 1) {
+                alphabets[random.nextInt(alphabets.length)]
+            } else {
+                alphaNumDots[random.nextInt(alphaNumDots.length)]
+            }
             builder.append(next)
+            prev = next
         }
         return builder.toString()
     }
