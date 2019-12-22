@@ -14,7 +14,7 @@ Set any colour as your system accent! The app gets your choice of colours (along
 
 **Requirements**
 
-* Android 9+
+* Android 8+
 * Magisk  
 
 [Screenshots](https://forum.xda-developers.com/devdb/project/?id=35917#screenshots)

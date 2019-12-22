@@ -14,8 +14,8 @@ android {
         applicationId "app.akilesh.qacc"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 5
-        versionName "1.30"
+        versionCode 6
+        versionName "1.40"
         vectorDrawables.useSupportLibrary = true
     }
     compileOptions {
