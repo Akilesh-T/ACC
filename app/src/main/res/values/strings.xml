@@ -1,49 +1,12 @@
 <resources>
     <string name="app_name">ACC</string>
     <string name="app_name_full">Accent Colour Creator</string>
-
-    <!-- Preset colours from AEX -->
-    <string name="amber">Amber</string>
-    <string name="blue">Blue</string>
-    <string name="blue_grey">Blue Grey</string>
-    <string name="brown">Brown</string>
-    <string name="candy_red">Candy Red</string>
-    <string name="cyan">Cyan</string>
-    <string name="deep_orange">Deep Orange</string>
-    <string name="deep_purple">Deep Purple</string>
-    <string name="elegant_green">Elegant Green</string>
-    <string name="extended_green">Extended Green</string>
-    <string name="grey">Grey</string>
-    <string name="indigo">Indigo</string>
-    <string name="jade_green">Jade Green</string>
-    <string name="light_blue">Light Blue</string>
-    <string name="light_green">Light Green</string>
-    <string name="lime">Lime</string>
-    <string name="orange">Orange</string>
-    <string name="pale_blue">Pale Blue</string>
-    <string name="pale_red">Pale Red</string>
-    <string name="pink">Pink</string>
-    <string name="red">Red</string>
-    <string name="teal">Teal</string>
-    <string name="yellove">Yellow</string>
-
-
     <string name="color_custom">Custom colour</string>
     <string name="set_custom_color">Tap to set a custom colour</string>
     <string name="color_name">Name your accent colour</string>
-    <string name="create">Create accent colour</string>
     <string name="color_wallpaper">Wallpaper colours</string>
-    <string name="wallpaper_primary">Primary</string>
-    <string name="wallpaper_secondary">Secondary</string>
-    <string name="wallpaper_tertiary">Tertiary</string>
     <string name="enable_accent">Enable</string>
     <string name="created_accents">Created accents</string>
-    <string name="accent_name">accent_name</string>
-    <string name="accent_light">accent_light</string>
-    <string name="accent_dark">accent_dark</string>
-    <string name="current_accent_name">Name: %1$s</string>
-    <string name="current_accent_light">Light: %1$s</string>
-    <string name="current_accent_dark">Dark: %1$s</string>
     <string name="presets">Preset Colours</string>
     <string name="set_preset_color">Tap to use preset colours</string>
     <string name="set_wallpaper_color">Tap to use colours from your wallpaper</string>
@@ -53,5 +16,7 @@
     <string name="display_title">Dark theme</string>
     <string name="disable_accent">Disable</string>
     <string name="overlay_not_installed">Not installed</string>
+    <string name="colour">%1$s - %2$s</string>
+    <string name="create_accent">%1$s  %2$s\n%3$s</string>
 
 </resources>

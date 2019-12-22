@@ -85,27 +85,10 @@
                     android:id="@+id/wall_colors"
                     style="@style/Cards">
 
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/preview_wall"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:paddingStart="30dp"
-                            android:paddingEnd="0dp"
-                            app:srcCompat="@drawable/ic_color"/>
-
                         <com.google.android.material.textview.MaterialTextView
                             style="@style/Text"
                             android:id="@+id/wall_text"
                             android:text="@string/set_wallpaper_color"/>
-
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-
                 </com.google.android.material.card.MaterialCardView>
             </FrameLayout>
 
@@ -125,26 +108,10 @@
                     android:id="@+id/custom"
                     style="@style/Cards">
 
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/preview_custom"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:paddingStart="30dp"
-                            android:paddingEnd="0dp"
-                            app:srcCompat="@drawable/ic_color"/>
-
                         <com.google.android.material.textview.MaterialTextView
                             style="@style/Text"
                             android:id="@+id/customText"
                             android:text="@string/set_custom_color"/>
-
-                    </androidx.appcompat.widget.LinearLayoutCompat>
                 </com.google.android.material.card.MaterialCardView>
 
 
@@ -164,27 +131,11 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/preset"
                     style="@style/Cards">
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/preview_preset"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:paddingStart="30dp"
-                            android:paddingEnd="0dp"
-                            app:srcCompat="@drawable/ic_color"/>
 
                         <com.google.android.material.textview.MaterialTextView
                             style="@style/Text"
                             android:id="@+id/presetText"
                             android:text="@string/set_preset_color"/>
-
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-
                 </com.google.android.material.card.MaterialCardView>
 
             </FrameLayout>
@@ -224,57 +175,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="72dp">
+                android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textview.MaterialTextView
                     style="@style/CardHeaders"
                     android:textColor="@android:color/white"
                     android:text="@string/selected" />
+
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/create"
                     style="@style/Cards">
 
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:paddingTop="30dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <androidx.appcompat.widget.LinearLayoutCompat
-                            android:orientation="horizontal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/preview_selected"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:srcCompat="@drawable/ic_color"/>
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="0dp"
-                                android:maxLines="1"
-                                android:id="@+id/preview_selected_text" />
-                        </androidx.appcompat.widget.LinearLayoutCompat>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/create"
-                            android:layout_margin="4dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            app:icon="@drawable/ic_build"
-                            app:iconTint="?colorOnBackground"
-                            android:textAllCaps="false"
-                            android:textColor="?colorOnBackground"
-                            android:text="@string/create"/>
-
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-
+                    <com.google.android.material.textview.MaterialTextView
+                        style="@style/Text"
+                        android:id="@+id/preview_selected_text"/>
                 </com.google.android.material.card.MaterialCardView>
 
             </FrameLayout>

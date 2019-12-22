@@ -1,4 +1,4 @@
-package app.akilesh.qacc
+package app.akilesh.qacc.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import app.akilesh.qacc.R
 import app.akilesh.qacc.model.Accent
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView

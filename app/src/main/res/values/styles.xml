@@ -33,7 +33,6 @@
         <item name="strokeWidth">0.1dp</item>
         <item name="strokeColor">@color/colorPrimaryDark</item>
         <item name="cardUseCompatPadding">true</item>
-        <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
 
     <style name="CardHeaders" parent="@style/TextAppearance.MaterialComponents.Button">
@@ -55,5 +54,21 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:padding">30dp</item>
+    </style>
+    
+    <style name="PreviewCards" parent="Widget.MaterialComponents.CardView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <style name="PreviewText" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">32dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
     </style>
 </resources>
