@@ -3,6 +3,8 @@ package app.akilesh.qacc.adapter
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.Q
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,10 +59,20 @@ class AccentListAdapter internal constructor(
             holder.button.iconTint = colorStateList
             holder.button.rippleColor = colorStateList
             holder.button.setOnClickListener {
-                if (holder.button.text == "Enable")
-                    Shell.su("cmd overlay enable-exclusive --category ${current.pkgName}").exec()
-                else
+                if (holder.button.text == "Enable") {
+                    //Enable selected and disable other accents created by the app
+                    if (SDK_INT >= Q) {
+                        Shell.su("cmd overlay enable-exclusive --category ${current.pkgName}").exec()
+                    } else {
+                        accents.forEach {
+                            Shell.su("cmd overlay disable ${it.pkgName}").exec()
+                        }
+                        Shell.su("cmd overlay enable ${current.pkgName}").exec()
+                    }
+                }
+                if (holder.button.text == "Disable") {
                     Shell.su("cmd overlay disable ${current.pkgName}").exec()
+                }
             }
         }
         else {
