@@ -56,7 +56,6 @@ import java.io.*
 import java.security.GeneralSecurityException
 import java.security.KeyFactory
 import java.security.PrivateKey
-import java.security.SecureRandom
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import java.security.spec.PKCS8EncodedKeySpec
@@ -195,7 +194,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun chooseFromPresets() {
 
-
         val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
         val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
         dialogTitleBinding.titleText.text = String.format(resources.getString(R.string.presets))
@@ -294,7 +292,7 @@ class MainActivity : AppCompatActivity() {
     private fun createAccent() {
         if (accentColor.isNotBlank() && accentName.isNotBlank()) {
 
-            val suffix = genSuffix()
+            val suffix = "hex" + accentColor.removePrefix("#")
             val pkgName = prefix + suffix
             Log.d("pkg-name", pkgName)
 
@@ -381,28 +379,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun toHex(color: Int): String {
         return String.format("#%06X", (0xFFFFFF and color))
-    }
-
-    private fun genSuffix(): String {
-        val alphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        val numbers = "0123456789"
-        val alphaNum = alphabets + numbers
-        val alphaNumDots = "$alphaNum............"
-        val length = 10
-        val builder = StringBuilder(length)
-        val random = SecureRandom()
-        var next: Char
-        var prev = '.'
-        for (i in 0 until length) {
-            next = if (prev == '.' || i == length - 1) {
-                alphabets[random.nextInt(alphabets.length)]
-            } else {
-                alphaNumDots[random.nextInt(alphaNumDots.length)]
-            }
-            builder.append(next)
-            prev = next
-        }
-        return builder.toString()
     }
 
     @Throws(IOException::class, GeneralSecurityException::class)
