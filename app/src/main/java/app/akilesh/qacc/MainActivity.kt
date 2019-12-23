@@ -20,7 +20,6 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -118,15 +117,7 @@ class MainActivity : AppCompatActivity() {
 
         when(resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_NO -> {
-                val colorWhite = ContextCompat.getColor(this, R.color.white)
-                window.navigationBarColor = colorWhite
-                window.statusBarColor = colorWhite
                 decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-            }
-            Configuration.UI_MODE_NIGHT_YES -> {
-                val colorDefaultDark = ContextCompat.getColor(this, R.color.colorDefaultDark)
-                window.statusBarColor = colorDefaultDark
-                window.navigationBarColor = colorDefaultDark
             }
         }
 

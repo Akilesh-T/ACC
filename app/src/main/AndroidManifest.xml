@@ -27,7 +27,6 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:theme="@style/Theme.MaterialComponents.DayNight"
             android:label="@string/title_activity_settings" />
 
     </application>
