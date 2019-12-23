@@ -48,7 +48,7 @@ class SettingsActivity : AppCompatActivity() {
             if (themePreference != null) {
                 themePreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
                     val theme = newValue as String
-                    ThemeUtil().applyTheme(theme)
+                    ThemeUtil.applyTheme(theme)
                     true
                 }
             }

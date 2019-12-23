@@ -17,8 +17,8 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val theme = sharedPreferences.getString("themePref", ThemeUtil().default)
-        ThemeUtil().applyTheme(theme)
+        val theme = sharedPreferences.getString("themePref", ThemeUtil.default)
+        ThemeUtil.applyTheme(theme)
 
     }
 }

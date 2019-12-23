@@ -2,11 +2,11 @@ package app.akilesh.qacc.utils
 
 import androidx.appcompat.app.AppCompatDelegate
 
-class ThemeUtil {
-    private val lightMode  = "light"
-    private val darkMode = "dark"
-    private val batterySaverMode = "battery"
-    val default = "default"
+object ThemeUtil {
+    private const val lightMode  = "light"
+    private const val darkMode = "dark"
+    private const val batterySaverMode = "battery"
+    const val default = "default"
 
     fun applyTheme(theme: String?) {
         when (theme) {
