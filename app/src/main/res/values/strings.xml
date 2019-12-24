@@ -5,7 +5,6 @@
     <string name="set_custom_color">Tap to set a custom colour</string>
     <string name="color_name">Name your accent colour</string>
     <string name="color_wallpaper">Wallpaper colours</string>
-    <string name="enable_accent">Enable</string>
     <string name="created_accents">Created accents</string>
     <string name="presets">Preset Colours</string>
     <string name="set_preset_color">Tap to use preset colours</string>
@@ -14,8 +13,6 @@
     <string name="title_activity_settings">Settings</string>
     <string name="display_header">Display</string>
     <string name="display_title">Dark theme</string>
-    <string name="disable_accent">Disable</string>
-    <string name="overlay_not_installed">Not installed</string>
     <string name="colour">%1$s - %2$s</string>
     <string name="create_accent">%1$s  %2$s\n%3$s</string>
 

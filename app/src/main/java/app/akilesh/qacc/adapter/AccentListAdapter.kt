@@ -1,17 +1,15 @@
 package app.akilesh.qacc.adapter
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
 import app.akilesh.qacc.model.Accent
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textview.MaterialTextView
 import com.topjohnwu.superuser.Shell
 
@@ -25,7 +23,7 @@ class AccentListAdapter internal constructor(
     inner class AccentViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val name: MaterialTextView = itemView.findViewById(R.id.name)
         val color: AppCompatImageView = itemView.findViewById(R.id.color)
-        val button: MaterialButton = itemView.findViewById(R.id.enable_or_disable_accent)
+        val box: MaterialCheckBox = itemView.findViewById(R.id.enable_or_disable_accent)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccentViewHolder {
@@ -37,48 +35,34 @@ class AccentListAdapter internal constructor(
         val current = accents[position]
         val text = current.name + " - " + current.color
         val color = Color.parseColor(current.color)
-        val colorStateList = ColorStateList.valueOf(color)
         holder.name.text = text
         holder.color.setColorFilter(color)
 
         if (isOverlayInstalled(current.pkgName)) {
 
-            if(isOverlayEnabled(current.pkgName)) {
-                holder.button.strokeColor = colorStateList
-                holder.button.strokeWidth = 3
-                holder.button.text = context.resources.getString(R.string.disable_accent)
-                holder.button.icon = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_check_circle_unchecked, context.theme)
-            }
-            else {
-                holder.button.text = context.resources.getString(R.string.enable_accent)
-                holder.button.icon = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_check_circle_checked, context.theme)
-            }
+            holder.box.isChecked = isOverlayEnabled(current.pkgName)
+            if (holder.box.isChecked) holder.name.setTextColor(color)
 
-            holder.button.iconTint = colorStateList
-            holder.button.rippleColor = colorStateList
-            holder.button.setOnClickListener {
-                if (holder.button.text == "Enable") {
-                    //Disable accents created by the app and enable selected accent
+            holder.box.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
                     accents.forEach {
                         Shell.su("cmd overlay disable ${it.pkgName}").exec()
                     }
                     Shell.su(
                         "cmd overlay enable ${current.pkgName}",
                         "cmd overlay set-priority ${current.pkgName} highest"
-                        ).exec()
+                    ).exec()
                     //Shell.su("cmd overlay enable-exclusive --category ${current.pkgName}").exec()
                 }
-                if (holder.button.text == "Disable") {
-                    //Disable enabled accent
+                else {
                     Shell.su("cmd overlay disable ${current.pkgName}").exec()
                 }
             }
         }
         else {
-            holder.button.strokeWidth = 0
-            holder.button.text = context.resources.getString(R.string.overlay_not_installed)
-            holder.button.isClickable = false
-            holder.button.icon = null
+            holder.box.hint = "Not installed"
+            holder.box.isClickable = false
+            holder.box.buttonDrawable = null
         }
     }
 

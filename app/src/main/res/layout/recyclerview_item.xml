@@ -28,13 +28,11 @@
             android:layout_weight="1"
             android:maxLines="1" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/enable_or_disable_accent"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        <com.google.android.material.checkbox.MaterialCheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            android:textColor="?colorOnBackground" />
+            android:id="@+id/enable_or_disable_accent"
+            android:button="@drawable/ic_check_circle" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
