@@ -16,7 +16,7 @@
             android:layout_margin="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_color"/>
+            app:srcCompat="@drawable/ic_palette_24dp"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/name"

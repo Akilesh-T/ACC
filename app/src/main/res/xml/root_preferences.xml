@@ -8,7 +8,7 @@
         <ListPreference
             app:key="themePref"
             app:title="@string/display_title"
-            android:icon="@drawable/ic_theme"
+            android:icon="@drawable/ic_palette_38dp"
             app:defaultValue="default"
             app:dialogTitle="@string/display_title"
             app:entries="@array/themeListArray"
