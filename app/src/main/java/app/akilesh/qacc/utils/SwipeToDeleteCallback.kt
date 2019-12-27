@@ -26,7 +26,7 @@ abstract class SwipeToDeleteCallback(context: Context) :
     ): Int {
         return makeMovementFlags(
             0,
-            ItemTouchHelper.LEFT
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         )
     }
 
@@ -50,45 +50,51 @@ abstract class SwipeToDeleteCallback(context: Context) :
         super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         val itemView = viewHolder.itemView
         val itemHeight = itemView.height
-        val isCancelled = dX == 0f && !isCurrentlyActive
-        if (isCancelled) {
-            clearCanvas(
-                canvas,
-                itemView.right + dX,
-                itemView.top.toFloat(),
-                itemView.right.toFloat(),
-                itemView.bottom.toFloat()
-            )
-            super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-            return
-        }
         background.color = backgroundColor
-        background.setBounds(
-            itemView.right + dX.toInt(),
-            itemView.top,
-            itemView.right,
-            itemView.bottom
-        )
-        background.draw(canvas)
         val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
         val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
-        val deleteIconLeft = itemView.right - deleteIconMargin - intrinsicWidth
-        val deleteIconRight = itemView.right - deleteIconMargin
         val deleteIconBottom = deleteIconTop + intrinsicHeight
-        deleteDrawable!!.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
-        deleteDrawable.draw(canvas)
+
+        if (dX < 0) { // Swiping to the left
+            background.setBounds(
+                itemView.right + dX.toInt(),
+                itemView.top,
+                itemView.right,
+                itemView.bottom
+            )
+
+            val deleteIconLeft = itemView.right - deleteIconMargin - intrinsicWidth
+            val deleteIconRight = itemView.right - deleteIconMargin
+            deleteDrawable!!.setBounds(
+                deleteIconLeft,
+                deleteIconTop,
+                deleteIconRight,
+                deleteIconBottom
+            )
+        }
+        else if (dX > 0) { // Swiping to the right
+            background.setBounds(
+                itemView.left,
+                itemView.top,
+                itemView.left + dX.toInt(),
+                itemView.bottom
+            )
+
+            val deleteIconLeft = itemView.left + deleteIconMargin
+            val deleteIconRight = itemView.left + deleteIconMargin + intrinsicWidth
+            deleteDrawable!!.setBounds(
+                deleteIconLeft,
+                deleteIconTop,
+                deleteIconRight,
+                deleteIconBottom
+            )
+        }
+        background.draw(canvas)
+        deleteDrawable!!.draw(canvas)
+
         super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
-    private fun clearCanvas(
-        canvas: Canvas,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float
-    ) {
-        canvas.drawRect(left, top, right, bottom, clearPaint)
-    }
 
     override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
         return 0.6f
