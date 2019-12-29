@@ -2,10 +2,9 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
 
     <item android:drawable="@color/colorPrimaryDark"/>
-    <item>
-        <bitmap android:src="@drawable/ic_splash"
-            android:tileMode="disabled"
-            android:gravity="center"/>
-    </item>
+
+    <item
+        android:drawable="@drawable/ic_palette_144dp"
+        android:gravity="center"/>
 
 </layer-list>
