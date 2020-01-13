@@ -1,4 +1,4 @@
-package app.akilesh.qacc
+package app.akilesh.qacc.db
 
 import androidx.lifecycle.LiveData
 import app.akilesh.qacc.db.dao.AccentDao

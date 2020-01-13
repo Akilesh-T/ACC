@@ -1,7 +1,9 @@
-package app.akilesh.qacc.adapter
+package app.akilesh.qacc.ui.adapter
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.Q
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +11,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
 import app.akilesh.qacc.model.Accent
+import app.akilesh.qacc.utils.AppUtils.getColorAccent
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textview.MaterialTextView
 import com.topjohnwu.superuser.Shell
@@ -21,6 +25,7 @@ class AccentListAdapter internal constructor(
 
 
     inner class AccentViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+        val card: MaterialCardView = itemView.findViewById(R.id.cardView)
         val name: MaterialTextView = itemView.findViewById(R.id.name)
         val color: AppCompatImageView = itemView.findViewById(R.id.color)
         val box: MaterialCheckBox = itemView.findViewById(R.id.enable_or_disable_accent)
@@ -32,16 +37,25 @@ class AccentListAdapter internal constructor(
     }
 
     override fun onBindViewHolder(holder: AccentViewHolder, position: Int) {
+
         val current = accents[position]
-        val text = current.name + " - " + current.color
-        val color = Color.parseColor(current.color)
+        val colorLight = Color.parseColor(current.colorLight)
+        var text = current.name + " - " + current.colorLight
+        if (current.colorDark.isNotBlank() && current.colorDark != current.colorLight) text +=  " & " + current.colorDark
         holder.name.text = text
-        holder.color.setColorFilter(color)
+        holder.color.setColorFilter(colorLight)
 
         if (isOverlayInstalled(current.pkgName)) {
 
-            holder.box.isChecked = isOverlayEnabled(current.pkgName)
-            if (holder.box.isChecked) holder.name.setTextColor(color)
+            if (isOverlayEnabled(current.pkgName)) {
+                holder.box.isChecked = true
+                val accentColor = context.getColorAccent()
+                holder.color.setColorFilter(accentColor)
+                holder.card.strokeWidth = 3
+                holder.card.strokeColor = accentColor
+
+            }
+            else holder.box.isChecked = false
 
             holder.box.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -81,14 +95,23 @@ class AccentListAdapter internal constructor(
 
     private fun isOverlayInstalled(pkgName: String): Boolean {
         return try {
-            context.packageManager.getPackageInfo(pkgName, 0)
-            true
+            context.packageManager.getApplicationInfo(pkgName, 0).enabled
         } catch (e: Exception) {
             false
         }
     }
 
     private fun isOverlayEnabled(pkgName: String): Boolean {
-        return Shell.su("cmd overlay dump isenabled $pkgName").exec().out.component1() == "true"
+        var isEnabled = false
+        if (SDK_INT == Q)
+            isEnabled = Shell.su("cmd overlay dump isenabled $pkgName").exec().out.component1() == "true"
+        else {
+            val overlays = Shell.su("cmd overlay list").exec().out
+            overlays.forEach {
+                if (it.startsWith("[x]") && it.contains(pkgName))
+                    isEnabled = true
+            }
+        }
+        return isEnabled
     }
 }
