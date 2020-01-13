@@ -1,5 +1,7 @@
 package app.akilesh.qacc.utils
 
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.Q
 import app.akilesh.qacc.BuildConfig
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -68,6 +70,17 @@ object XmlUtils {
         val resourcesElement = document.createElement("resources")
         addColor(document, resourcesElement, "accent_device_default_light", colorLight)
         addColor(document, resourcesElement, "accent_device_default_dark", colorDark)
+        if (SDK_INT < Q) {
+            addColor(document, resourcesElement, "material_blue_grey_700", colorLight)
+            addColor(document, resourcesElement, "material_blue_grey_800", colorLight)
+            addColor(document, resourcesElement, "material_blue_grey_900", colorLight)
+            addColor(document, resourcesElement, "system_notification_accent_color", colorLight)
+            addColor(document, resourcesElement, "notification_default_color", colorLight)
+            addColor(document, resourcesElement, "accent_material_dark", colorLight)
+            addColor(document, resourcesElement, "accent_material_light", colorLight)
+            addColor(document, resourcesElement, "accent_device_default_700", colorLight)
+            addColor(document, resourcesElement, "accent_device_default_50", colorLight)
+        }
         document.appendChild(resourcesElement)
 
         try {
