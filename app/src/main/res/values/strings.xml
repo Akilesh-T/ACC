@@ -9,11 +9,24 @@
     <string name="presets">Preset Colours</string>
     <string name="set_preset_color">Tap to use preset colours</string>
     <string name="set_wallpaper_color">Tap to use colours from your wallpaper</string>
-    <string name="selected">Selected colour</string>
-    <string name="title_activity_settings">Settings</string>
     <string name="display_header">Display</string>
     <string name="display_title">Dark theme</string>
     <string name="colour">%1$s - %2$s</string>
-    <string name="create_accent">%1$s  %2$s\n%3$s</string>
+    <string name="accents_header">Accents</string>
+    <string name="separate_accents_title">Separate accents</string>
+    <string name="create_new">Create</string>
+    <string name="picker_title_text">Choose your accent %1$s</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="info">Info</string>
+    <string name="separate_accent_summary_off">Same accent colour will be used for both light &amp; dark themes</string>
+    <string name="separate_accent_summary_on">You can now set different accents for light &amp; dark themes</string>
+    <string name="hue">Hue</string>
+    <string name="saturation">Saturation</string>
+    <string name="lightness">Lightness</string>
+    <string name="reset">Reset</string>
+    <string name="settings">Settings</string>
 
 </resources>

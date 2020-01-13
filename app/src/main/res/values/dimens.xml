@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="preview_theme_icon_size">30dp</dimen>
+    <dimen name="preview_theme_tile_size">16dp</dimen>
+</resources>

@@ -1,14 +1,14 @@
-package app.akilesh.qacc
+package app.akilesh.qacc.ui
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import app.akilesh.qacc.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.topjohnwu.superuser.Shell
 
-
-class SplashActivity : AppCompatActivity() {
+class LaunchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +25,8 @@ class SplashActivity : AppCompatActivity() {
              */
             MaterialAlertDialogBuilder(this)
                 .setTitle("Unable to get root access")
-                .setMessage("Please ensure that:\n1. Your device is rooted using Magisk.\n2. ${getString(R.string.app_name)} is granted root access.")
+                .setMessage("Please ensure that:\n1. Your device is rooted using Magisk.\n2. ${getString(
+                    R.string.app_name)} is granted root access.")
                 .setCancelable(false)
                 .setNegativeButton("Exit") { _, _ ->
                     finish()

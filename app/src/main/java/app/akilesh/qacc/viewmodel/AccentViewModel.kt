@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import app.akilesh.qacc.AccentRepository
+import app.akilesh.qacc.db.AccentRepository
 import app.akilesh.qacc.db.AccentDatabase
 import app.akilesh.qacc.model.Accent
 import kotlinx.coroutines.launch

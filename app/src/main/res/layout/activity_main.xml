@@ -1,193 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:animateLayoutChanges="true">
 
-    <androidx.core.widget.NestedScrollView
+    <fragment
+        android:id="@+id/fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:clipChildren="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_gravity="center"
-                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-                    android:text="@string/app_name_full"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    app:fabSize="mini"
-                    app:srcCompat="@drawable/ic_settings"
-                    app:tint="?colorOnPrimary"
-                    android:layout_marginEnd="8dp"/>
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/created_accents"
-                android:clipChildren="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
-
-                <com.google.android.material.textview.MaterialTextView
-                    style="@style/CardHeaders"
-                    android:text="@string/created_accents" />
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/Cards">
-                    
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
-                        tools:listitem="@layout/recyclerview_item"/>
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </FrameLayout>
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"
+        tools:ignore="FragmentTagUsage" />
 
 
-            <FrameLayout
-                android:id="@+id/wallFrame"
-                android:clipChildren="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp">
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottom_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:hideOnScroll="true"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:fabAlignmentMode="center"
+        app:navigationIcon="@drawable/ic_twotone_home"
+        app:menu="@menu/main_menu"/>
 
-                <com.google.android.material.textview.MaterialTextView
-                    style="@style/CardHeaders"
-                    android:text="@string/color_wallpaper" />
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/x_fab"
+        app:layout_anchor="@id/bottom_app_bar"
+        android:textAllCaps="false"
+        android:text="@string/create_new"
+        android:textColor="?colorPrimary"
+        app:iconTint="@null"
+        android:backgroundTint="?colorSurface"
+        app:strokeWidth="1dp"
+        app:strokeColor="?colorPrimary"
+        app:icon="@drawable/ic_plus_google_colors"/>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/wall_colors"
-                    style="@style/Cards">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            style="@style/Text"
-                            android:id="@+id/wall_text"
-                            android:text="@string/set_wallpaper_color"/>
-                </com.google.android.material.card.MaterialCardView>
-            </FrameLayout>
-
-
-            <FrameLayout
-                android:clipChildren="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
-
-                <com.google.android.material.textview.MaterialTextView
-                    style="@style/CardHeaders"
-                    android:text="@string/color_custom" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/custom"
-                    style="@style/Cards">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            style="@style/Text"
-                            android:id="@+id/customText"
-                            android:text="@string/set_custom_color"/>
-                </com.google.android.material.card.MaterialCardView>
-
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:clipChildren="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
-
-                <com.google.android.material.textview.MaterialTextView
-                    style="@style/CardHeaders"
-                    android:text="@string/presets" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/preset"
-                    style="@style/Cards">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            style="@style/Text"
-                            android:id="@+id/presetText"
-                            android:text="@string/set_preset_color"/>
-                </com.google.android.material.card.MaterialCardView>
-
-            </FrameLayout>
-
-
-            <FrameLayout
-                android:clipChildren="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16.0dip">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    app:endIconMode="clear_text"
-                    android:importantForAutofill="noExcludeDescendants"
-                    android:hint="@string/color_name">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/name"
-                        android:maxLines="1"
-                        android:maxLength="15"
-                        android:inputType="text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </FrameLayout>
-
-
-            <FrameLayout
-                android:clipChildren="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp">
-
-                <com.google.android.material.textview.MaterialTextView
-                    style="@style/CardHeaders"
-                    android:text="@string/selected" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/create"
-                    style="@style/Cards">
-
-                    <com.google.android.material.textview.MaterialTextView
-                        style="@style/Text"
-                        android:id="@+id/preview_selected_text"/>
-                </com.google.android.material.card.MaterialCardView>
-
-            </FrameLayout>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-    </androidx.core.widget.NestedScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,14 +1,15 @@
-<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        app:key="theme_category"
-        app:title="@string/display_header">
+        app:key="display_category"
+        app:title="@string/display_header"
+        app:allowDividerBelow="false">
 
         <ListPreference
             app:key="themePref"
             app:title="@string/display_title"
-            android:icon="@drawable/ic_palette_38dp"
+            app:icon="@drawable/ic_palette_38dp"
             app:defaultValue="default"
             app:dialogTitle="@string/display_title"
             app:entries="@array/themeListArray"
@@ -16,5 +17,29 @@
             app:useSimpleSummaryProvider="true"/>
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="accents_category"
+        app:title="@string/accents_header"
+        app:allowDividerAbove="false"
+        app:initialExpandedChildrenCount="2">
+
+        <SwitchPreferenceCompat
+            app:key="separate_accent"
+            app:icon="@drawable/ic_invert_colors"
+            app:title="@string/separate_accents_title"
+            app:defaultValue="false"
+            app:summaryOff="@string/separate_accent_summary_off"
+            app:summaryOn="@string/separate_accent_summary_on"/>
+
+        <SwitchPreferenceCompat
+            app:key="customise"
+            app:title="Tweak colours"
+            app:icon="@drawable/ic_colorize"
+            app:defaultValue="false"
+            app:summary="Modify Hue, saturation and lightness of the chosen colours" />
+
+    </PreferenceCategory>
+
 
 </androidx.preference.PreferenceScreen>
