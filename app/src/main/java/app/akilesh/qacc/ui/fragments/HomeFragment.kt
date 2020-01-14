@@ -56,7 +56,10 @@ class HomeFragment: Fragment() {
                 val result = if (SDK_INT >= P)
                     Shell.su("rm -f $overlayPath/$appName.apk").exec()
                 else
-                    Shell.su("pm uninstall ${accent.pkgName}").exec()
+                    Shell.su(
+                        "cmd overlay disable ${accent.pkgName}",
+                        "pm uninstall ${accent.pkgName}"
+                    ).exec()
                 if (result.isSuccess)
                     showSnackbar(view, "${accent.name} removed.")
             }
