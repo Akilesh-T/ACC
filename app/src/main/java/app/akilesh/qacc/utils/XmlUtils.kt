@@ -76,10 +76,13 @@ object XmlUtils {
             addColor(document, resourcesElement, "material_blue_grey_900", colorLight)
             addColor(document, resourcesElement, "system_notification_accent_color", colorLight)
             addColor(document, resourcesElement, "notification_default_color", colorLight)
+            addColor(document, resourcesElement, "notification_icon_bg_color", colorLight)
             addColor(document, resourcesElement, "accent_material_dark", colorLight)
             addColor(document, resourcesElement, "accent_material_light", colorLight)
             addColor(document, resourcesElement, "accent_device_default_700", colorLight)
             addColor(document, resourcesElement, "accent_device_default_50", colorLight)
+            addColor(document, resourcesElement, "material_deep_teal_200", colorLight)
+            addColor(document, resourcesElement, "material_deep_teal_500", colorLight)
         }
         document.appendChild(resourcesElement)
 
