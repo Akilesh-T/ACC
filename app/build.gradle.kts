@@ -83,4 +83,6 @@ dependencies {
 
     implementation(Libraries.materialAbout)
 
+    implementation(Libraries.appUpdater)
+
 }

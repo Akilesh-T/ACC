@@ -13,7 +13,7 @@ class App: Application() {
         Shell.Config.verboseLogging(true)
         Shell.Config.setTimeout(10)
     }
-
+    
     override fun onCreate() {
         super.onCreate()
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)

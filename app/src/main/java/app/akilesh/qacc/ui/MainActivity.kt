@@ -11,11 +11,14 @@ import androidx.navigation.navOptions
 import app.akilesh.qacc.Const.getAssetFiles
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ActivityMainBinding
+import com.github.javiersantos.appupdater.AppUpdater
+import com.github.javiersantos.appupdater.enums.UpdateFrom
 import java.io.File
 
 class MainActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var appUpdater: AppUpdater
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +84,15 @@ class MainActivity: AppCompatActivity() {
         }
 
         copyAssets()
+
+        appUpdater = AppUpdater(this)
+        appUpdater
+            .setUpdateFrom(UpdateFrom.JSON)
+            .setUpdateJSON("https://raw.githubusercontent.com/Akilesh-T/ACC/master/app/update-changelog.json")
+            .showEvery(3)
+            .setButtonDoNotShowAgain("")
+            .setButtonDismiss("")
+            .start()
     }
 
     private fun copyAssets() {
@@ -99,4 +111,13 @@ class MainActivity: AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        appUpdater.start()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        appUpdater.stop()
+    }
 }

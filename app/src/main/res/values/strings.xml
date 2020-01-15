@@ -9,7 +9,7 @@
     <string name="presets">Preset Colours</string>
     <string name="set_preset_color">Tap to use preset colours</string>
     <string name="set_wallpaper_color">Tap to use colours from your wallpaper</string>
-    <string name="display_header">Display</string>
+    <string name="general_header">General</string>
     <string name="display_title">Dark theme</string>
     <string name="colour">%1$s - %2$s</string>
     <string name="accents_header">Accents</string>
@@ -28,5 +28,7 @@
     <string name="lightness">Lightness</string>
     <string name="reset">Reset</string>
     <string name="settings">Settings</string>
+    <string name="settings_app_update">App update</string>
+    <string name="settings_check_for_updates">Check for updates</string>
 
 </resources>

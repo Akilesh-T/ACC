@@ -43,6 +43,7 @@ object Libraries {
         const val bouncycastle = "1.63"
         const val assent = "2.3.1"
         const val about = "2.4.2"
+        const val appUpdater = "2.7"
     }
 
     const val kotlinStdLib        = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -78,5 +79,7 @@ object Libraries {
     const val assent              = "com.afollestad:assent:${Versions.assent}"
 
     const val materialAbout       = "com.github.daniel-stoneuk:material-about-library:${Versions.about}"
+
+    const val appUpdater          = "com.github.javiersantos:AppUpdater:${Versions.appUpdater}"
 
 }
