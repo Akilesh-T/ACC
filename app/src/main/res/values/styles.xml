@@ -6,13 +6,15 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorCustom</item>
+        <item name="colorSurface">@color/colorCustom</item>
         <item name="buttonBarButtonStyle">@style/Button</item>
         <item name="android:statusBarColor">?colorSurface</item>
         <item name="android:navigationBarColor">?colorSurface</item>
+        <item name="dialogCornerRadius">8dp</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.NoActionBar">
-
         <item name="android:windowBackground">@drawable/splash</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
@@ -51,6 +53,17 @@
         <item name="android:elevation">4.0dip</item>
         <item name="android:drawablePadding">8.0dip</item>
         <item name="android:textColor">?colorOnPrimary</item>
+    </style>
+
+<!--
+    MAL doesn't use Theme.MaterialComponents.DayNight yet
+-->
+    <style name="AppTheme.AboutCardLight" parent="Theme.Mal.Light">
+        <item name="mal_card_background">@color/aboutCardBackground</item>
+    </style>
+
+    <style name="AppTheme.AboutCardDark" parent="Theme.Mal.Dark">
+        <item name="mal_card_background">@color/aboutCardBackground</item>
     </style>
 
     <style name="Text" parent="Widget.MaterialComponents.TextView">

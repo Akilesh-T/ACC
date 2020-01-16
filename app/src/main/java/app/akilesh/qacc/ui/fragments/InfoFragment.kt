@@ -23,10 +23,10 @@ class InfoFragment: MaterialAboutFragment() {
         var theme: Int = R.style.AppTheme
         when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_NO -> {
-                theme =  R.style.Theme_Mal_Light
+                theme =  R.style.AppTheme_AboutCardLight
             }
             Configuration.UI_MODE_NIGHT_YES -> {
-                theme = R.style.Theme_Mal_Dark
+                theme = R.style.AppTheme_AboutCardDark
             }
         }
         return theme
