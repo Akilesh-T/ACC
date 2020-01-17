@@ -5,20 +5,27 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import app.akilesh.qacc.Const.getAssetFiles
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ActivityMainBinding
-import com.github.javiersantos.appupdater.AppUpdater
-import com.github.javiersantos.appupdater.enums.UpdateFrom
+import app.akilesh.qacc.utils.DownloadUtils.download
+import app.akilesh.qacc.viewmodel.InstallApkViewModel
+import com.github.javiersantos.appupdater.AppUpdaterUtils
+import com.github.javiersantos.appupdater.enums.AppUpdaterError
+import com.github.javiersantos.appupdater.enums.UpdateFrom.JSON
+import com.github.javiersantos.appupdater.objects.Update
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 
 class MainActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var appUpdater: AppUpdater
+    private lateinit var appUpdaterUtils: AppUpdaterUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,13 +92,40 @@ class MainActivity: AppCompatActivity() {
 
         copyAssets()
 
-        appUpdater = AppUpdater(this)
-        appUpdater
-            .setUpdateFrom(UpdateFrom.JSON)
-            .setUpdateJSON("https://raw.githubusercontent.com/Akilesh-T/ACC/master/app/update-changelog.json")
-            .showEvery(3)
-            .setButtonDoNotShowAgain("")
-            .setButtonDismiss("")
+        appUpdaterUtils = AppUpdaterUtils(this)
+
+        appUpdaterUtils
+            .setUpdateFrom(JSON)
+            .setUpdateJSON("https://raw.githubusercontent.com/Akilesh-T/ACC/testing/app/update-changelog.json")
+            .withListener(object : AppUpdaterUtils.UpdateListener {
+
+                     override fun onSuccess(update: Update?, isUpdateAvailable: Boolean?) {
+                         if (!isUpdateAvailable!!)
+                             binding.updateLinearLayout.visibility = View.GONE
+                         else {
+                             val url = "${update!!.urlToDownload}/download/acc-v${update.latestVersion}.apk"
+                             binding.updateLinearLayout.visibility = View.VISIBLE
+                             binding.update.setOnClickListener {
+                                 MaterialAlertDialogBuilder(this@MainActivity)
+                                     .setTitle("What's new in v${update.latestVersion}:")
+                                     .setMessage(update.releaseNotes)
+                                     .setPositiveButton(getString(R.string.dl_and_install)) { _, _ ->
+                                         val model = ViewModelProvider(this@MainActivity).get(
+                                             InstallApkViewModel::class.java)
+                                         Toast.makeText(this@MainActivity, "Downloading v${update.latestVersion}", Toast.LENGTH_SHORT).show()
+                                         download(this@MainActivity, url, update.latestVersion,  model)
+                                     }
+                                     .create()
+                                     .show()
+                             }
+                         }
+                     }
+
+                     override fun onFailed(error: AppUpdaterError?) {
+                         Log.e("UpdaterError", error.toString())
+                     }
+                 }
+            )
             .start()
     }
 
@@ -113,11 +147,11 @@ class MainActivity: AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        appUpdater.start()
+        appUpdaterUtils.start()
     }
 
     override fun onStop() {
         super.onStop()
-        appUpdater.stop()
+        appUpdaterUtils.stop()
     }
 }

@@ -30,5 +30,6 @@
     <string name="settings">Settings</string>
     <string name="settings_app_update">App update</string>
     <string name="settings_check_for_updates">Check for updates</string>
+    <string name="dl_and_install">Download &amp; install</string>
 
 </resources>
