@@ -100,11 +100,9 @@ class MainActivity: AppCompatActivity() {
             .withListener(object : AppUpdaterUtils.UpdateListener {
 
                      override fun onSuccess(update: Update?, isUpdateAvailable: Boolean?) {
-                         if (!isUpdateAvailable!!)
-                             binding.updateLinearLayout.visibility = View.GONE
-                         else {
+                         if (isUpdateAvailable!!) {
+                             binding.updateCard.visibility = View.VISIBLE
                              val url = "${update!!.urlToDownload}/download/acc-v${update.latestVersion}.apk"
-                             binding.updateLinearLayout.visibility = View.VISIBLE
                              binding.update.setOnClickListener {
                                  MaterialAlertDialogBuilder(this@MainActivity)
                                      .setTitle("What's new in v${update.latestVersion}:")
@@ -119,6 +117,7 @@ class MainActivity: AppCompatActivity() {
                                      .show()
                              }
                          }
+                         else binding.updateCard.visibility = View.GONE
                      }
 
                      override fun onFailed(error: AppUpdaterError?) {
