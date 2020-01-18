@@ -1,9 +1,11 @@
 {
-  "latestVersion": "1.50",
+  "latestVersion": "1.51",
   "latestVersionCode": "9",
   "url": "https://github.com/Akilesh-T/ACC/releases/latest",
   "releaseNotes": [
-    "- Change 1",
-    "- Change 2"
+    "- In-app updates",
+    "  * Get notified when there is a new update",
+    "  * After your download is complete, click the notification to install",
+    "- Dark theme is now #000000"
   ]
 }
