@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import app.akilesh.qacc.Const.overlayPath
+import app.akilesh.qacc.Const.Module.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.ui.adapter.AccentListAdapter
 import app.akilesh.qacc.databinding.HomeFragmentBinding

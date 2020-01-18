@@ -40,10 +40,10 @@
 
         <SwitchPreferenceCompat
             app:key="customise"
-            app:title="Tweak colours"
+            app:title="@string/tweak"
             app:icon="@drawable/ic_colorize"
             app:defaultValue="false"
-            app:summary="Modify Hue, saturation and lightness of the chosen colours" />
+            app:summary="@string/tweak_summary" />
 
     </PreferenceCategory>
 

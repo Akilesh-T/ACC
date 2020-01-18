@@ -31,5 +31,9 @@
     <string name="settings_app_update">App update</string>
     <string name="settings_check_for_updates">Check for updates</string>
     <string name="dl_and_install">Download &amp; install</string>
+    <string name="tweak">Tweak colours</string>
+    <string name="tweak_summary">Modify Hue, saturation and lightness of the chosen colours</string>
+    <string name="set_on_boot">Set on boot</string>
+    <string name="set_on_boot_summary">Fixes accent colour reverting to default after a reboot</string>
 
 </resources>

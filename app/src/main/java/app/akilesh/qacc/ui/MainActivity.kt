@@ -96,7 +96,7 @@ class MainActivity: AppCompatActivity() {
 
         appUpdaterUtils
             .setUpdateFrom(JSON)
-            .setUpdateJSON("https://raw.githubusercontent.com/Akilesh-T/ACC/testing/app/update-changelog.json")
+            .setUpdateJSON("https://raw.githubusercontent.com/Akilesh-T/ACC/master/app/update-changelog.json")
             .withListener(object : AppUpdaterUtils.UpdateListener {
 
                      override fun onSuccess(update: Update?, isUpdateAvailable: Boolean?) {
@@ -134,7 +134,6 @@ class MainActivity: AppCompatActivity() {
             File("$filesDir/src/values").mkdirs()
 
         val assetFiles = getAssetFiles()
-        Log.d("assets", assetFiles.toString())
         assetFiles.forEach {
             val file = it.removeSuffix("64")
             assets.open(file).use { stream ->

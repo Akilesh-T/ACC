@@ -11,7 +11,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.ColorUtils
-import app.akilesh.qacc.Const.overlayPath
+import app.akilesh.qacc.Const.Module.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding

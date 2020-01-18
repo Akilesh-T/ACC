@@ -47,8 +47,11 @@ object Const {
         const val githubReleases = "$githubRepo/releases/latest"
     }
 
-    val overlayPath = if (SDK_INT == Q) "/data/adb/modules/qacc-mobile/system/product/overlay"
-    else "/data/adb/modules/qacc-mobile/system/vendor/overlay"
+    object Module {
+        private const val modPath = "/data/adb/modules/qacc-mobile"
+        val overlayPath = if (SDK_INT == Q) "$modPath/system/product/overlay"
+        else "$modPath/system/vendor/overlay"
+    }
 
     const val prefix = "com.android.theme.color.custom."
 
