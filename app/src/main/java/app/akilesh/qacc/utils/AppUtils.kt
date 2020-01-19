@@ -93,7 +93,7 @@ object AppUtils {
         Snackbar.make(
             view,
             text,
-            Snackbar.LENGTH_LONG
+            Snackbar.LENGTH_INDEFINITE
         )
             .setAnchorView(R.id.x_fab)
             .setAction("Reboot") {
