@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Translated by https://github.com/wsay-kx99
+-->
+<resources>
+    <string name="app_name">ACC</string>
+    <string name="app_name_full">强调色创建者</string>
+    <string name="color_custom">自定义强调色</string>
+    <string name="set_custom_color">轻触可设置自定义强调色</string>
+    <string name="color_name">输入你的强调色名称</string>
+    <string name="color_wallpaper">壁纸颜色</string>
+    <string name="created_accents">新增的强调色</string>
+    <string name="presets">预设强调色</string>
+    <string name="set_preset_color">点击使用预设强调色</string>
+    <string name="set_wallpaper_color">点击使用壁纸颜色作为强调色</string>
+    <string name="general_header">总选项</string>
+    <string name="display_title">暗黑主题</string>
+    <string name="accents_header">强调色</string>
+    <string name="separate_accents_title">分开设置强调色</string>
+    <string name="create_new">新增强调色</string>
+    <string name="picker_title_text">选择%1$s下的强调色</string>
+    <string name="previous">上一页</string>
+    <string name="next">下一个</string>
+    <string name="light">Light</string>
+    <string name="dark">暗黑</string>
+    <string name="info">信息</string>
+    <string name="separate_accent_summary_off">浅色和深色主题将使用相同的强调色</string>
+    <string name="separate_accent_summary_on">您现在可以为亮色/暗色主题设置不同的强调色</string>
+    <string name="hue">色调</string>
+    <string name="saturation">饱和</string>
+    <string name="lightness">Lightness</string>
+    <string name="reset">重置</string>
+    <string name="settings">设置</string>
+    <string name="settings_app_update">应用程序更新</string>
+    <string name="settings_check_for_updates">检查更新</string>
+    <string name="dl_and_install">下载并安装</string>
+    <string name="tweak">调整强调色</string>
+    <string name="tweak_summary">修改所选颜色的色调、饱和度和亮度</string>
+
+</resources>
