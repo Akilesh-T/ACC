@@ -4,11 +4,11 @@
     <string name="color_custom">Benutzerdefinierte Farbe</string>
     <string name="set_custom_color">Tippen zum Einstellen einer benutzerdefinierten Farbe</string>
     <string name="color_name">Benenne deine Farbe</string>
-    <string name="color_wallpaper">Hintergrund Farben</string>
+    <string name="color_wallpaper">Hintergrundbild Farben</string>
     <string name="created_accents">Akzente erstellt</string>
     <string name="presets">Voreingestellte Farben</string>
     <string name="set_preset_color">Tippen um voreingestellte Farben zu verwenden</string>
-    <string name="set_wallpaper_color">Tippen um Farben vom Hintergrund zu verwenden</string>
+    <string name="set_wallpaper_color">Tippen um Farben vom Hintergrundbild zu verwenden</string>
     <string name="general_header">Allgemein</string>
     <string name="display_title">Dunkles Design</string>
     <string name="accents_header">Akzente</string>
@@ -33,60 +33,73 @@
     <string name="tweak_summary">Farbton, Sättigung und Helligkeit der gewählten Farben ändern</string>
 
     <string name="picker_title_text">Wähle deinen Akzent</string>
-    <string name="picker_title_text_light">Choose your accent for light theme</string>
-    <string name="picker_title_text_dark">Choose your accent for dark theme</string>
+    <string name="picker_title_text_light">Wähle deinen Akzent für das helle Design</string>
+    <string name="picker_title_text_dark">Wähle deinen Akzent für das dunkele Design</string>
 
-    <string name="amber">Amber</string>
-    <string name="blue">Blue</string>
-    <string name="blue_grey">Blue Grey</string>
-    <string name="brown">Brown</string>
-    <string name="candy_red">Candy Red</string>
-    <string name="cyan">Cyan</string>
-    <string name="deep_orange">Deep Orange</string>
-    <string name="deep_purple">Deep Purple</string>
-    <string name="elegant_green">Elegant Green</string>
-    <string name="extended_green">Extended Green</string>
-    <string name="grey">Grey</string>
-    <string name="indigo">Indigo</string>
-    <string name="jade_green">Jade Green</string>
-    <string name="light_blue">Light Blue</string>
-    <string name="light_green">Light Green</string>
-    <string name="lime">Lime</string>
-    <string name="orange">Orange</string>
-    <string name="pale_blue">Pale Blue</string>
-    <string name="pale_red">Pale Red</string>
-    <string name="pink">Pink</string>
-    <string name="red">Red</string>
-    <string name="teal">Teal</string>
-    <string name="yellove">Yellow</string>
-    <string name="wallpaper_primary">Wallpaper primary</string>
-    <string name="wallpaer_secondary">Wallpaper secondary</string>
-    <string name="wallpaper_tertiary">Wallpaper tertiary</string>
+    <string name="amber">Bernstein</string>
+    <string name="blue">Blau</string>
+    <string name="blue_grey">Blaugrau</string>
+    <string name="brown">Braun</string>
+    <!--
+        unused translation cause i dont know a german word for this color
+        <string name="candy_red">Candy Red</string> 
+    -->
+    <string name="cyan">Türkis</string>
+    <string name="deep_orange">Dunkelorange</string>
+    <string name="deep_purple">Dunkelviolett</string>
+    <string name="elegant_green">Elegant Grün</string>    
+    <string name="extended_green">Neongrün</string>
+    <string name="grey">Grau</string>
+    <string name="indigo">Indigoblau</string>
+    <string name="jade_green">Jade Grün</string>
+    <string name="light_blue">Hellblau</string>
+    <string name="light_green">Hellgrün</string>
+    <string name="lime">Limettengrün</string>
+    <!--
+        unused translation cause its the same word
+        <string name="orange">Orange</string>
+    -->
+    <string name="pale_blue">Blass-Blau</string>
+    <string name="pale_red">Blass-Rot</string>
+    <!--
+        unused translation cause its the same word
+        <string name="pink">Pink</string>
+    -->
+    <string name="red">Rot</string>
+    <!<string name="teal">Blaugrün</string>
+    <string name="yellove">Gelb</string>
+    <string name="wallpaper_primary">Hintergrundbild primär</string>
+    <string name="wallpaer_secondary">Hintergrundbild sekundär</string>
+    <string name="wallpaper_tertiary">Hintergrundbild tertiär</string>
     <string name="about_title_desc">By Akilesh</string>
-    <string name="version">Version</string>
-    <string name="links">Links</string>
-    <string name="github">Github repo</string>
-    <string name="telegram_group">Telegram group</string>
-    <string name="xda">XDA thread</string>
-    <string name="downloads">Downloads</string>
-    <string name="github_releases">Github releases</string>
-    <string name="telegram_channel">Telegram channel (includes beta releases)</string>
-    <string name="toast_light_theme_not_selected">Accent color for light theme is not selected</string>
-    <string name="toast_color_not_selected">Accent color is not selected</string>
-    <string name="toast_name_not_set">Accent name is not set</string>
-    <string name="storage_permission_rationale">Storage permission is required to get wallpaper colours</string>
+    <!--
+        same word in german / no translation needed
+        <string name="version">Version</string>    
+        <string name="links">Links</string>
+        <string name="github">Github repo</string>
+        <string name="downloads">Downloads</string>
+        <string name="github_releases">Github releases</string>
+    -->
+    <string name="telegram_group">Telegram Gruppe</string>
+    <string name="xda">XDA Beitrag</string>
+
+    <string name="telegram_channel">Telegram channel (enthält Beta-Versionen)</string>
+    <string name="toast_light_theme_not_selected">Akzentfarbe für helles Design nicht ausgewählt</string>
+    <string name="toast_color_not_selected">Akzentfarbe nicht ausgewählt</string>
+    <string name="toast_name_not_set">Akzentname wurde nicht gesetzt</string>
+    <string name="storage_permission_rationale">Dateiberechtigung werden für die Farben des Hintergrundbildes benötigt</string>
     <!--
         "%s" in the below 3 strings is a placeholder for the accent name set by the user
     -->
-    <string name="accent_created">%s created</string>
-    <string name="accent_removed">%s removed</string>
-    <string name="oos_accent_set">%s set</string>
+    <string name="accent_created">%s erstellt</string>
+    <string name="accent_removed">%s gelöscht</string>
+    <string name="oos_accent_set">%s aktiviert</string>
 
-    <string name="no_root_access_title">Unable to get root access</string>
-    <string name="no_root_access_message">Please ensure that:\n1. Your device is rooted using Magisk\n2. ACC is granted root access</string>
-    <string name="magisk_not_detected">Magisk not detected!</string>
-    <string name="exit">Exit</string>
-    <string name="aapt_error">Couldn\'t create overlay</string>
+    <string name="no_root_access_title">Fehlende Root-Rechte</string>
+    <string name="no_root_access_message">Bitte beachte:\n1. Dein Gerät ist gerootet mit Magisk\n2. ACC werden Root-Rechte gewährt</string>
+    <string name="magisk_not_detected">Magisk nicht gefunden!</string>
+    <string name="exit">Beenden</string>
+    <string name="aapt_error">Erstellen fehlgeschlagen</string>
 
 
 </resources>
