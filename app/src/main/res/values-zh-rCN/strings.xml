@@ -21,7 +21,7 @@
     <string name="picker_title_text">选择%1$s下的强调色</string>
     <string name="previous">上一页</string>
     <string name="next">下一个</string>
-    <string name="light">Light</string>
+    <string name="light">浅色</string>
     <string name="dark">暗黑</string>
     <string name="info">信息</string>
     <string name="separate_accent_summary_off">浅色和深色主题将使用相同的强调色</string>
