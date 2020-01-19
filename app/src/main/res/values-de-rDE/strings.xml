@@ -11,7 +11,6 @@
     <string name="set_wallpaper_color">Tippen um Farben vom Hintergrund zu verwenden</string>
     <string name="general_header">Allgemein</string>
     <string name="display_title">Dunkles Design</string>
-    <string name="colour">%1$s - %2$s</string>
     <string name="accents_header">Akzente</string>
     <string name="separate_accents_title">Separate Akzente</string>
     <string name="create_new">Erstellen</string>
