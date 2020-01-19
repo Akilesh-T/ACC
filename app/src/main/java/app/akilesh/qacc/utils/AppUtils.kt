@@ -7,6 +7,7 @@ import android.os.Build.VERSION_CODES.P
 import android.os.Build.VERSION_CODES.Q
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
@@ -146,10 +147,13 @@ object AppUtils {
 
         if (manifest.exists() && colors.exists()) {
             Shell.su("cd ${filesDir.absolutePath}").exec()
-            val ovrRes = Shell.su(context.resources.openRawResource(R.raw.create_overlay)).exec()
-            Log.d("ACC-ovr", ovrRes.out.toString())
+            val aaptResult = Shell.su(
+                "chmod +x aapt",
+                "./aapt p -f -M AndroidManifest.xml -I  /system/framework/framework-res.apk -S src -F qacc.apk"
+            ).exec()
+            Log.d("aapt", aaptResult.code.toString())
 
-            if (ovrRes.isSuccess) {
+            if (aaptResult.isSuccess && File("$filesDir/qacc.apk").exists()) {
                 val certFile = context.assets.open("testkey.x509.pem")
                 val keyFile = context.assets.open("testkey.pk8")
                 val out = FileOutputStream(File(filesDir, "signed.apk").absolutePath)
@@ -161,20 +165,18 @@ object AppUtils {
 
                 SignAPK.sign(cert, key, jar, out.buffered())
 
-                Shell.su("cd ${filesDir.absolutePath}").exec()
-                val zipalignRes = Shell.su(context.resources.openRawResource(R.raw.zipalign)).exec()
-                Log.d("ACC-zip", zipalignRes.out.toString())
+                Shell.su(context.resources.openRawResource(R.raw.zipalign)).exec()
 
-                if (zipalignRes.isSuccess) {
+                if (File("$filesDir/aligned.apk").exists()) {
 
                     if (SDK_INT >= P) {
                         Shell.su("mkdir -p $overlayPath").exec()
                         Shell.su(context.resources.openRawResource(R.raw.create_module)).exec()
                         val result = Shell.su(
-                            "cp -f $filesDir/aligned.apk $overlayPath/$appName.apk",
-                            "chmod 644 $overlayPath/$appName.apk"
+                            "cp -f $filesDir/aligned.apk $overlayPath/$appName.apk"
                         ).exec()
-                        Log.d("ACC-MM", result.out.toString())
+                        Log.d("inject", result.code.toString())
+                        Shell.su("chmod 644 $overlayPath/$appName.apk").exec()
 
                         if (result.isSuccess) {
                             created = true
@@ -190,6 +192,7 @@ object AppUtils {
                             "chmod 644 $filesDir/aligned.apk",
                             "pm install -r $filesDir/aligned.apk"
                         ).exec()
+                        Log.d("pm-install", result.code.toString())
 
                         if (result.isSuccess) {
                             created = true
@@ -199,8 +202,13 @@ object AppUtils {
                             }
                             accentViewModel.insert(accent)
                         }
+                        else Log.e("pm-install", result.err.toString())
                     }
                 }
+            }
+            else {
+                Toast.makeText(context, "Couldn't create overlay", Toast.LENGTH_SHORT).show()
+                Log.e("aapt-e", aaptResult.err.toString())
             }
         }
         return created
