@@ -127,7 +127,8 @@ object AppUtils {
 
         binding.apply {
             buttonPrevious.setTextColor(accentColor)
-            buttonNext.setBackgroundColor(accentColor)
+            buttonPrevious.rippleColor = accentTintList
+            buttonNext.backgroundTintList = accentTintList
         }
     }
 
@@ -207,7 +208,7 @@ object AppUtils {
                 }
             }
             else {
-                Toast.makeText(context, "Couldn't create overlay", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.aapt_error), Toast.LENGTH_SHORT).show()
                 Log.e("aapt-e", aaptResult.err.toString())
             }
         }

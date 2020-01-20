@@ -75,18 +75,15 @@ class ColorPickerFragment: Fragment() {
         if (SDK_INT < Q || isOOS) separateAccents = false
 
         if (separateAccents) {
-            binding.title.text = String.format(
-                context!!.resources.getString(R.string.picker_title_text),
-                "for light theme"
-            )
-            binding.buttonNext.text = context!!.resources.getString(R.string.next)
+            binding.title.text = String.format(getString(R.string.picker_title_text_light))
+            binding.buttonNext.text = getString(R.string.next)
             binding.textInputLayout.visibility = View.INVISIBLE
         }
         else
-            binding.title.text = String.format(context!!.resources.getString(R.string.picker_title_text), "")
+            binding.title.text = String.format(getString(R.string.picker_title_text))
 
         if (customise)
-            binding.buttonNext.text = context!!.resources.getString(R.string.next)
+            binding.buttonNext.text = getString(R.string.next)
 
         binding.buttonNext.setOnClickListener {
 
@@ -96,7 +93,7 @@ class ColorPickerFragment: Fragment() {
                     findNavController().navigate(action)
                 }
                 else
-                    Toast.makeText(context, "Accent color for light theme is not selected",
+                    Toast.makeText(context, getString(R.string.toast_light_theme_not_selected),
                         Toast.LENGTH_SHORT
                     ).show()
             }
@@ -108,12 +105,12 @@ class ColorPickerFragment: Fragment() {
                 else {
                     if (accentColor.isBlank()) Toast.makeText(
                         context,
-                        "Accent color is not selected",
+                        getString(R.string.toast_color_not_selected),
                         Toast.LENGTH_SHORT
                     ).show()
                     if (accentName.isBlank()) Toast.makeText(
                         context,
-                        "Accent name is not set",
+                        getString(R.string.toast_name_not_set),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -124,14 +121,14 @@ class ColorPickerFragment: Fragment() {
                         val result = Shell.su("settings put system oem_black_mode_accent_color \'$accentColor\'")
                                 .exec()
                         if (result.isSuccess) {
-                            showSnackbar(view, "$accentColor set")
+                            showSnackbar(view, String.format(getString(R.string.oos_accent_set), accentName))
                             findNavController().navigate(R.id.back_home)
                         }
                     }
                     else
                         Toast.makeText(
                             context,
-                            "Accent color is not selected",
+                            getString(R.string.toast_color_not_selected),
                             Toast.LENGTH_SHORT
                         ).show()
                 } else {
@@ -141,18 +138,18 @@ class ColorPickerFragment: Fragment() {
                         val accent = Accent(pkgName, accentName, accentColor, accentColor)
                         Log.d("accent", accent.toString())
                         if (createAccent(context!!, accentViewModel, accent)) {
-                            showSnackbar(view, "$accentName created")
+                            showSnackbar(view, String.format(getString(R.string.accent_created), accentName))
                             findNavController().navigate(R.id.back_home)
                         }
                     } else {
                         if (accentColor.isBlank()) Toast.makeText(
                             context,
-                            "Accent color is not selected",
+                            getString(R.string.toast_color_not_selected),
                             Toast.LENGTH_SHORT
                         ).show()
                         if (accentName.isBlank()) Toast.makeText(
                             context,
-                            "Accent name is not set",
+                            getString(R.string.toast_name_not_set),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -226,7 +223,7 @@ class ColorPickerFragment: Fragment() {
             val rationaleHandler = createDialogRationale(R.string.app_name_full) {
                 onPermission(
                     Permission.READ_EXTERNAL_STORAGE,
-                    "Storage permission is required to get wallpaper colours."
+                    getString(R.string.storage_permission_rationale)
                 )
             }
 
@@ -249,14 +246,14 @@ class ColorPickerFragment: Fragment() {
                     val tertiary = wallColors.tertiaryColor?.toArgb()
 
                     val primaryHex = toHex(primary)
-                    val wallpaperColours = mutableListOf(Colour(primaryHex, "Wallpaper primary"))
+                    val wallpaperColours = mutableListOf(Colour(primaryHex, getString(R.string.wallpaper_primary)))
                     if (secondary != null) {
                         val secondaryHex = toHex(secondary)
-                        wallpaperColours.add(Colour(secondaryHex, "Wallpaper secondary"))
+                        wallpaperColours.add(Colour(secondaryHex, getString(R.string.wallpaer_secondary)))
                     }
                     if (tertiary != null) {
                         val tertiaryHex = toHex(tertiary)
-                        wallpaperColours.add(Colour(tertiaryHex, "Wallpaper tertiary"))
+                        wallpaperColours.add(Colour(tertiaryHex, getString(R.string.wallpaper_tertiary)))
                     }
 
                     val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)

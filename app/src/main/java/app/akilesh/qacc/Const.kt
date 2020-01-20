@@ -1,5 +1,6 @@
 package app.akilesh.qacc
 
+import android.content.Context
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.Q
@@ -8,32 +9,37 @@ import com.topjohnwu.superuser.Shell
 
 object Const {
 
+    private lateinit var context : Context
+    fun setContext(appContext: Context) {
+        context = appContext
+    }
     //Credits to AEX
     object Colors {
+
         val presets = listOf(
-            Colour("#FFC107", "Amber"),
-            Colour("#448AFF", "Blue"),
-            Colour("#607D8B", "Blue Grey"),
-            Colour("#795548", "Brown"),
-            Colour("#FF1744", "Candy Red"),
-            Colour("#00BCD4", "Cyan"),
-            Colour("#FF5722", "Deep Orange"),
-            Colour("#7C4DFF", "Deep Purple"),
-            Colour("#47AE84", "Elegant Green"),
-            Colour("#21EF8B", "Extended Green"),
-            Colour("#9E9E9E", "Grey"),
-            Colour("#536DFE", "Indigo"),
-            Colour("#9ABC98", "Jade Green"),
-            Colour("#03A9F4", "Light Blue"),
-            Colour("#8BC34A", "Light Green"),
-            Colour("#CDDC39", "Lime"),
-            Colour("#FF9800", "Orange"),
-            Colour("#A1B6ED", "Pale Blue"),
-            Colour("#F05361", "Pale Red"),
-            Colour("#FF4081", "Pink"),
-            Colour("#FF5252", "Red"),
-            Colour("#009688", "Teal"),
-            Colour("#FFEB3B", "Yellow")
+            Colour("#FFC107", context.getString(R.string.amber)),
+            Colour("#448AFF", context.getString(R.string.blue)),
+            Colour("#607D8B", context.getString(R.string.blue_grey)),
+            Colour("#795548", context.getString(R.string.brown)),
+            Colour("#FF1744", context.getString(R.string.candy_red)),
+            Colour("#00BCD4", context.getString(R.string.cyan)),
+            Colour("#FF5722", context.getString(R.string.deep_orange)),
+            Colour("#7C4DFF", context.getString(R.string.deep_purple)),
+            Colour("#47AE84", context.getString(R.string.elegant_green)),
+            Colour("#21EF8B", context.getString(R.string.extended_green)),
+            Colour("#9E9E9E", context.getString(R.string.grey)),
+            Colour("#536DFE", context.getString(R.string.indigo)),
+            Colour("#9ABC98", context.getString(R.string.jade_green)),
+            Colour("#03A9F4", context.getString(R.string.light_blue)),
+            Colour("#8BC34A", context.getString(R.string.light_green)),
+            Colour("#CDDC39", context.getString(R.string.lime)),
+            Colour("#FF9800", context.getString(R.string.orange)),
+            Colour("#A1B6ED", context.getString(R.string.pale_blue)),
+            Colour("#F05361", context.getString(R.string.pale_red)),
+            Colour("#FF4081", context.getString(R.string.pink)),
+            Colour("#FF5252", context.getString(R.string.red)),
+            Colour("#009688", context.getString(R.string.teal)),
+            Colour("#FFEB3B", context.getString(R.string.yellove))
         )
 
     }

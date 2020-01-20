@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.Const.Module.overlayPath
 import app.akilesh.qacc.Const.prefix
+import app.akilesh.qacc.R
 import app.akilesh.qacc.ui.adapter.AccentListAdapter
 import app.akilesh.qacc.databinding.HomeFragmentBinding
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
@@ -61,7 +62,7 @@ class HomeFragment: Fragment() {
                         "pm uninstall ${accent.pkgName}"
                     ).exec()
                 if (result.isSuccess)
-                    showSnackbar(view, "${accent.name} removed.")
+                    showSnackbar(view, String.format(getString(R.string.accent_removed), accent.name))
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)

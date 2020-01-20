@@ -24,11 +24,10 @@ class LaunchActivity : AppCompatActivity() {
              * Device is not rooted
              */
             MaterialAlertDialogBuilder(this)
-                .setTitle("Unable to get root access")
-                .setMessage("Please ensure that:\n1. Your device is rooted using Magisk.\n2. ${getString(
-                    R.string.app_name)} is granted root access.")
+                .setTitle(getString(R.string.no_root_access_title))
+                .setMessage(getString(R.string.no_root_access_message))
                 .setCancelable(false)
-                .setNegativeButton("Exit") { _, _ ->
+                .setNegativeButton(getString(R.string.exit)) { _, _ ->
                     finish()
                 }
                 .create()
@@ -44,9 +43,9 @@ class LaunchActivity : AppCompatActivity() {
             }
             else {
                 MaterialAlertDialogBuilder(this)
-                    .setTitle("Magisk not detected!")
+                    .setTitle(getString(R.string.magisk_not_detected))
                     .setCancelable(false)
-                    .setNegativeButton("Exit") { _, _ ->
+                    .setNegativeButton(getString(R.string.exit)) { _, _ ->
                         finish()
                     }
                     .create()
