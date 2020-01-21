@@ -79,7 +79,8 @@ dependencies {
     api(Libraries.bcProv)
     api(Libraries.bcPkix)
 
-    implementation(Libraries.assent)
+    implementation(Libraries.assentCore)
+    implementation(Libraries.assentRationales)
 
     implementation(Libraries.materialAbout)
 

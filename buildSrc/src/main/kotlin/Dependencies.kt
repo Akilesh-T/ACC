@@ -41,7 +41,7 @@ object Libraries {
         const val libSu = "2.5.1"
         const val chroma = "1.2.6"
         const val bouncycastle = "1.63"
-        const val assent = "2.3.1"
+        const val assent = "3.0.0-RC1"
         const val about = "2.4.2"
         const val appUpdater = "2.7"
     }
@@ -76,7 +76,8 @@ object Libraries {
     const val bcProv              = "org.bouncycastle:bcprov-jdk15on:${Versions.bouncycastle}"
     const val bcPkix              = "org.bouncycastle:bcpkix-jdk15on:${Versions.bouncycastle}"
 
-    const val assent              = "com.afollestad:assent:${Versions.assent}"
+    const val assentCore          = "com.afollestad.assent:core:${Versions.assent}"
+    const val assentRationales    = "com.afollestad.assent:rationales:${Versions.assent}"
 
     const val materialAbout       = "com.github.daniel-stoneuk:material-about-library:${Versions.about}"
 
