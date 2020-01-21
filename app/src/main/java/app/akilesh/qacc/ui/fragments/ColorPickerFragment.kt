@@ -1,10 +1,8 @@
 package app.akilesh.qacc.ui.fragments
 
-import android.annotation.SuppressLint
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.app.WallpaperManager.FLAG_SYSTEM
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
@@ -17,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -221,7 +220,6 @@ class ColorPickerFragment: Fragment() {
     }
 
 
-    @SuppressLint("MissingPermission")
     private fun chooseFromWallpaperColors() {
         if (SDK_INT > O) {
 
@@ -262,11 +260,9 @@ class ColorPickerFragment: Fragment() {
                         wallpaperColours.add(Colour(tertiaryHex, getString(R.string.wallpaper_tertiary)))
                     }
 
-                    if (wallpaperManager.wallpaperInfo == null) {
+                   if (wallpaperManager.wallpaperInfo == null) {
 
-                        val bitmap = BitmapFactory.decodeFileDescriptor(
-                            wallpaperManager.getWallpaperFile(FLAG_SYSTEM).fileDescriptor
-                        )
+                        val bitmap = wallDrawable.toBitmap()
                         val palette = Palette.from(bitmap).generate()
 
                         val defaultColor =
@@ -320,7 +316,7 @@ class ColorPickerFragment: Fragment() {
                                 "Light Muted"
                             )
                         )
-                    }
+                   }
 
                     val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
                     val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)

@@ -1,9 +1,7 @@
 package app.akilesh.qacc.ui.fragments
 
-import android.annotation.SuppressLint
 import android.app.WallpaperColors
 import android.app.WallpaperManager
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -24,12 +23,12 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.akilesh.qacc.Const
 import app.akilesh.qacc.R
-import app.akilesh.qacc.ui.adapter.ColorListAdapter
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
 import app.akilesh.qacc.databinding.ColorPreviewBinding
 import app.akilesh.qacc.databinding.DialogTitleBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
+import app.akilesh.qacc.ui.adapter.ColorListAdapter
 import app.akilesh.qacc.utils.AppUtils.createAccent
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.setPreview
@@ -182,7 +181,6 @@ class DarkColorPickerFragment: Fragment() {
     }
 
 
-    @SuppressLint("MissingPermission")
     private fun chooseFromWallpaperColors() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
 
@@ -224,9 +222,7 @@ class DarkColorPickerFragment: Fragment() {
 
                     if (wallpaperManager.wallpaperInfo == null) {
 
-                        val bitmap = BitmapFactory.decodeFileDescriptor(
-                            wallpaperManager.getWallpaperFile(WallpaperManager.FLAG_SYSTEM).fileDescriptor
-                        )
+                        val bitmap = wallDrawable.toBitmap()
                         val palette = Palette.from(bitmap).generate()
 
                         val defaultColor =
