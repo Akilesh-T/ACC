@@ -1,8 +1,10 @@
 package app.akilesh.qacc.ui.fragments
 
+import android.annotation.SuppressLint
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.app.WallpaperManager.FLAG_SYSTEM
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
@@ -14,10 +16,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.akilesh.qacc.Const.Colors.presets
@@ -217,6 +221,7 @@ class ColorPickerFragment: Fragment() {
     }
 
 
+    @SuppressLint("MissingPermission")
     private fun chooseFromWallpaperColors() {
         if (SDK_INT > O) {
 
@@ -245,6 +250,7 @@ class ColorPickerFragment: Fragment() {
                     val secondary = wallColors.secondaryColor?.toArgb()
                     val tertiary = wallColors.tertiaryColor?.toArgb()
 
+
                     val primaryHex = toHex(primary)
                     val wallpaperColours = mutableListOf(Colour(primaryHex, getString(R.string.wallpaper_primary)))
                     if (secondary != null) {
@@ -254,6 +260,66 @@ class ColorPickerFragment: Fragment() {
                     if (tertiary != null) {
                         val tertiaryHex = toHex(tertiary)
                         wallpaperColours.add(Colour(tertiaryHex, getString(R.string.wallpaper_tertiary)))
+                    }
+
+                    if (wallpaperManager.wallpaperInfo == null) {
+
+                        val bitmap = BitmapFactory.decodeFileDescriptor(
+                            wallpaperManager.getWallpaperFile(FLAG_SYSTEM).fileDescriptor
+                        )
+                        val palette = Palette.from(bitmap).generate()
+
+                        val defaultColor =
+                            ResourcesCompat.getColor(resources, android.R.color.transparent, null)
+                        val vibrant = palette.getVibrantColor(defaultColor)
+                        if (vibrant != defaultColor) wallpaperColours.add(
+                            Colour(
+                                toHex(vibrant),
+                                "Vibrant"
+                            )
+                        )
+
+                        val darkVibrant = palette.getDarkVibrantColor(defaultColor)
+                        if (darkVibrant != defaultColor) wallpaperColours.add(
+                            Colour(
+                                toHex(
+                                    darkVibrant
+                                ), "Dark Vibrant"
+                            )
+                        )
+
+                        val lightVibrant = palette.getLightVibrantColor(defaultColor)
+                        if (lightVibrant != defaultColor) wallpaperColours.add(
+                            Colour(
+                                toHex(
+                                    lightVibrant
+                                ), "Light Vibrant"
+                            )
+                        )
+
+                        val muted = palette.getMutedColor(defaultColor)
+                        if (muted != defaultColor) wallpaperColours.add(
+                            Colour(
+                                toHex(muted),
+                                "Muted"
+                            )
+                        )
+
+                        val darkMuted = palette.getDarkMutedColor(defaultColor)
+                        if (darkMuted != defaultColor) wallpaperColours.add(
+                            Colour(
+                                toHex(darkMuted),
+                                "Dark Muted"
+                            )
+                        )
+
+                        val lightMuted = palette.getLightMutedColor(defaultColor)
+                        if (lightMuted != defaultColor) wallpaperColours.add(
+                            Colour(
+                                toHex(lightMuted),
+                                "Light Muted"
+                            )
+                        )
                     }
 
                     val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
