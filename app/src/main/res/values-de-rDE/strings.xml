@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">ACC</string>
-    <string name="app_name_full">Accent Colour Creator</string>
+    <string name="app_name">Accent Colour Creator</string>
+    <string name="app_name_short">ACC</string>
     <string name="color_custom">Benutzerdefinierte Farbe</string>
     <string name="set_custom_color">Tippen zum Einstellen einer benutzerdefinierten Farbe</string>
     <string name="color_name">Benenne deine Farbe</string>

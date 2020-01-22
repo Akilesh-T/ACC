@@ -184,7 +184,7 @@ class DarkColorPickerFragment: Fragment() {
     private fun chooseFromWallpaperColors() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
 
-            val rationaleHandler = createDialogRationale(R.string.app_name_full) {
+            val rationaleHandler = createDialogRationale(R.string.app_name) {
                 onPermission(
                     Permission.READ_EXTERNAL_STORAGE,
                     getString(R.string.storage_permission_rationale)

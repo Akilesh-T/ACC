@@ -17,11 +17,11 @@ object DownloadUtils {
         context: Context,
         url: String,
         version: String,
-        model: InstallApkViewModel?
+        model: InstallApkViewModel
     ) {
 
         val downloadsFolder = Environment.DIRECTORY_DOWNLOADS
-        val subPath = "${context.getString(R.string.app_name_full)} updates/acc-v$version.apk"
+        val subPath = "${context.getString(R.string.app_name)} updates/acc-v$version.apk"
         val file = File(downloadsFolder, subPath)
 
         val onComplete = object: BroadcastReceiver() {
@@ -29,7 +29,7 @@ object DownloadUtils {
                 when(intent?.action) {
                     DownloadManager.ACTION_DOWNLOAD_COMPLETE -> {
                         if (file.exists()) {
-                            model!!.install(Uri.fromFile(file))
+                            model.install(Uri.fromFile(file))
                         }
                     }
                 }
@@ -42,7 +42,7 @@ object DownloadUtils {
         downloadManager.enqueue(
             DownloadManager.Request(Uri.parse(url))
                 .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE or DownloadManager.Request.NETWORK_WIFI)
-                .setTitle(context.resources.getString(R.string.app_name_full))
+                .setTitle(context.resources.getString(R.string.app_name))
                 .setDescription("Downloading v$version")
                 .setDestinationInExternalPublicDir(downloadsFolder, subPath)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)

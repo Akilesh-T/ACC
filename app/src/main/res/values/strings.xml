@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation">
 
-    <string name="app_name">ACC</string>
-    <string name="app_name_full">Accent Colour Creator</string>
+    <string name="app_name">Accent Colour Creator</string>
+    <string name="app_name_short">ACC</string>
     <string name="color_custom">Custom colour</string>
     <string name="set_custom_color">Tap to set a custom colour</string>
     <string name="color_name">Name your accent colour</string>

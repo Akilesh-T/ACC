@@ -37,7 +37,7 @@ class InfoFragment: MaterialAboutFragment() {
         val appInfoCard = MaterialAboutCard.Builder()
             .addItem(
                 MaterialAboutTitleItem.Builder()
-                    .text(context!!.resources.getString(R.string.app_name_full))
+                    .text(context!!.resources.getString(R.string.app_name))
                     .desc(getString(R.string.about_title_desc))
                     .icon(R.mipmap.ic_launcher)
                     .build()
