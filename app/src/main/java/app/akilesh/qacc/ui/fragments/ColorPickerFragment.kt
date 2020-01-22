@@ -260,63 +260,64 @@ class ColorPickerFragment: Fragment() {
                         wallpaperColours.add(Colour(tertiaryHex, getString(R.string.wallpaper_tertiary)))
                     }
 
-                   if (wallpaperManager.wallpaperInfo == null) {
+                    val bitmap = if (wallpaperManager.wallpaperInfo == null)
+                        wallDrawable.toBitmap()
+                    else
+                        wallpaperManager.wallpaperInfo.loadThumbnail(context!!.packageManager).toBitmap()
 
-                        val bitmap = wallDrawable.toBitmap()
-                        val palette = Palette.from(bitmap).generate()
+                    val palette = Palette.from(bitmap).generate()
+                    val defaultColor =
+                        ResourcesCompat.getColor(resources, android.R.color.transparent, null)
 
-                        val defaultColor =
-                            ResourcesCompat.getColor(resources, android.R.color.transparent, null)
-                        val vibrant = palette.getVibrantColor(defaultColor)
-                        if (vibrant != defaultColor) wallpaperColours.add(
-                            Colour(
-                                toHex(vibrant),
-                                "Vibrant"
-                            )
+                    val vibrant = palette.getVibrantColor(defaultColor)
+                    if (vibrant != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(vibrant),
+                            "Vibrant"
                         )
+                    )
 
-                        val darkVibrant = palette.getDarkVibrantColor(defaultColor)
-                        if (darkVibrant != defaultColor) wallpaperColours.add(
-                            Colour(
-                                toHex(
-                                    darkVibrant
-                                ), "Dark Vibrant"
-                            )
+                    val darkVibrant = palette.getDarkVibrantColor(defaultColor)
+                    if (darkVibrant != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(
+                                darkVibrant
+                            ), "Dark Vibrant"
                         )
+                    )
 
-                        val lightVibrant = palette.getLightVibrantColor(defaultColor)
-                        if (lightVibrant != defaultColor) wallpaperColours.add(
-                            Colour(
-                                toHex(
-                                    lightVibrant
-                                ), "Light Vibrant"
-                            )
+                    val lightVibrant = palette.getLightVibrantColor(defaultColor)
+                    if (lightVibrant != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(
+                                lightVibrant
+                            ), "Light Vibrant"
                         )
+                    )
 
-                        val muted = palette.getMutedColor(defaultColor)
-                        if (muted != defaultColor) wallpaperColours.add(
-                            Colour(
-                                toHex(muted),
-                                "Muted"
-                            )
+                    val muted = palette.getMutedColor(defaultColor)
+                    if (muted != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(muted),
+                            "Muted"
                         )
+                    )
 
-                        val darkMuted = palette.getDarkMutedColor(defaultColor)
-                        if (darkMuted != defaultColor) wallpaperColours.add(
-                            Colour(
-                                toHex(darkMuted),
-                                "Dark Muted"
-                            )
+                    val darkMuted = palette.getDarkMutedColor(defaultColor)
+                    if (darkMuted != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(darkMuted),
+                            "Dark Muted"
                         )
+                    )
 
-                        val lightMuted = palette.getLightMutedColor(defaultColor)
-                        if (lightMuted != defaultColor) wallpaperColours.add(
-                            Colour(
-                                toHex(lightMuted),
-                                "Light Muted"
-                            )
+                    val lightMuted = palette.getLightMutedColor(defaultColor)
+                    if (lightMuted != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(lightMuted),
+                            "Light Muted"
                         )
-                   }
+                    )
 
                     val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
                     val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
