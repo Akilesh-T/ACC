@@ -5,7 +5,7 @@ const val navigationVersion = "2.2.0-rc04"
 object BuildPlugins {
 
     object Versions {
-        const val gradleBuildToolsVersion = "4.0.0-alpha08"
+        const val gradleBuildToolsVersion = "4.0.0-alpha09"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradleBuildToolsVersion}"
@@ -44,6 +44,7 @@ object Libraries {
         const val assent = "3.0.0-RC1"
         const val about = "2.4.2"
         const val appUpdater = "2.7"
+        const val whatTheStack = "0.0.1"
     }
 
     const val kotlinStdLib        = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -83,4 +84,5 @@ object Libraries {
 
     const val appUpdater          = "com.github.javiersantos:AppUpdater:${Versions.appUpdater}"
 
+    const val whatTheStack        = "com.github.haroldadmin:WhatTheStack:${Versions.whatTheStack}"
 }

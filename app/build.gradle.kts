@@ -86,4 +86,6 @@ dependencies {
 
     implementation(Libraries.appUpdater)
 
+    implementation(Libraries.whatTheStack)
+
 }
