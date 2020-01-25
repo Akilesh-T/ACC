@@ -83,7 +83,7 @@ class ColorCustomisationFragment: Fragment() {
         }
         else {
             binding.lightSliders.root.visibility = View.GONE
-            colorDark = Color.parseColor(accentDark)
+            colorDark = if (accentDark.isNotBlank()) Color.parseColor(accentDark) else colorLight
             setPreviewDark(colorDark, accentDark)
             ColorUtils.colorToHSL(colorDark, hsl)
             binding.darkSliders.hue.value = hsl[0]

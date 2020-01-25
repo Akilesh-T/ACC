@@ -8,7 +8,45 @@
     <fragment
         android:id="@+id/home"
         android:name="app.akilesh.qacc.ui.fragments.HomeFragment"
-        tools:layout="@layout/home_fragment" />
+        tools:layout="@layout/home_fragment">
+
+        <argument
+            android:name="lightAccent"
+            app:argType="string" />
+
+        <argument
+            android:name="darkAccent"
+            app:argType="string" />
+
+        <argument
+            android:name="accentName"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/edit"
+            app:destination="@id/customisation"
+            app:enterAnim="@anim/fragment_enter"
+            app:popEnterAnim="@anim/fragment_enter_pop"
+            app:exitAnim="@anim/fragment_exit"
+            app:popExitAnim="@anim/fragment_exit_pop">
+
+            <argument
+                android:name="lightAccent"
+                app:argType="string"
+                android:defaultValue="#FF5722" />
+
+            <argument
+                android:name="darkAccent"
+                app:argType="string"
+                android:defaultValue="#FF5722" />
+
+            <argument
+                android:name="accentName"
+                app:argType="string"
+                android:defaultValue="Custom" />
+        </action>
+
+    </fragment>
 
     <fragment
         android:id="@+id/settings"
