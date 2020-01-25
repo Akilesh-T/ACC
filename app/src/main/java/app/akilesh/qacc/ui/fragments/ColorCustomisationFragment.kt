@@ -2,6 +2,8 @@ package app.akilesh.qacc.ui.fragments
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -52,6 +54,7 @@ class ColorCustomisationFragment: Fragment() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         separateAccents = sharedPreferences.getBoolean("separate_accent", false)
+        if (SDK_INT < Q) separateAccents = false
 
         var accentLight = args.lightAccent
         var accentDark = args.darkAccent
@@ -73,7 +76,7 @@ class ColorCustomisationFragment: Fragment() {
         }
         model.lightAccent.observe(viewLifecycleOwner, lightAccentObserver)
 
-        if (!separateAccents) {
+        if (!separateAccents && SDK_INT < Q) {
             binding.chipGroup.visibility = View.GONE
             binding.previewDark.root.visibility = View.GONE
             editAccentLight()
@@ -132,11 +135,12 @@ class ColorCustomisationFragment: Fragment() {
 
             var suffix = "hex_" + accentLight.removePrefix("#")
             val dark: String
-            if (separateAccents) {
+            if (SDK_INT < Q)
+                dark = accentLight
+            else {
                 suffix += "_" + accentDark.removePrefix("#")
                 dark = accentDark
             }
-            else dark = accentLight
             val pkgName = prefix + suffix
             val accent = Accent(pkgName, args.accentName, accentLight, dark)
             Log.d("accent", accent.toString())
@@ -149,7 +153,7 @@ class ColorCustomisationFragment: Fragment() {
     }
 
     private fun setPreviewLight(color: Int, hex: String) {
-        val colorName = if (separateAccents) context!!.resources.getString(R.string.light) else args.accentName
+        val colorName = if (SDK_INT < Q) args.accentName else context!!.resources.getString(R.string.light)
         binding.previewLight.colorName.text = String.format(context!!.resources.getString(R.string.colour), colorName, hex)
         val textColorLight = Palette.Swatch(color, 1).bodyTextColor
         binding.previewLight.colorName.setTextColor(textColorLight)
