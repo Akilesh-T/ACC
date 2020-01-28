@@ -40,9 +40,9 @@
     <string name="picker_title_text_light">选择亮色主题下的强调色</string>
     <string name="picker_title_text_dark">选择暗黑主题下的强调色</string>
 
-    <string name="amber">琥珀色</string>
+    <string name="amber">赤地黄</string>
     <string name="blue">深蓝色</string>
-    <string name="blue_grey">蓝灰色</string>
+    <string name="blue_grey">深灰色</string>
     <string name="brown">棕褐色</string>
     <string name="candy_red">糖果红</string>
     <string name="cyan">冬青色</string>
@@ -52,12 +52,12 @@
     <string name="extended_green">云杉绿</string>
     <string name="grey">甸灰色</string>
     <string name="indigo">靛蓝色</string>
-    <string name="jade_green">翡翠绿</string>
+    <string name="jade_green">浅绿色</string>
     <string name="light_blue">浅蓝色</string>
-    <string name="light_green">浅绿色</string>
+    <string name="light_green">翡翠绿</string>
     <string name="lime">酸橙色</string>
     <string name="orange">蜜橙色</string>
-    <string name="pale_blue">淡蓝色</string>
+    <string name="pale_blue">淡紫色</string>
     <string name="pale_red">淡红色</string>
     <string name="pink">少女粉</string>
     <string name="red">亮红色</string>
@@ -94,13 +94,13 @@
     <string name="magisk_not_detected">未检测到Magisk!</string>
     <string name="exit">退出</string>
     <string name="aapt_error">无法创建叠加层</string>
-    <string name="backup_restore">Backup and restore</string>
-    <string name="backup_restore_summary">Save your accents and restore them when needed</string>
-    <string name="restore">Restore</string>
-    <string name="local_backups">Backups in storage</string>
-    <string name="hex_code">Hex code</string>
-    <string name="backup_deleted">Backup file deleted</string>
-    <string name="backup_created">Backup created!</string>
-    <string name="accents_restored">Accents restored!</string>
+    <string name="backup_restore">备份和还原</string>
+    <string name="backup_restore_summary">备份您的自定义颜色并在需要时将其还原</string>
+    <string name="restore">还原</string>
+    <string name="local_backups">备份到存储</string>
+    <string name="hex_code">十六进制代码</string>
+    <string name="backup_deleted">备份已删除</string>
+    <string name="backup_created">备份已创建!</string>
+    <string name="accents_restored">强调色已恢复!</string>
 
 </resources>
