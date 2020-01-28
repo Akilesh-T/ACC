@@ -173,19 +173,19 @@ class ColorCustomisationFragment: Fragment() {
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(colorLight, hsl)
 
-        binding.lightSliders.hue.setOnChangeListener { _, value ->
+        binding.lightSliders.hue.addOnChangeListener { _, value, _ ->
             hsl[0] = value
             newColor = ColorUtils.HSLToColor(hsl)
             model.lightAccent.value = toHex(newColor)
         }
 
-        binding.lightSliders.saturation.setOnChangeListener { _, value ->
+        binding.lightSliders.saturation.addOnChangeListener { _, value, _ ->
             hsl[1] = value
             newColor = ColorUtils.HSLToColor(hsl)
             model.lightAccent.value = toHex(newColor)
         }
 
-        binding.lightSliders.lightness.setOnChangeListener { _, value ->
+        binding.lightSliders.lightness.addOnChangeListener { _, value, _ ->
             hsl[2] = value
             newColor = ColorUtils.HSLToColor(hsl)
             model.lightAccent.value = toHex(newColor)
@@ -198,19 +198,19 @@ class ColorCustomisationFragment: Fragment() {
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(colorDark, hsl)
 
-        binding.darkSliders.hue.setOnChangeListener { _, value ->
+        binding.darkSliders.hue.addOnChangeListener { _, value, _ ->
             hsl[0] = value
             newColor = ColorUtils.HSLToColor(hsl)
             model.darkAccent.value = toHex(newColor)
         }
 
-        binding.darkSliders.saturation.setOnChangeListener { _, value ->
+        binding.darkSliders.saturation.addOnChangeListener { _, value, _ ->
             hsl[1] = value
             newColor = ColorUtils.HSLToColor(hsl)
             model.darkAccent.value = toHex(newColor)
         }
 
-        binding.darkSliders.lightness.setOnChangeListener { _, value ->
+        binding.darkSliders.lightness.addOnChangeListener { _, value, _ ->
             hsl[2] = value
             newColor = ColorUtils.HSLToColor(hsl)
             model.darkAccent.value = toHex(newColor)

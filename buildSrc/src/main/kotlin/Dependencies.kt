@@ -37,7 +37,7 @@ object Libraries {
         const val lifecycle = "2.2.0-rc03"
         const val coroutines = "1.3.3"
         const val fragment = "1.2.0-rc05"
-        const val material = "1.2.0-alpha03"
+        const val material = "1.2.0-alpha04"
         const val libSu = "2.5.1"
         const val chroma = "1.2.6"
         const val bouncycastle = "1.63"
