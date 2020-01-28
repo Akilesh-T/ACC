@@ -45,6 +45,12 @@
             app:defaultValue="false"
             app:summary="@string/tweak_summary" />
 
+        <Preference
+            app:key="backups"
+            app:icon="@drawable/ic_round_settings_backup_restore"
+            app:title="@string/backup_restore"
+            app:summary="@string/backup_restore_summary"/>
+
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

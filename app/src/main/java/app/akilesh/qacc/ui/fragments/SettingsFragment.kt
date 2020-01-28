@@ -1,8 +1,10 @@
 package app.akilesh.qacc.ui.fragments
 
 import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.P
 import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
+import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -10,6 +12,7 @@ import androidx.preference.SwitchPreferenceCompat
 import app.akilesh.qacc.Const.isOOS
 import app.akilesh.qacc.R
 import app.akilesh.qacc.utils.AppUtils
+import app.akilesh.qacc.utils.AppUtils.navAnim
 import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.UpdateFrom.JSON
 
@@ -35,6 +38,13 @@ class SettingsFragment: PreferenceFragmentCompat() {
                 .setButtonDismiss("")
                 .start()
 
+            true
+        }
+
+        val backupPref = findPreference<Preference>("backups")!!
+        if (SDK_INT < P) backupPref.isVisible = false
+        backupPref.setOnPreferenceClickListener {
+            findNavController().navigate(R.id.backup_fragment, null, navAnim)
             true
         }
     }

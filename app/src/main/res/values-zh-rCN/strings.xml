@@ -94,5 +94,13 @@
     <string name="magisk_not_detected">未检测到Magisk!</string>
     <string name="exit">退出</string>
     <string name="aapt_error">无法创建叠加层</string>
+    <string name="backup_restore">Backup and restore</string>
+    <string name="backup_restore_summary">Save your accents and restore them when needed</string>
+    <string name="restore">Restore</string>
+    <string name="local_backups">Backups in storage</string>
+    <string name="hex_code">Hex code</string>
+    <string name="backup_deleted">Backup file deleted</string>
+    <string name="backup_created">Backup created!</string>
+    <string name="accents_restored">Accents restored!</string>
 
 </resources>

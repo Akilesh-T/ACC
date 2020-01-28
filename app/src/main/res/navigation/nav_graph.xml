@@ -202,4 +202,9 @@
         </action>
     </fragment>
 
+    <fragment
+        android:id="@+id/backup_fragment"
+        android:name="app.akilesh.qacc.ui.fragments.BackupRestoreFragment"
+        tools:layout="@layout/backup_restore_fragment" />
+
 </navigation>

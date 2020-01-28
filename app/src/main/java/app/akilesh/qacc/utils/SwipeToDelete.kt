@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
 
-abstract class SwipeToDeleteCallback(context: Context) :
+abstract class SwipeToDelete(context: Context) :
     ItemTouchHelper.Callback() {
     private val clearPaint: Paint = Paint()
     private val background: ColorDrawable = ColorDrawable()

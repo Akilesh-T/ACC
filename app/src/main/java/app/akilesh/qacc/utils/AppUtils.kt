@@ -12,7 +12,8 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.ColorUtils
-import app.akilesh.qacc.Const.Module.overlayPath
+import androidx.navigation.navOptions
+import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
@@ -102,6 +103,15 @@ object AppUtils {
                     .submit()
             }
             .show()
+    }
+
+    val navAnim = navOptions {
+        anim  {
+            enter  = R.anim.fragment_enter
+            exit = R.anim.fragment_exit
+            popEnter = R.anim.fragment_enter_pop
+            popExit = R.anim.fragment_exit_pop
+        }
     }
 
 

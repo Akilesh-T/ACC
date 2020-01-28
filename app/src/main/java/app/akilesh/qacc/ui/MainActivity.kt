@@ -9,10 +9,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.navOptions
 import app.akilesh.qacc.Const.getAssetFiles
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ActivityMainBinding
+import app.akilesh.qacc.utils.AppUtils.navAnim
 import app.akilesh.qacc.utils.DownloadUtils.download
 import app.akilesh.qacc.viewmodel.InstallApkViewModel
 import com.github.javiersantos.appupdater.AppUpdaterUtils
@@ -60,24 +60,14 @@ class MainActivity: AppCompatActivity() {
             }
         }
 
-        val navOptions = navOptions {
-            anim  {
-                // Animations from Android 10
-                enter  = R.anim.fragment_enter
-                exit = R.anim.fragment_exit
-                popEnter = R.anim.fragment_enter_pop
-                popExit = R.anim.fragment_exit_pop
-            }
-        }
-
         binding.xFab.setOnClickListener {
-            navController.navigate(R.id.color_picker, null, navOptions)
+            navController.navigate(R.id.color_picker, null, navAnim)
         }
 
         binding.bottomAppBar.setOnMenuItemClickListener {
             when(it.itemId) {
-                R.id.settings -> navController.navigate(R.id.settings, null, navOptions)
-                R.id.info -> navController.navigate(R.id.info, null, navOptions)
+                R.id.settings -> navController.navigate(R.id.settings, null, navAnim)
+                R.id.info -> navController.navigate(R.id.info, null, navAnim)
             }
             true
         }
@@ -87,7 +77,7 @@ class MainActivity: AppCompatActivity() {
          * May not be the correct way, but convenient.
          */
         binding.bottomAppBar.setNavigationOnClickListener {
-            navController.navigate(R.id.home, null, navOptions)
+            navController.navigate(R.id.home, null, navAnim)
         }
 
         copyAssets()
