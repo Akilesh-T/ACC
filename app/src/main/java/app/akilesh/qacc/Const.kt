@@ -1,5 +1,6 @@
 package app.akilesh.qacc
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
@@ -58,6 +59,7 @@ object Const {
         const val modPath = "/data/adb/modules/qacc-mobile"
         val overlayPath = if (SDK_INT == Q) "$modPath/system/product/overlay"
         else "$modPath/system/vendor/overlay"
+        @SuppressLint("SdCardPath")
         val backupFolder = "/sdcard/${DIRECTORY_DOCUMENTS}/${contextConst.getString(R.string.app_name_short)}/backups"
     }
 

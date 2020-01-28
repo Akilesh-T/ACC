@@ -1,6 +1,5 @@
 package app.akilesh.qacc.ui.fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
@@ -112,7 +111,6 @@ class BackupRestoreFragment: Fragment() {
         ).exec().out
     }
 
-    @SuppressLint("SdCardPath")
     private fun createBackup() {
         var date = Calendar.getInstance().time.toString()
         date = date.replace("\\s".toRegex(), "-")
