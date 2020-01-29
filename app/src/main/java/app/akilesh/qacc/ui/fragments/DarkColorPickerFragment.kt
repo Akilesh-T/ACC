@@ -5,7 +5,6 @@ import android.app.WallpaperManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -197,13 +196,11 @@ class DarkColorPickerFragment: Fragment() {
             ) {
                 if (it.isAllGranted()) {
                     val wallpaperManager = WallpaperManager.getInstance(context)
-                    val wallDrawable = wallpaperManager.drawable
-                    var wallColors = wallpaperManager.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)!!
-
-                    val colorsChangedListener = WallpaperManager.OnColorsChangedListener { colors, _ ->
-                        wallColors = colors ?: WallpaperColors.fromDrawable(wallDrawable)
-                    }
-                    wallpaperManager.addOnColorsChangedListener(colorsChangedListener, Handler())
+                    val bitmap = if (wallpaperManager.wallpaperInfo == null)
+                        wallpaperManager.drawable.toBitmap()
+                    else
+                        wallpaperManager.wallpaperInfo.loadThumbnail(context!!.packageManager).toBitmap()
+                    val wallColors = WallpaperColors.fromBitmap(bitmap)
 
                     val primary = wallColors.primaryColor.toArgb()
                     val secondary = wallColors.secondaryColor?.toArgb()
@@ -220,13 +217,7 @@ class DarkColorPickerFragment: Fragment() {
                         wallpaperColours.add(Colour(tertiaryHex, getString(R.string.wallpaper_tertiary)))
                     }
 
-                    val bitmap = if (wallpaperManager.wallpaperInfo == null)
-                        wallDrawable.toBitmap()
-                    else
-                        wallpaperManager.wallpaperInfo.loadThumbnail(context!!.packageManager).toBitmap()
-
                     val palette = Palette.from(bitmap).generate()
-
                     val defaultColor =
                         ResourcesCompat.getColor(resources, android.R.color.transparent, null)
                     val vibrant = palette.getVibrantColor(defaultColor)

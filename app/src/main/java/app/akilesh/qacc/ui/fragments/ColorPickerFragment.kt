@@ -2,13 +2,11 @@ package app.akilesh.qacc.ui.fragments
 
 import android.app.WallpaperColors
 import android.app.WallpaperManager
-import android.app.WallpaperManager.FLAG_SYSTEM
 import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
 import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -236,13 +234,11 @@ class ColorPickerFragment: Fragment() {
             ) {
                 if (it.isAllGranted()) {
                     val wallpaperManager = WallpaperManager.getInstance(context)
-                    val wallDrawable = wallpaperManager.drawable
-                    var wallColors = wallpaperManager.getWallpaperColors(FLAG_SYSTEM)!!
-
-                    val colorsChangedListener = WallpaperManager.OnColorsChangedListener { colors, _ ->
-                        wallColors = colors ?: WallpaperColors.fromDrawable(wallDrawable)
-                    }
-                    wallpaperManager.addOnColorsChangedListener(colorsChangedListener, Handler())
+                    val bitmap = if (wallpaperManager.wallpaperInfo == null)
+                        wallpaperManager.drawable.toBitmap()
+                    else
+                        wallpaperManager.wallpaperInfo.loadThumbnail(context!!.packageManager).toBitmap()
+                    val wallColors = WallpaperColors.fromBitmap(bitmap)
 
                     val primary = wallColors.primaryColor.toArgb()
                     val secondary = wallColors.secondaryColor?.toArgb()
@@ -259,11 +255,6 @@ class ColorPickerFragment: Fragment() {
                         val tertiaryHex = toHex(tertiary)
                         wallpaperColours.add(Colour(tertiaryHex, getString(R.string.wallpaper_tertiary)))
                     }
-
-                    val bitmap = if (wallpaperManager.wallpaperInfo == null)
-                        wallDrawable.toBitmap()
-                    else
-                        wallpaperManager.wallpaperInfo.loadThumbnail(context!!.packageManager).toBitmap()
 
                     val palette = Palette.from(bitmap).generate()
                     val defaultColor =
