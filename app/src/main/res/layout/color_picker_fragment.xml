@@ -37,8 +37,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="32dp"
             android:layout_marginTop="16dp"
+            android:paddingBottom="36dp"
             app:layout_constrainedHeight="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/color_name"
                 android:importantForAutofill="noExcludeDescendants"
-                android:padding="20dp"
+                android:layout_margin="18dp"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -125,7 +125,6 @@
                     android:inputType="text"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
-
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

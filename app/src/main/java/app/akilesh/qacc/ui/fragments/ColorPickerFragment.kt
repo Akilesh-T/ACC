@@ -78,7 +78,7 @@ class ColorPickerFragment: Fragment() {
         if (separateAccents) {
             binding.title.text = String.format(getString(R.string.picker_title_text_light))
             binding.buttonNext.text = getString(R.string.next)
-            binding.textInputLayout.visibility = View.INVISIBLE
+            binding.textInputLayout.visibility = View.GONE
         }
         else
             binding.title.text = String.format(getString(R.string.picker_title_text))
