@@ -9,7 +9,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.graphics.ColorUtils
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -52,12 +54,22 @@ class ColorCustomisationFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.textInputLayout.visibility = if (args.fromHome) View.VISIBLE else View.GONE
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         separateAccents = sharedPreferences.getBoolean("separate_accent", false)
         if (SDK_INT < Q) separateAccents = false
 
         var accentLight = args.lightAccent
         var accentDark = args.darkAccent
+        var accentName = args.accentName
+
+        if (args.fromHome) {
+            binding.name.setText(accentName)
+            binding.name.doAfterTextChanged {
+                accentName = it.toString().trim()
+            }
+        }
+
         colorLight = Color.parseColor(accentLight)
         setPreviewLight(colorLight, accentLight)
         val hsl = FloatArray(3)
@@ -133,21 +145,27 @@ class ColorCustomisationFragment: Fragment() {
                 }
             }
 
-            var suffix = "hex_" + accentLight.removePrefix("#")
-            val dark: String
-            if (SDK_INT < Q)
-                dark = accentLight
-            else {
-                suffix += "_" + accentDark.removePrefix("#")
-                dark = accentDark
+            if (accentName.isNotBlank()) {
+                var suffix = "hex_" + accentLight.removePrefix("#")
+                val dark: String
+                if (SDK_INT < Q)
+                    dark = accentLight
+                else {
+                    suffix += "_" + accentDark.removePrefix("#")
+                    dark = accentDark
+                }
+                val pkgName = prefix + suffix
+                val accent = Accent(pkgName, accentName, accentLight, dark)
+                Log.d("accent", accent.toString())
+                if (createAccent(context!!, accentViewModel, accent)) {
+                    showSnackbar(
+                        view,
+                        String.format(getString(R.string.accent_created), args.accentName)
+                    )
+                    findNavController().navigate(R.id.to_home)
+                }
             }
-            val pkgName = prefix + suffix
-            val accent = Accent(pkgName, args.accentName, accentLight, dark)
-            Log.d("accent", accent.toString())
-            if (createAccent(context!!, accentViewModel, accent)) {
-                showSnackbar(view, String.format(getString(R.string.accent_created), args.accentName))
-                findNavController().navigate(R.id.to_home)
-            }
+            else Toast.makeText(context, getString(R.string.toast_name_not_set), Toast.LENGTH_SHORT).show()
         }
 
     }

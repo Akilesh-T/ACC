@@ -42,7 +42,7 @@ class HomeFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val adapter = AccentListAdapter(context!!) {
-            val navDirections = HomeFragmentDirections.edit(it.colorLight, it.colorDark, it.name)
+            val navDirections = HomeFragmentDirections.edit(it.colorLight, it.colorDark, it.name, true)
             findNavController().navigate(navDirections)
         }
         binding.recyclerView.adapter = adapter

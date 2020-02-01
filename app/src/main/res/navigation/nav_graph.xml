@@ -22,6 +22,10 @@
             android:name="accentName"
             app:argType="string" />
 
+        <argument
+            android:name="from_home"
+            app:argType="boolean" />
+
         <action
             android:id="@+id/edit"
             app:destination="@id/customisation"
@@ -44,6 +48,11 @@
                 android:name="accentName"
                 app:argType="string"
                 android:defaultValue="Custom" />
+
+            <argument
+                android:name="from_home"
+                app:argType="boolean"
+                android:defaultValue="true"/>
         </action>
 
     </fragment>
@@ -175,6 +184,11 @@
         <argument
             android:name="accentName"
             app:argType="string" />
+
+        <argument
+            android:name="from_home"
+            app:argType="boolean"
+            android:defaultValue="false"/>
 
         <action
             android:id="@+id/to_home"
