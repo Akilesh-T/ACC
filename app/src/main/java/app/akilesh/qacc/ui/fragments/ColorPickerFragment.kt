@@ -12,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.doAfterTextChanged
@@ -21,7 +23,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import app.akilesh.qacc.Const.Colors.presets
+import app.akilesh.qacc.Const.Colors.AEX
+import app.akilesh.qacc.Const.Colors.brandColors
 import app.akilesh.qacc.Const.isOOS
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
@@ -65,8 +68,9 @@ class ColorPickerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val systemAccentColor = this.context!!.getColorAccent()
-        setPreview(binding, systemAccentColor)
+        val previewColor = if (accentColor.isBlank()) this.context!!.getColorAccent()
+        else Color.parseColor(accentColor)
+        setPreview(binding, previewColor)
 
         accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
 
@@ -78,6 +82,7 @@ class ColorPickerFragment: Fragment() {
         if (separateAccents) {
             binding.title.text = String.format(getString(R.string.picker_title_text_light))
             binding.buttonNext.text = getString(R.string.next)
+            binding.nameTitle.visibility = View.GONE
             binding.textInputLayout.visibility = View.GONE
         }
         else
@@ -162,12 +167,13 @@ class ColorPickerFragment: Fragment() {
             findNavController().navigateUp()
         }
 
+        binding.brandColors.setOnClickListener { chooseFromPresets(R.string.brand_colors, R.drawable.ic_palette_24dp, brandColors) }
         binding.custom.setOnClickListener { setCustomColor() }
-        binding.preset.setOnClickListener { chooseFromPresets() }
+        binding.preset.setOnClickListener { chooseFromPresets(R.string.presets, R.drawable.ic_preset, AEX) }
         if (SDK_INT > O)
             binding.wallColors.setOnClickListener { chooseFromWallpaperColors() }
         else
-            binding.wallFrame.visibility = View.GONE
+            binding.wallColors.visibility = View.GONE
 
         binding.name.doAfterTextChanged {
             accentName = it.toString().trim()
@@ -192,18 +198,18 @@ class ColorPickerFragment: Fragment() {
 
     }
 
-    private fun chooseFromPresets() {
+    private fun chooseFromPresets(@StringRes title: Int, @DrawableRes icon: Int, colorList: List<Colour>) {
 
         val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
         val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
-        dialogTitleBinding.titleText.text = String.format(resources.getString(R.string.presets))
-        dialogTitleBinding.titleIcon.setImageResource(R.drawable.ic_preset)
+        dialogTitleBinding.titleText.text = String.format(resources.getString(title))
+        dialogTitleBinding.titleIcon.setImageResource(icon)
         val builder = MaterialAlertDialogBuilder(context)
             .setCustomTitle(dialogTitleBinding.root)
             .setView(colorPreviewBinding.root)
         val dialog = builder.create()
 
-        val adapter = ColorListAdapter(context!!, presets) { colour ->
+        val adapter = ColorListAdapter(context!!, colorList) { colour ->
             accentColor = colour.hex
             accentName = colour.name
             binding.name.setText(colour.name)

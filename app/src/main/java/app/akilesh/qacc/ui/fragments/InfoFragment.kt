@@ -57,7 +57,7 @@ class InfoFragment: MaterialAboutFragment() {
             .titleColor(ResourcesCompat.getColor(context.resources, R.color.colorPrimary, context.theme))
             .addItem(
                 MaterialAboutActionItem.Builder()
-                    .text(getString(R.string.github))
+                    .text(getString(R.string.github_repo))
                     .icon(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_github, context.theme))
                     .setOnClickAction(
                         ConvenienceBuilder.createWebsiteOnClickAction(context, Uri.parse(githubRepo))
@@ -75,7 +75,7 @@ class InfoFragment: MaterialAboutFragment() {
             )
             .addItem(
                 MaterialAboutActionItem.Builder()
-                    .text(getString(R.string.xda))
+                    .text(getString(R.string.xda_thread))
                     .icon(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_xda, context.theme))
                     .setOnClickAction(
                         ConvenienceBuilder.createWebsiteOnClickAction(context, Uri.parse(xdaThread))

@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:colorBackground">@color/colorCustom</item>
         <item name="colorSurface">@color/colorCustom</item>
         <item name="buttonBarButtonStyle">@style/Button</item>
@@ -26,35 +26,6 @@
         <item name="textAllCaps">false</item>
     </style>
 
-    <style name="Cards" parent="@style/Widget.MaterialComponents.CardView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">12.0dip</item>
-        <item name="android:layout_marginStart">12.0dip</item>
-        <item name="android:layout_marginEnd">12.0dip</item>
-        <item name="cardCornerRadius">8.0dip</item>
-        <item name="cardElevation">2.0dip</item>
-        <item name="strokeWidth">0.75dp</item>
-        <item name="strokeColor">@color/colorPrimary</item>
-        <item name="cardUseCompatPadding">true</item>
-    </style>
-
-    <style name="CardHeaders" parent="@style/TextAppearance.MaterialComponents.Button">
-        <item name="android:textAllCaps">false</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:background">@drawable/rounded_corners</item>
-        <item name="android:paddingTop">6.0dip</item>
-        <item name="android:paddingBottom">6.0dip</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingStart">8.0dip</item>
-        <item name="android:paddingEnd">12.0dip</item>
-        <item name="android:layout_marginStart">24.0dip</item>
-        <item name="android:elevation">4.0dip</item>
-        <item name="android:drawablePadding">8.0dip</item>
-        <item name="android:textColor">?colorOnPrimary</item>
-    </style>
-
 <!--
     MAL doesn't use Theme.MaterialComponents.DayNight yet
 -->
@@ -64,12 +35,6 @@
 
     <style name="AppTheme.AboutCardDark" parent="Theme.Mal.Dark">
         <item name="mal_card_background">@color/aboutCardBackground</item>
-    </style>
-
-    <style name="Text" parent="Widget.MaterialComponents.TextView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:padding">30dp</item>
     </style>
     
     <style name="PreviewCards" parent="Widget.MaterialComponents.CardView">

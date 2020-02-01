@@ -10,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.doAfterTextChanged
@@ -62,8 +64,9 @@ class DarkColorPickerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val systemAccentColor = this.context!!.getColorAccent()
-        setPreview(binding, systemAccentColor)
+        val previewColor = if (accentColor.isBlank()) this.context!!.getColorAccent()
+        else Color.parseColor(accentColor)
+        setPreview(binding, previewColor)
 
         val accentColorLight = args.lightAccent
         accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
@@ -124,12 +127,17 @@ class DarkColorPickerFragment: Fragment() {
             findNavController().navigateUp()
         }
 
+        binding.brandColors.setOnClickListener { chooseFromPresets(R.string.brand_colors, R.drawable.ic_palette_24dp,
+            Const.Colors.brandColors
+        ) }
         binding.custom.setOnClickListener { setCustomColor() }
-        binding.preset.setOnClickListener { chooseFromPresets() }
+        binding.preset.setOnClickListener { chooseFromPresets(R.string.presets, R.drawable.ic_preset,
+            Const.Colors.AEX
+        ) }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
             binding.wallColors.setOnClickListener { chooseFromWallpaperColors() }
         else
-            binding.wallFrame.visibility = View.GONE
+            binding.wallColors.visibility = View.GONE
 
         binding.name.doAfterTextChanged {
             accentName = it.toString().trim()
@@ -154,18 +162,18 @@ class DarkColorPickerFragment: Fragment() {
 
     }
 
-    private fun chooseFromPresets() {
+    private fun chooseFromPresets(@StringRes title: Int, @DrawableRes icon: Int, colorList: List<Colour>) {
 
         val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
         val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
-        dialogTitleBinding.titleText.text = String.format(resources.getString(R.string.presets))
-        dialogTitleBinding.titleIcon.setImageResource(R.drawable.ic_preset)
+        dialogTitleBinding.titleText.text = String.format(resources.getString(title))
+        dialogTitleBinding.titleIcon.setImageResource(icon)
         val builder = MaterialAlertDialogBuilder(context)
             .setCustomTitle(dialogTitleBinding.root)
             .setView(colorPreviewBinding.root)
         val dialog = builder.create()
 
-        val adapter = ColorListAdapter(context!!, Const.Colors.presets) { colour ->
+        val adapter = ColorListAdapter(context!!, colorList) { colour ->
             accentColor = colour.hex
             accentName = colour.name
             binding.name.setText(colour.name)

@@ -136,6 +136,17 @@ object AppUtils {
         }
 
         binding.apply {
+            brandColorsText.compoundDrawableTintList = accentTintList
+            customText.compoundDrawableTintList = accentTintList
+            presetText.compoundDrawableTintList = accentTintList
+            wallColorsText.compoundDrawableTintList = accentTintList
+            textInputLayout.setBoxStrokeColorStateList(accentTintList)
+            if (SDK_INT >= Q) {
+                name.textCursorDrawable?.setTintList(accentTintList)
+                name.textSelectHandle?.setTintList(accentTintList)
+                name.textSelectHandleLeft?.setTintList(accentTintList)
+                name.textSelectHandleRight?.setTintList(accentTintList)
+            }
             buttonPrevious.setTextColor(accentColor)
             buttonPrevious.rippleColor = accentTintList
             buttonNext.backgroundTintList = accentTintList
