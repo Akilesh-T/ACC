@@ -1,7 +1,6 @@
 package app.akilesh.qacc.ui.fragments
 
 import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.P
 import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import androidx.navigation.fragment.findNavController
@@ -42,7 +41,6 @@ class SettingsFragment: PreferenceFragmentCompat() {
         }
 
         val backupPref = findPreference<Preference>("backups")!!
-        if (SDK_INT < P) backupPref.isVisible = false
         backupPref.setOnPreferenceClickListener {
             findNavController().navigate(R.id.backup_fragment, null, navAnim)
             true

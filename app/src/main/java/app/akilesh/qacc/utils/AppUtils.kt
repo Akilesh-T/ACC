@@ -158,8 +158,8 @@ object AppUtils {
         val appName = accent.pkgName.substringAfter(prefix)
         val filesDir = context.filesDir
 
-        val manifest = File("$filesDir", "AndroidManifest.xml")
-        val values = File("$filesDir/src/values")
+        val manifest = File(filesDir, "AndroidManifest.xml")
+        val values = File(filesDir, "/src/values")
         val colors = File(values, "colors.xml")
         manifest.createNewFile()
         colors.createNewFile()
@@ -178,18 +178,21 @@ object AppUtils {
             if (aaptResult.isSuccess && File("$filesDir/qacc.apk").exists()) {
                 val certFile = context.assets.open("testkey.x509.pem")
                 val keyFile = context.assets.open("testkey.pk8")
-                val out = FileOutputStream(File(filesDir, "signed.apk").absolutePath)
+                val out = FileOutputStream(File("$filesDir/signed.apk").path)
 
                 val cert = readCertificate(certFile)
                 val key = readPrivateKey(keyFile)
 
-                val jar = JarMap.open("$filesDir/qacc.apk")
+                val jar = JarMap.open(File(filesDir, "qacc.apk").path)
 
                 SignAPK.sign(cert, key, jar, out.buffered())
 
-                Shell.su(context.resources.openRawResource(R.raw.zipalign)).exec()
+                if (File(filesDir, "signed.apk").exists())
+                    Shell.su(context.resources.openRawResource(R.raw.zipalign)).exec()
+                else
+                    Toast.makeText(context, "Signed overlay not created", Toast.LENGTH_SHORT).show()
 
-                if (File("$filesDir/aligned.apk").exists()) {
+                if (File(filesDir, "aligned.apk").exists()) {
 
                     if (SDK_INT >= P) {
                         Shell.su("mkdir -p $overlayPath").exec()

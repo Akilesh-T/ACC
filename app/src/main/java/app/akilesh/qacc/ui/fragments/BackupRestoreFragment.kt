@@ -2,6 +2,8 @@ package app.akilesh.qacc.ui.fragments
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.Const.Paths.backupFolder
 import app.akilesh.qacc.Const.Paths.modPath
 import app.akilesh.qacc.Const.Paths.overlayPath
+import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.BackupRestoreFragmentBinding
 import app.akilesh.qacc.databinding.ColorPreviewBinding
@@ -112,15 +115,38 @@ class BackupRestoreFragment: Fragment() {
     }
 
     private fun createBackup() {
+
+        Shell.su("mkdir -p $backupFolder").exec()
+        if (SDK_INT >= P) {
+            compress(overlayPath)
+        }
+        else {
+            val overlays = Shell.su(
+                "pm list packages -f ${prefix}hex | sed s/package://"
+            ).exec().out
+            context!!.cacheDir.deleteRecursively()
+            overlays.forEach {
+                val path = it.substringBeforeLast('=')
+                val pkgName = it.substringAfterLast('=')
+                val apkName = pkgName.substringAfter(prefix)
+                Shell.su(
+                    "cp -f $path ${context!!.cacheDir.absolutePath}/$apkName.apk"
+                ).exec()
+            }
+            compress(context!!.cacheDir.absolutePath)
+        }
+    }
+
+    private fun compress(path: String) {
         var date = Calendar.getInstance().time.toString()
         date = date.replace("\\s".toRegex(), "-")
         val result = Shell.su(
-            "mkdir -p $backupFolder",
-            ".$busyBox tar c -zv -f $backupFolder/$date.tar.gz -C $overlayPath ."
+            ".$busyBox tar c -zv -f $backupFolder/$date.tar.gz -C $path ."
         ).exec()
         Log.d("compress", result.out.toString())
         if (result.isSuccess) {
-            Toast.makeText(context, getString(R.string.backup_created), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.backup_created), Toast.LENGTH_SHORT)
+                .show()
             model.backupFiles.value = getBackupFiles()
         }
     }
@@ -145,19 +171,38 @@ class BackupRestoreFragment: Fragment() {
                 }
             }
 
-            val result = Shell.su("[ -d $modPath ]").exec()
-            if (!result.isSuccess) {
-                Shell.su("mkdir -p $overlayPath").exec()
-                Shell.su(context!!.resources.openRawResource(R.raw.create_module)).exec()
-            }
+            if (SDK_INT >= P) {
+                val result = Shell.su("[ -d $modPath ]").exec()
+                if (!result.isSuccess) {
+                    Shell.su("mkdir -p $overlayPath").exec()
+                    Shell.su(context!!.resources.openRawResource(R.raw.create_module)).exec()
+                }
 
-            val restoreResult = Shell.su(
-                ".$busyBox tar x -zv -f $backupFile -C $overlayPath"
-            ).exec()
-            Log.d("restore", restoreResult.out.toString())
-            if (restoreResult.isSuccess) {
-                context!!.cacheDir.delete()
-                showSnackbar(this.view!!, getString(R.string.accents_restored))
+                val restoreResult = Shell.su(
+                    ".$busyBox tar x -zv -f $backupFile -C $overlayPath"
+                ).exec()
+                Log.d("restore", restoreResult.out.toString())
+                if (restoreResult.isSuccess) {
+                    context!!.cacheDir.deleteRecursively()
+                    showSnackbar(this.view!!, getString(R.string.accents_restored))
+                }
+            }
+            else {
+                context!!.cacheDir.deleteRecursively()
+                Shell.su(
+                    ".$busyBox tar x -zv -f $backupFile -C ${context!!.cacheDir.absolutePath}"
+                ).exec()
+                val apps = context!!.cacheDir.listFiles { file ->
+                    file.length() > 0 && file.extension == "apk" && file.name.startsWith("hex")
+                }
+                apps?.forEach {
+                    val result = Shell.su(
+                        "chmod 644 ${it.absolutePath}",
+                        "pm install -r ${it.absolutePath}"
+                    ).exec()
+                    Log.d("pm-install", result.out.toString())
+                }
+                context!!.cacheDir.deleteRecursively()
             }
         }
     }
