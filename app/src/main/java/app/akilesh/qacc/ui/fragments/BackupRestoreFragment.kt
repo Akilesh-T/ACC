@@ -24,11 +24,14 @@ import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.BackupRestoreFragmentBinding
 import app.akilesh.qacc.databinding.ColorPreviewBinding
 import app.akilesh.qacc.databinding.DialogTitleBinding
+import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.adapter.BackupListAdapter
 import app.akilesh.qacc.ui.adapter.ColorListAdapter
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
+import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.utils.SwipeToDelete
+import app.akilesh.qacc.viewmodel.AccentViewModel
 import app.akilesh.qacc.viewmodel.BackupFileViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.topjohnwu.superuser.Shell
@@ -179,22 +182,18 @@ class BackupRestoreFragment: Fragment() {
                 }
 
                 val restoreResult = Shell.su(
-                    ".$busyBox tar x -zv -f $backupFile -C $overlayPath"
+                    ".$busyBox tar x -zv -f ${backupFile.absolutePath} -C $overlayPath"
                 ).exec()
                 Log.d("restore", restoreResult.out.toString())
                 if (restoreResult.isSuccess) {
+                    insertToDB(getAppList(backupFile.absolutePath))
                     context!!.cacheDir.deleteRecursively()
                     showSnackbar(this.view!!, getString(R.string.accents_restored))
                 }
             }
             else {
                 context!!.cacheDir.deleteRecursively()
-                Shell.su(
-                    ".$busyBox tar x -zv -f $backupFile -C ${context!!.cacheDir.absolutePath}"
-                ).exec()
-                val apps = context!!.cacheDir.listFiles { file ->
-                    file.length() > 0 && file.extension == "apk" && file.name.startsWith("hex")
-                }
+                val apps = getAppList(backupFile.absolutePath)
                 apps?.forEach {
                     val result = Shell.su(
                         "chmod 644 ${it.absolutePath}",
@@ -202,8 +201,38 @@ class BackupRestoreFragment: Fragment() {
                     ).exec()
                     Log.d("pm-install", result.out.toString())
                 }
+                insertToDB(apps)
                 context!!.cacheDir.deleteRecursively()
             }
+        }
+    }
+
+    private fun getAppList(path: String): Array<File>? {
+        Shell.su(
+            ".$busyBox tar x -zv -f $path -C ${context!!.cacheDir.absolutePath}"
+        ).exec()
+        return context!!.cacheDir.listFiles { file ->
+            file.length() > 0 && file.extension == "apk" && file.name.startsWith("hex")
+        }
+    }
+
+    private fun insertToDB(appList: Array<File>?) {
+        val packageManager = context!!.packageManager
+        appList?.forEach {
+            val packageInfo = packageManager.getPackageArchiveInfo(it.absolutePath, 0)!!
+            val applicationInfo = packageInfo.applicationInfo
+            applicationInfo.sourceDir = it.absolutePath
+            applicationInfo.publicSourceDir = it.absolutePath
+            val accentName = packageManager.getApplicationLabel(applicationInfo).toString()
+            val pkgName = packageInfo.packageName.toString()
+            val resources = packageManager.getResourcesForApplication(applicationInfo)
+            val accentLightId = resources.getIdentifier("accent_device_default_light", "color", pkgName)
+            val colorLight = resources.getColor(accentLightId, null)
+            val accentDarkId = resources.getIdentifier("accent_device_default_dark", "color", pkgName)
+            val colorDark = resources.getColor(accentDarkId, null)
+            val accent = Accent(pkgName, accentName, toHex(colorLight), toHex(colorDark))
+            val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+            accentViewModel.insert(accent)
         }
     }
 }
