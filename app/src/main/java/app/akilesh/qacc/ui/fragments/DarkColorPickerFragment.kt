@@ -5,27 +5,31 @@ import android.app.WallpaperManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.akilesh.qacc.Const
 import app.akilesh.qacc.R
-import app.akilesh.qacc.ui.adapter.ColorListAdapter
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
 import app.akilesh.qacc.databinding.ColorPreviewBinding
 import app.akilesh.qacc.databinding.DialogTitleBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
+import app.akilesh.qacc.ui.adapter.ColorListAdapter
 import app.akilesh.qacc.utils.AppUtils.createAccent
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.setPreview
@@ -60,15 +64,16 @@ class DarkColorPickerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val systemAccentColor = this.context!!.getColorAccent()
-        setPreview(binding, systemAccentColor)
+        val previewColor = if (accentColor.isBlank()) this.context!!.getColorAccent()
+        else Color.parseColor(accentColor)
+        setPreview(binding, previewColor)
 
         val accentColorLight = args.lightAccent
         accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val customise = sharedPreferences.getBoolean("customise", false)
-        binding.title.text = String.format(context!!.resources.getString(R.string.picker_title_text), "for dark theme")
+        binding.title.text = String.format(getString(R.string.picker_title_text_dark))
 
         if (customise) binding.buttonNext.text = context!!.resources.getString(R.string.next)
 
@@ -83,12 +88,12 @@ class DarkColorPickerFragment: Fragment() {
                 } else {
                     if (accentColor.isBlank()) Toast.makeText(
                         context,
-                        "Accent color is not selected",
+                        getString(R.string.toast_color_not_selected),
                         Toast.LENGTH_SHORT
                     ).show()
                     if (accentName.isBlank()) Toast.makeText(
                         context,
-                        "Accent name is not set",
+                        getString(R.string.toast_name_not_set),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -100,18 +105,18 @@ class DarkColorPickerFragment: Fragment() {
                     val accent = Accent(pkgName, accentName, accentColorLight, accentColor)
                     Log.d("accent", accent.toString())
                     if (createAccent(context!!, accentViewModel, accent)) {
-                        showSnackbar(view, "$accentName created")
+                        showSnackbar(view, String.format(getString(R.string.accent_created), accentName))
                         findNavController().navigate(R.id.back_home)
                     }
                 } else {
                     if (accentColor.isBlank()) Toast.makeText(
                         context,
-                        "Accent color is not selected",
+                        getString(R.string.toast_color_not_selected),
                         Toast.LENGTH_SHORT
                     ).show()
                     if (accentName.isBlank()) Toast.makeText(
                         context,
-                        "Accent name is not set",
+                        getString(R.string.toast_name_not_set),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -122,12 +127,17 @@ class DarkColorPickerFragment: Fragment() {
             findNavController().navigateUp()
         }
 
+        binding.brandColors.setOnClickListener { chooseFromPresets(R.string.brand_colors, R.drawable.ic_palette_24dp,
+            Const.Colors.brandColors
+        ) }
         binding.custom.setOnClickListener { setCustomColor() }
-        binding.preset.setOnClickListener { chooseFromPresets() }
+        binding.preset.setOnClickListener { chooseFromPresets(R.string.presets, R.drawable.ic_preset,
+            Const.Colors.AEX
+        ) }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
             binding.wallColors.setOnClickListener { chooseFromWallpaperColors() }
         else
-            binding.wallFrame.visibility = View.GONE
+            binding.wallColors.visibility = View.GONE
 
         binding.name.doAfterTextChanged {
             accentName = it.toString().trim()
@@ -152,18 +162,18 @@ class DarkColorPickerFragment: Fragment() {
 
     }
 
-    private fun chooseFromPresets() {
+    private fun chooseFromPresets(@StringRes title: Int, @DrawableRes icon: Int, colorList: List<Colour>) {
 
         val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
         val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
-        dialogTitleBinding.titleText.text = String.format(resources.getString(R.string.presets))
-        dialogTitleBinding.titleIcon.setImageResource(R.drawable.ic_preset)
+        dialogTitleBinding.titleText.text = String.format(resources.getString(title))
+        dialogTitleBinding.titleIcon.setImageResource(icon)
         val builder = MaterialAlertDialogBuilder(context)
             .setCustomTitle(dialogTitleBinding.root)
             .setView(colorPreviewBinding.root)
         val dialog = builder.create()
 
-        val adapter = ColorListAdapter(context!!, Const.Colors.presets) { colour ->
+        val adapter = ColorListAdapter(context!!, colorList) { colour ->
             accentColor = colour.hex
             accentName = colour.name
             binding.name.setText(colour.name)
@@ -181,10 +191,10 @@ class DarkColorPickerFragment: Fragment() {
     private fun chooseFromWallpaperColors() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
 
-            val rationaleHandler = createDialogRationale(R.string.app_name_full) {
+            val rationaleHandler = createDialogRationale(R.string.app_name) {
                 onPermission(
                     Permission.READ_EXTERNAL_STORAGE,
-                    "Storage permission is required to get wallpaper colours."
+                    getString(R.string.storage_permission_rationale)
                 )
             }
 
@@ -194,28 +204,79 @@ class DarkColorPickerFragment: Fragment() {
             ) {
                 if (it.isAllGranted()) {
                     val wallpaperManager = WallpaperManager.getInstance(context)
-                    val wallDrawable = wallpaperManager.drawable
-                    var wallColors = wallpaperManager.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)!!
-
-                    val colorsChangedListener = WallpaperManager.OnColorsChangedListener { colors, _ ->
-                        wallColors = colors ?: WallpaperColors.fromDrawable(wallDrawable)
-                    }
-                    wallpaperManager.addOnColorsChangedListener(colorsChangedListener, Handler())
+                    val bitmap = if (wallpaperManager.wallpaperInfo == null)
+                        wallpaperManager.drawable.toBitmap()
+                    else
+                        wallpaperManager.wallpaperInfo.loadThumbnail(context!!.packageManager).toBitmap()
+                    val wallColors = WallpaperColors.fromBitmap(bitmap)
 
                     val primary = wallColors.primaryColor.toArgb()
                     val secondary = wallColors.secondaryColor?.toArgb()
                     val tertiary = wallColors.tertiaryColor?.toArgb()
 
                     val primaryHex = toHex(primary)
-                    val wallpaperColours = mutableListOf(Colour(primaryHex, "Wallpaper primary"))
+                    val wallpaperColours = mutableListOf(Colour(primaryHex, getString(R.string.wallpaper_primary)))
                     if (secondary != null) {
                         val secondaryHex = toHex(secondary)
-                        wallpaperColours.add(Colour(secondaryHex, "Wallpaper secondary"))
+                        wallpaperColours.add(Colour(secondaryHex, getString(R.string.wallpaer_secondary)))
                     }
                     if (tertiary != null) {
                         val tertiaryHex = toHex(tertiary)
-                        wallpaperColours.add(Colour(tertiaryHex, "Wallpaper tertiary"))
+                        wallpaperColours.add(Colour(tertiaryHex, getString(R.string.wallpaper_tertiary)))
                     }
+
+                    val palette = Palette.from(bitmap).generate()
+                    val defaultColor =
+                        ResourcesCompat.getColor(resources, android.R.color.transparent, null)
+                    val vibrant = palette.getVibrantColor(defaultColor)
+                    if (vibrant != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(vibrant),
+                            "Vibrant"
+                        )
+                    )
+
+                    val darkVibrant = palette.getDarkVibrantColor(defaultColor)
+                    if (darkVibrant != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(
+                                darkVibrant
+                            ), "Dark Vibrant"
+                        )
+                    )
+
+                    val lightVibrant = palette.getLightVibrantColor(defaultColor)
+                    if (lightVibrant != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(
+                                lightVibrant
+                            ), "Light Vibrant"
+                        )
+                    )
+
+                    val muted = palette.getMutedColor(defaultColor)
+                    if (muted != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(muted),
+                            "Muted"
+                        )
+                    )
+
+                    val darkMuted = palette.getDarkMutedColor(defaultColor)
+                    if (darkMuted != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(darkMuted),
+                            "Dark Muted"
+                        )
+                    )
+
+                    val lightMuted = palette.getLightMutedColor(defaultColor)
+                    if (lightMuted != defaultColor) wallpaperColours.add(
+                        Colour(
+                            toHex(lightMuted),
+                            "Light Muted"
+                        )
+                    )
 
                     val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
                     val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)

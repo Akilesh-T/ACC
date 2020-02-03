@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        android:layout_marginBottom="4dp"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="2dp">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/backup_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="16dp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/view_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:tint="?colorPrimary"
+                app:srcCompat="@drawable/ic_outline_pageview" />
+
+            <!--
+            Sharing an Android 10 accent to older versions
+            may result in:
+             separate accents for dark & light theme (https://github.com/Akilesh-T/ACC/issues/2#issuecomment-572951801),
+             accent being applied only to certain layouts.
+
+            Conversely using an accent from older android versions on Q will
+            apply the same accent to both dark & light themes.
+
+            TLDR: Sharing accents is not supported.
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:tint="?colorPrimary"
+                app:srcCompat="@drawable/ic_outline_share" />
+             -->
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

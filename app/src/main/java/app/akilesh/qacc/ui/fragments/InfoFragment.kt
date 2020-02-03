@@ -37,15 +37,15 @@ class InfoFragment: MaterialAboutFragment() {
         val appInfoCard = MaterialAboutCard.Builder()
             .addItem(
                 MaterialAboutTitleItem.Builder()
-                    .text(context!!.resources.getString(R.string.app_name_full))
-                    .desc("By Akilesh")
+                    .text(context!!.resources.getString(R.string.app_name))
+                    .desc(getString(R.string.about_title_desc))
                     .icon(R.mipmap.ic_launcher)
                     .build()
             )
             .addItem(
                 ConvenienceBuilder.createVersionActionItem(context,
                     ResourcesCompat.getDrawable(context.resources, R.drawable.ic_outline_info, context.theme),
-                    "Version",
+                    getString(R.string.version),
                     false
                     )
             )
@@ -53,11 +53,11 @@ class InfoFragment: MaterialAboutFragment() {
 
 
         val linksCard = MaterialAboutCard.Builder()
-            .title("Links")
+            .title(getString(R.string.links))
             .titleColor(ResourcesCompat.getColor(context.resources, R.color.colorPrimary, context.theme))
             .addItem(
                 MaterialAboutActionItem.Builder()
-                    .text("Github repo")
+                    .text(getString(R.string.github_repo))
                     .icon(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_github, context.theme))
                     .setOnClickAction(
                         ConvenienceBuilder.createWebsiteOnClickAction(context, Uri.parse(githubRepo))
@@ -66,7 +66,7 @@ class InfoFragment: MaterialAboutFragment() {
             )
             .addItem(
                 MaterialAboutActionItem.Builder()
-                    .text("Telegram group")
+                    .text(getString(R.string.telegram_group))
                     .icon(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_outline_group, context.theme))
                     .setOnClickAction(
                         ConvenienceBuilder.createWebsiteOnClickAction(context, Uri.parse(telegramGroup))
@@ -75,7 +75,7 @@ class InfoFragment: MaterialAboutFragment() {
             )
             .addItem(
                 MaterialAboutActionItem.Builder()
-                    .text("XDA thread")
+                    .text(getString(R.string.xda_thread))
                     .icon(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_xda, context.theme))
                     .setOnClickAction(
                         ConvenienceBuilder.createWebsiteOnClickAction(context, Uri.parse(xdaThread))
@@ -85,11 +85,11 @@ class InfoFragment: MaterialAboutFragment() {
             .build()
 
         val downloadsCard = MaterialAboutCard.Builder()
-            .title("Downloads")
+            .title(getString(R.string.downloads))
             .titleColor(ResourcesCompat.getColor(context.resources, R.color.colorPrimary, context.theme))
             .addItem(
                 MaterialAboutActionItem.Builder()
-                    .text("Github releases")
+                    .text(getString(R.string.github_releases))
                     .icon(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_outline_get_app, context.theme))
                     .setOnClickAction(
                         ConvenienceBuilder.createWebsiteOnClickAction(context, Uri.parse(githubReleases))
@@ -98,7 +98,7 @@ class InfoFragment: MaterialAboutFragment() {
             )
             .addItem(
                 MaterialAboutActionItem.Builder()
-                    .text("Telegram channel (includes beta releases)")
+                    .text(getString(R.string.telegram_channel))
                     .icon(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_outline_get_app, context.theme))
                     .setOnClickAction(
                         ConvenienceBuilder.createWebsiteOnClickAction(context, Uri.parse(telegramChannel))

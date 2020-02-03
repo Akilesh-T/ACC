@@ -3,8 +3,8 @@
   Translated by https://github.com/wsay-kx99
 -->
 <resources>
-    <string name="app_name">ACC</string>
-    <string name="app_name_full">强调色创建者</string>
+    <string name="app_name">强调色创建者</string>
+    <string name="app_name_short">ACC</string>
     <string name="color_custom">自定义强调色</string>
     <string name="set_custom_color">轻触可设置自定义强调色</string>
     <string name="color_name">输入你的强调色名称</string>
@@ -40,9 +40,9 @@
     <string name="picker_title_text_light">选择亮色主题下的强调色</string>
     <string name="picker_title_text_dark">选择暗黑主题下的强调色</string>
 
-    <string name="amber">琥珀色</string>
+    <string name="amber">赤地黄</string>
     <string name="blue">深蓝色</string>
-    <string name="blue_grey">蓝灰色</string>
+    <string name="blue_grey">深灰色</string>
     <string name="brown">棕褐色</string>
     <string name="candy_red">糖果红</string>
     <string name="cyan">冬青色</string>
@@ -52,12 +52,12 @@
     <string name="extended_green">云杉绿</string>
     <string name="grey">甸灰色</string>
     <string name="indigo">靛蓝色</string>
-    <string name="jade_green">翡翠绿</string>
+    <string name="jade_green">浅绿色</string>
     <string name="light_blue">浅蓝色</string>
-    <string name="light_green">浅绿色</string>
+    <string name="light_green">翡翠绿</string>
     <string name="lime">酸橙色</string>
     <string name="orange">蜜橙色</string>
-    <string name="pale_blue">淡蓝色</string>
+    <string name="pale_blue">淡紫色</string>
     <string name="pale_red">淡红色</string>
     <string name="pink">少女粉</string>
     <string name="red">亮红色</string>
@@ -69,14 +69,16 @@
     <string name="about_title_desc">作者：Akilesh</string>
     <string name="version">当前版本</string>
     <string name="links">项目相关信息</string>
-    <string name="github">Github开源社区</string>
+    <string name="github_repo">Github开源社区</string>
     <string name="telegram_group">Telegram公开频道</string>
-    <string name="xda">XDA主题发布</string>
+    <string name="xda_thread">XDA主题发布</string>
     <string name="downloads">下载相关链接</string>
     <string name="github_releases">Github获取</string>
     <string name="telegram_channel">Telegram频道获取（将包括测试版）</string>
     <string name="toast_light_theme_not_selected">未选择浅色主题的强调颜色</string>
-    <string name="toast_Dark_theme_not_selected">未选择暗黑主题的强调颜色</string>
+<!--
+    <string name="toast_dark_theme_not_selected">未选择暗黑主题的强调颜色</string>
+-->
     <string name="toast_color_not_selected">未选择强调色</string>
     <string name="toast_name_not_set">未命名强调色</string>
     <string name="storage_permission_rationale">需要获得存储权限才能获得壁纸颜色</string>
@@ -92,5 +94,52 @@
     <string name="magisk_not_detected">未检测到Magisk!</string>
     <string name="exit">退出</string>
     <string name="aapt_error">无法创建叠加层</string>
+    <string name="backup_restore">备份和还原</string>
+    <string name="backup_restore_summary">备份您的自定义颜色并在需要时将其还原</string>
+    <string name="restore">还原</string>
+    <string name="local_backups">备份到存储</string>
+    <string name="hex_code">十六进制代码</string>
+    <string name="backup_deleted">备份已删除</string>
+    <string name="backup_created">备份已创建!</string>
+    <string name="accents_restored">强调色已恢复!</string>
+    <string name="brand_colors">Brand colors</string>
+    <string name="adobe">Adobe</string>
+    <string name="airbnb">Airbnb</string>
+    <string name="alienware">Alienware</string>
+    <string name="alphabet">Alphabet</string>
+    <string name="amazon">Amazon</string>
+    <string name="android">Android</string>
+    <string name="archLinux">Arch Linux</string>
+    <string name="att">AT&amp;T</string>
+    <string name="cadbury">Cadbury</string>
+    <string name="cocacola">Coca-Cola</string>
+    <string name="debian">Debian</string>
+    <string name="dell">Dell</string>
+    <string name="discord">Discord</string>
+    <string name="fb">Facebook</string>
+    <string name="feedly">Feedly</string>
+    <string name="ferrari">Ferrari</string>
+    <string name="firefox">Firefox</string>
+    <string name="github">GitHub</string>
+    <string name="google_blue">Google blue</string>
+    <string name="google_green">Google green</string>
+    <string name="google_yellow">Google yellow</string>
+    <string name="google_red">Google red</string>
+    <string name="instagram">Instagram</string>
+    <string name="lamborghini">Lamborghini</string>
+    <string name="nokia">Nokia</string>
+    <string name="oneplus">OnePlus</string>
+    <string name="playStation">PlayStation</string>
+    <string name="razer">Razer</string>
+    <string name="samsung">Samsung</string>
+    <string name="spotify">Spotify</string>
+    <string name="t_mobile">T-Mobile</string>
+    <string name="telegram">Telegram</string>
+    <string name="tesla">Tesla</string>
+    <string name="twitter">Twitter</string>
+    <string name="ubuntu">Ubuntu</string>
+    <string name="whatsapp">Whatsapp</string>
+    <string name="xda">XDA Developers</string>
+    <string name="windows">Windows</string>
 
 </resources>

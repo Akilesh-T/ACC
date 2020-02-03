@@ -12,7 +12,8 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.ColorUtils
-import app.akilesh.qacc.Const.Module.overlayPath
+import androidx.navigation.navOptions
+import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
@@ -104,6 +105,15 @@ object AppUtils {
             .show()
     }
 
+    val navAnim = navOptions {
+        anim  {
+            enter  = R.anim.fragment_enter
+            exit = R.anim.fragment_exit
+            popEnter = R.anim.fragment_enter_pop
+            popExit = R.anim.fragment_exit_pop
+        }
+    }
+
 
     fun setPreview(binding: ColorPickerFragmentBinding, accentColor: Int) {
 
@@ -126,8 +136,20 @@ object AppUtils {
         }
 
         binding.apply {
+            brandColorsText.compoundDrawableTintList = accentTintList
+            customText.compoundDrawableTintList = accentTintList
+            presetText.compoundDrawableTintList = accentTintList
+            wallColorsText.compoundDrawableTintList = accentTintList
+            textInputLayout.setBoxStrokeColorStateList(accentTintList)
+            if (SDK_INT >= Q) {
+                name.textCursorDrawable?.setTintList(accentTintList)
+                name.textSelectHandle?.setTintList(accentTintList)
+                name.textSelectHandleLeft?.setTintList(accentTintList)
+                name.textSelectHandleRight?.setTintList(accentTintList)
+            }
             buttonPrevious.setTextColor(accentColor)
-            buttonNext.setBackgroundColor(accentColor)
+            buttonPrevious.rippleColor = accentTintList
+            buttonNext.backgroundTintList = accentTintList
         }
     }
 
@@ -136,8 +158,8 @@ object AppUtils {
         val appName = accent.pkgName.substringAfter(prefix)
         val filesDir = context.filesDir
 
-        val manifest = File("$filesDir", "AndroidManifest.xml")
-        val values = File("$filesDir/src/values")
+        val manifest = File(filesDir, "AndroidManifest.xml")
+        val values = File(filesDir, "/src/values")
         val colors = File(values, "colors.xml")
         manifest.createNewFile()
         colors.createNewFile()
@@ -156,18 +178,21 @@ object AppUtils {
             if (aaptResult.isSuccess && File("$filesDir/qacc.apk").exists()) {
                 val certFile = context.assets.open("testkey.x509.pem")
                 val keyFile = context.assets.open("testkey.pk8")
-                val out = FileOutputStream(File(filesDir, "signed.apk").absolutePath)
+                val out = FileOutputStream(File("$filesDir/signed.apk").path)
 
                 val cert = readCertificate(certFile)
                 val key = readPrivateKey(keyFile)
 
-                val jar = JarMap.open("$filesDir/qacc.apk")
+                val jar = JarMap.open(File(filesDir, "qacc.apk").path)
 
                 SignAPK.sign(cert, key, jar, out.buffered())
 
-                Shell.su(context.resources.openRawResource(R.raw.zipalign)).exec()
+                if (File(filesDir, "signed.apk").exists())
+                    Shell.su(context.resources.openRawResource(R.raw.zipalign)).exec()
+                else
+                    Toast.makeText(context, "Signed overlay not created", Toast.LENGTH_SHORT).show()
 
-                if (File("$filesDir/aligned.apk").exists()) {
+                if (File(filesDir, "aligned.apk").exists()) {
 
                     if (SDK_INT >= P) {
                         Shell.su("mkdir -p $overlayPath").exec()
@@ -207,7 +232,7 @@ object AppUtils {
                 }
             }
             else {
-                Toast.makeText(context, "Couldn't create overlay", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.aapt_error), Toast.LENGTH_SHORT).show()
                 Log.e("aapt-e", aaptResult.err.toString())
             }
         }

@@ -8,7 +8,54 @@
     <fragment
         android:id="@+id/home"
         android:name="app.akilesh.qacc.ui.fragments.HomeFragment"
-        tools:layout="@layout/home_fragment" />
+        tools:layout="@layout/home_fragment">
+
+        <argument
+            android:name="lightAccent"
+            app:argType="string" />
+
+        <argument
+            android:name="darkAccent"
+            app:argType="string" />
+
+        <argument
+            android:name="accentName"
+            app:argType="string" />
+
+        <argument
+            android:name="from_home"
+            app:argType="boolean" />
+
+        <action
+            android:id="@+id/edit"
+            app:destination="@id/customisation"
+            app:enterAnim="@anim/fragment_enter"
+            app:popEnterAnim="@anim/fragment_enter_pop"
+            app:exitAnim="@anim/fragment_exit"
+            app:popExitAnim="@anim/fragment_exit_pop">
+
+            <argument
+                android:name="lightAccent"
+                app:argType="string"
+                android:defaultValue="#FF5722" />
+
+            <argument
+                android:name="darkAccent"
+                app:argType="string"
+                android:defaultValue="#FF5722" />
+
+            <argument
+                android:name="accentName"
+                app:argType="string"
+                android:defaultValue="Custom" />
+
+            <argument
+                android:name="from_home"
+                app:argType="boolean"
+                android:defaultValue="true"/>
+        </action>
+
+    </fragment>
 
     <fragment
         android:id="@+id/settings"
@@ -138,6 +185,11 @@
             android:name="accentName"
             app:argType="string" />
 
+        <argument
+            android:name="from_home"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+
         <action
             android:id="@+id/to_home"
             app:popUpTo="@id/home" />
@@ -163,5 +215,10 @@
                 app:argType="string" />
         </action>
     </fragment>
+
+    <fragment
+        android:id="@+id/backup_fragment"
+        android:name="app.akilesh.qacc.ui.fragments.BackupRestoreFragment"
+        tools:layout="@layout/backup_restore_fragment" />
 
 </navigation>

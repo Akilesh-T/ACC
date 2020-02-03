@@ -2,12 +2,16 @@ package app.akilesh.qacc.ui.fragments
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.graphics.ColorUtils
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -50,13 +54,30 @@ class ColorCustomisationFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.textInputLayout.visibility = if (args.fromHome) View.VISIBLE else View.GONE
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         separateAccents = sharedPreferences.getBoolean("separate_accent", false)
+        if (SDK_INT < Q) separateAccents = false
 
         var accentLight = args.lightAccent
         var accentDark = args.darkAccent
+        var accentName = args.accentName
+
+        if (args.fromHome) {
+            binding.name.setText(accentName)
+            binding.name.doAfterTextChanged {
+                accentName = it.toString().trim()
+            }
+        }
+
         colorLight = Color.parseColor(accentLight)
         setPreviewLight(colorLight, accentLight)
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(colorLight, hsl)
+        binding.lightSliders.hue.value = hsl[0]
+        binding.lightSliders.saturation.value = hsl[1]
+        binding.lightSliders.lightness.value = hsl[2]
+
         model = ViewModelProvider(this).get(CustomisationViewModel::class.java)
         accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
 
@@ -67,15 +88,19 @@ class ColorCustomisationFragment: Fragment() {
         }
         model.lightAccent.observe(viewLifecycleOwner, lightAccentObserver)
 
-        if (!separateAccents) {
+        if (!separateAccents && SDK_INT < Q) {
             binding.chipGroup.visibility = View.GONE
             binding.previewDark.root.visibility = View.GONE
-            updateColor(false)
-
+            editAccentLight()
         }
         else {
-            colorDark = Color.parseColor(accentDark)
+            binding.lightSliders.root.visibility = View.GONE
+            colorDark = if (accentDark.isNotBlank()) Color.parseColor(accentDark) else colorLight
             setPreviewDark(colorDark, accentDark)
+            ColorUtils.colorToHSL(colorDark, hsl)
+            binding.darkSliders.hue.value = hsl[0]
+            binding.darkSliders.saturation.value = hsl[1]
+            binding.darkSliders.lightness.value = hsl[2]
 
             val darkAccentObserver = Observer<String> {
                 accentDark = it
@@ -88,10 +113,14 @@ class ColorCustomisationFragment: Fragment() {
         binding.chipGroup.setOnCheckedChangeListener { _, checkedId ->
             when(checkedId) {
                 binding.lightChip.id -> {
-                    updateColor( false)
+                    binding.lightSliders.root.visibility = View.VISIBLE
+                    binding.darkSliders.root.visibility = View.GONE
+                    editAccentLight()
                 }
                 binding.darkChip.id -> {
-                    updateColor( true)
+                    binding.lightSliders.root.visibility = View.GONE
+                    binding.darkSliders.root.visibility = View.VISIBLE
+                    editAccentDark()
                 }
             }
         }
@@ -111,31 +140,38 @@ class ColorCustomisationFragment: Fragment() {
                 val result = Shell.su("settings put system oem_black_mode_accent_color \'$accentLight\'")
                     .exec()
                 if (result.isSuccess) {
-                    showSnackbar(view, "$accentLight set")
+                    showSnackbar(view, String.format(getString(R.string.oos_accent_set), args.accentName))
                     findNavController().navigate(R.id.back_home)
                 }
             }
 
-            var suffix = "hex_" + accentLight.removePrefix("#")
-            val dark: String
-            if (separateAccents) {
-                suffix += "_" + accentDark.removePrefix("#")
-                dark = accentDark
+            if (accentName.isNotBlank()) {
+                var suffix = "hex_" + accentLight.removePrefix("#")
+                val dark: String
+                if (SDK_INT < Q)
+                    dark = accentLight
+                else {
+                    suffix += "_" + accentDark.removePrefix("#")
+                    dark = accentDark
+                }
+                val pkgName = prefix + suffix
+                val accent = Accent(pkgName, accentName, accentLight, dark)
+                Log.d("accent", accent.toString())
+                if (createAccent(context!!, accentViewModel, accent)) {
+                    showSnackbar(
+                        view,
+                        String.format(getString(R.string.accent_created), args.accentName)
+                    )
+                    findNavController().navigate(R.id.to_home)
+                }
             }
-            else dark = accentLight
-            val pkgName = prefix + suffix
-            val accent = Accent(pkgName, args.accentName, accentLight, dark)
-            Log.d("accent", accent.toString())
-            if (createAccent(context!!, accentViewModel, accent)) {
-                showSnackbar(view, "${args.accentName} created")
-                findNavController().navigate(R.id.to_home)
-            }
+            else Toast.makeText(context, getString(R.string.toast_name_not_set), Toast.LENGTH_SHORT).show()
         }
 
     }
 
     private fun setPreviewLight(color: Int, hex: String) {
-        val colorName = if (separateAccents) context!!.resources.getString(R.string.light) else args.accentName
+        val colorName = if (SDK_INT < Q) args.accentName else context!!.resources.getString(R.string.light)
         binding.previewLight.colorName.text = String.format(context!!.resources.getString(R.string.colour), colorName, hex)
         val textColorLight = Palette.Swatch(color, 1).bodyTextColor
         binding.previewLight.colorName.setTextColor(textColorLight)
@@ -149,37 +185,53 @@ class ColorCustomisationFragment: Fragment() {
         binding.previewDark.colorCard.backgroundTintList = ColorStateList.valueOf(color)
     }
 
-    private fun updateColor(isDark: Boolean) {
+    private fun editAccentLight() {
 
         var newColor: Int
         val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(if (isDark) colorDark else colorLight, hsl)
+        ColorUtils.colorToHSL(colorLight, hsl)
 
-        binding.hue.setOnChangeListener { _, value ->
+        binding.lightSliders.hue.addOnChangeListener { _, value, _ ->
             hsl[0] = value
             newColor = ColorUtils.HSLToColor(hsl)
-            if (isDark)
-                model.darkAccent.value = toHex(newColor)
-            else
-                model.lightAccent.value = toHex(newColor)
+            model.lightAccent.value = toHex(newColor)
         }
 
-        binding.saturation.setOnChangeListener { _, value ->
+        binding.lightSliders.saturation.addOnChangeListener { _, value, _ ->
             hsl[1] = value
             newColor = ColorUtils.HSLToColor(hsl)
-            if (isDark)
-                model.darkAccent.value = toHex(newColor)
-            else
-                model.lightAccent.value = toHex(newColor)
+            model.lightAccent.value = toHex(newColor)
         }
 
-        binding.lightness.setOnChangeListener { _, value ->
+        binding.lightSliders.lightness.addOnChangeListener { _, value, _ ->
             hsl[2] = value
             newColor = ColorUtils.HSLToColor(hsl)
-            if (isDark)
-                model.darkAccent.value = toHex(newColor)
-            else
-                model.lightAccent.value = toHex(newColor)
+            model.lightAccent.value = toHex(newColor)
+        }
+    }
+
+    private fun editAccentDark() {
+
+        var newColor: Int
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(colorDark, hsl)
+
+        binding.darkSliders.hue.addOnChangeListener { _, value, _ ->
+            hsl[0] = value
+            newColor = ColorUtils.HSLToColor(hsl)
+            model.darkAccent.value = toHex(newColor)
+        }
+
+        binding.darkSliders.saturation.addOnChangeListener { _, value, _ ->
+            hsl[1] = value
+            newColor = ColorUtils.HSLToColor(hsl)
+            model.darkAccent.value = toHex(newColor)
+        }
+
+        binding.darkSliders.lightness.addOnChangeListener { _, value, _ ->
+            hsl[2] = value
+            newColor = ColorUtils.HSLToColor(hsl)
+            model.darkAccent.value = toHex(newColor)
         }
     }
 }

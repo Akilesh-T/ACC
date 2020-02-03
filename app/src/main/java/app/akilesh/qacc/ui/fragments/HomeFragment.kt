@@ -9,15 +9,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import app.akilesh.qacc.Const.Module.overlayPath
+import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
+import app.akilesh.qacc.R
 import app.akilesh.qacc.ui.adapter.AccentListAdapter
 import app.akilesh.qacc.databinding.HomeFragmentBinding
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
-import app.akilesh.qacc.utils.SwipeToDeleteCallback
+import app.akilesh.qacc.utils.SwipeToDelete
 import app.akilesh.qacc.viewmodel.AccentViewModel
 import com.topjohnwu.superuser.Shell
 
@@ -39,7 +41,10 @@ class HomeFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = AccentListAdapter(context!!)
+        val adapter = AccentListAdapter(context!!) {
+            val navDirections = HomeFragmentDirections.edit(it.colorLight, it.colorDark, it.name, true)
+            findNavController().navigate(navDirections)
+        }
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context!!)
 
@@ -48,7 +53,7 @@ class HomeFragment: Fragment() {
             accents?.let { adapter.setAccents(it) }
         })
 
-        val swipeHandler = object : SwipeToDeleteCallback(context!!) {
+        val swipeHandler = object : SwipeToDelete(context!!) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                val accent = adapter.getAccentAndRemoveAt(viewHolder.adapterPosition)
                 accentViewModel.delete(accent)
@@ -61,7 +66,7 @@ class HomeFragment: Fragment() {
                         "pm uninstall ${accent.pkgName}"
                     ).exec()
                 if (result.isSuccess)
-                    showSnackbar(view, "${accent.name} removed.")
+                    showSnackbar(view, String.format(getString(R.string.accent_removed), accent.name))
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)

@@ -18,7 +18,8 @@ import com.google.android.material.textview.MaterialTextView
 import com.topjohnwu.superuser.Shell
 
 class AccentListAdapter internal constructor(
-    private val context: Context
+    private val context: Context,
+    val onLongClick: (Accent) -> Unit
 ): RecyclerView.Adapter<AccentListAdapter.AccentViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var accents = mutableListOf<Accent>()
@@ -41,9 +42,15 @@ class AccentListAdapter internal constructor(
         val current = accents[position]
         val colorLight = Color.parseColor(current.colorLight)
         var text = current.name + " - " + current.colorLight
+        holder.card.setOnLongClickListener {
+            onLongClick(current)
+            return@setOnLongClickListener true
+        }
+
         if (current.colorDark.isNotBlank() && current.colorDark != current.colorLight) text +=  " & " + current.colorDark
         holder.name.text = text
         holder.color.setColorFilter(colorLight)
+
 
         if (isOverlayInstalled(current.pkgName)) {
 

@@ -5,7 +5,7 @@ const val navigationVersion = "2.2.0-rc04"
 object BuildPlugins {
 
     object Versions {
-        const val gradleBuildToolsVersion = "4.0.0-alpha08"
+        const val gradleBuildToolsVersion = "4.0.0-alpha09"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradleBuildToolsVersion}"
@@ -37,13 +37,14 @@ object Libraries {
         const val lifecycle = "2.2.0-rc03"
         const val coroutines = "1.3.3"
         const val fragment = "1.2.0-rc05"
-        const val material = "1.2.0-alpha03"
+        const val material = "1.2.0-alpha04"
         const val libSu = "2.5.1"
         const val chroma = "1.2.6"
         const val bouncycastle = "1.63"
-        const val assent = "2.3.1"
+        const val assent = "3.0.0-RC1"
         const val about = "2.4.2"
         const val appUpdater = "2.7"
+        const val whatTheStack = "0.0.1"
     }
 
     const val kotlinStdLib        = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -76,10 +77,12 @@ object Libraries {
     const val bcProv              = "org.bouncycastle:bcprov-jdk15on:${Versions.bouncycastle}"
     const val bcPkix              = "org.bouncycastle:bcpkix-jdk15on:${Versions.bouncycastle}"
 
-    const val assent              = "com.afollestad:assent:${Versions.assent}"
+    const val assentCore          = "com.afollestad.assent:core:${Versions.assent}"
+    const val assentRationales    = "com.afollestad.assent:rationales:${Versions.assent}"
 
     const val materialAbout       = "com.github.daniel-stoneuk:material-about-library:${Versions.about}"
 
     const val appUpdater          = "com.github.javiersantos:AppUpdater:${Versions.appUpdater}"
 
+    const val whatTheStack        = "com.github.haroldadmin:WhatTheStack:${Versions.whatTheStack}"
 }

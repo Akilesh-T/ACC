@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/hue_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/hue"
+        android:layout_marginTop="14dp"
+        android:labelFor="@+id/hue"
+        android:text="@string/hue"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/saturation_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hue"
+        android:layout_marginTop="14dp"
+        android:labelFor="@+id/saturation"
+        android:text="@string/saturation"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/lightness_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saturation"
+        android:layout_marginTop="14dp"
+        android:labelFor="@+id/lightness"
+        android:text="@string/lightness"
+        />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/vertical_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="hue_text, saturation_text, lightness_text"
+        app:barrierDirection="end" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/hue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/vertical_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:valueFrom="0"
+        android:valueTo="359" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/saturation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/vertical_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hue"
+        android:valueFrom="0"
+        android:valueTo="1" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/lightness"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/vertical_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saturation"
+        android:valueFrom="0"
+        android:valueTo="1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,5 +4,6 @@
     android:id="@+id/recycler_view_color"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:padding="8dp"
     xmlns:tools="http://schemas.android.com/tools"
     tools:listitem="@layout/recyclerview_item_color_preview" />

@@ -7,166 +7,166 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <include
             android:id="@+id/preview_light"
+            layout="@layout/recyclerview_item_color_preview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constrainedHeight="true"
-            android:layout_marginTop="25dp"
             android:layout_marginStart="12dp"
+            android:layout_marginTop="25dp"
             android:layout_marginEnd="12dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/preview_dark"
-            layout="@layout/recyclerview_item_color_preview" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <include
             android:id="@+id/preview_dark"
+            layout="@layout/recyclerview_item_color_preview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constrainedHeight="true"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="12dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/preview_light"
+            app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/chip_group"
-            layout="@layout/recyclerview_item_color_preview" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/preview_light"
+            />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constrainedHeight="true"
             android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/preview_dark"
+            app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/reset_chip"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/preview_dark"
+            app:selectionRequired="true"
             app:singleLine="true"
             app:singleSelection="true"
-            app:selectionRequired="true">
+            >
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/light_chip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:text="@string/light"/>
+                android:text="@string/light"
+                />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/dark_chip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:text="@string/dark"/>
+                android:text="@string/dark"
+                />
 
         </com.google.android.material.chip.ChipGroup>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/reset_chip"
+            style="@style/Widget.MaterialComponents.Chip.Action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constrainedWidth="true"
-            app:layout_constrainedHeight="true"
-            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:layout_marginTop="8dp"
             android:text="@string/reset"
             app:chipIcon="@drawable/ic_outline_autorenew"
-            android:layout_marginTop="8dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chip_group"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat"/>
+            />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/linearLayoutCompat"
+        <include
+            android:id="@+id/light_sliders"
+            layout="@layout/hsl_sliders"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:paddingBottom="32dp"
-            android:orientation="vertical"
+    	    android:layout_marginEnd="16dp"
+            app:layout_constrainedHeight="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reset_chip">
+            app:layout_constraintTop_toBottomOf="@id/reset_chip"
+            />
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="light_sliders" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+        <include
+            android:id="@+id/dark_sliders"
+            layout="@layout/hsl_sliders"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+    	    android:layout_marginEnd="16dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrier"
+            android:visibility="gone"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="light_sliders, dark_sliders" />
+
+        
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrier2"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:importantForAutofill="noExcludeDescendants"
+            android:hint="@string/color_rename"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:inputType="text"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="64dp"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@+id/hue"
-                    android:text="@string/hue" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayout"
+            app:layout_constraintBottom_toTopOf="@id/bottom_barrier"
+            />
 
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/hue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:floatingLabel="true"
-                    android:valueFrom="0"
-                    android:valueTo="359" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="64dp"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@+id/saturation"
-                    android:text="@string/saturation" />
-
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/saturation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:floatingLabel="true"
-                    android:valueFrom="0"
-                    android:valueTo="1" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="64dp"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@+id/lightness"
-                    android:text="@string/lightness" />
-
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/lightness"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:floatingLabel="true"
-                    android:valueFrom="0"
-                    android:valueTo="1" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/bottom_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="button_next, button_previous"
+            app:barrierDirection="top" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_previous"
@@ -177,7 +177,8 @@
             android:text="@string/previous"
             android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_next"
@@ -188,7 +189,8 @@
             android:text="@string/create_new"
             android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
