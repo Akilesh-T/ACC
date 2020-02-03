@@ -155,5 +155,9 @@
     <string name="color_rename">Umbenennen</string>
     <string name="backup_contents">Sicherungsinhalt</string>
     <string name="version">Version</string>
+    <string name="dark_mode_on">An</string>
+    <string name="dark_mode_off">Aus</string>
+    <string name="dark_mode_set_by_battery_saver">Bei Energiesparmodus</string>
+    <string name="dark_mode_system_default">Systemstandard</string>
 
 </resources>
