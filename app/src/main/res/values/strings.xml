@@ -140,6 +140,9 @@
     <string name="whatsapp">Whatsapp</string>
     <string name="xda">XDA Developers</string>
     <string name="windows">Windows</string>
-
+    <string name="dark_mode_on">On</string>
+    <string name="dark_mode_off">Off</string>
+    <string name="dark_mode_set_by_battery_saver">Set by battery saver</string>
+    <string name="dark_mode_system_default">System default</string>
 
 </resources>
