@@ -2,25 +2,25 @@
     <string name="app_name">Accent Colour Creator</string>
     <string name="app_name_short">ACC</string>
     <string name="color_custom">Benutzerdefinierte Farbe</string>
-    <string name="set_custom_color">Tippen zum Einstellen einer benutzerdefinierten Farbe</string>
-    <string name="color_name">Benenne deine Farbe</string>
-    <string name="color_wallpaper">Hintergrundbild Farben</string>
+    <string name="set_custom_color">Tippen zum Erstellen einer benutzerdefinierten Farbe</string>
+    <string name="color_name">Name der Akzentfarbe</string>
+    <string name="color_wallpaper">Farben aus Hintergrundbild</string>
     <string name="created_accents">Akzente erstellt</string>
     <string name="presets">Voreingestellte Farben</string>
-    <string name="set_preset_color">Tippen um voreingestellte Farben zu verwenden</string>
-    <string name="set_wallpaper_color">Tippen um Farben vom Hintergrundbild zu verwenden</string>
+    <string name="set_preset_color">Tippen um fertige Farben zu verwenden</string>
+    <string name="set_wallpaper_color">Tippen um Farben aus dem Hintergrundbild zu verwenden</string>
     <string name="general_header">Allgemein</string>
     <string name="display_title">Dunkles Design</string>
     <string name="accents_header">Akzente</string>
     <string name="separate_accents_title">Separate Akzente</string>
-    <string name="create_new">Erstellen</string>
-    <string name="previous">Vorherige</string>
-    <string name="next">Nächstes</string>
+    <string name="create_new">Neu</string>
+    <string name="previous">Zurück</string>
+    <string name="next">Weiter</string>
     <string name="light">Hell</string>
     <string name="dark">Dunkel</string>
     <string name="info">Info</string>
-    <string name="separate_accent_summary_off">Die gleiche Farbe wird für das helle &amp; das dunkele Design genommen</string>
-    <string name="separate_accent_summary_on">Du kannst nun verschiedene Akzentfarben für helles &amp; dunkeles Design nutzen</string>
+    <string name="separate_accent_summary_off">Die aktuelle Akzentfarbe wird für das helle und das dunkele Design genutzt.</string>
+    <string name="separate_accent_summary_on">Helles und dunkeles Design nutzen verschieden Akzente</string>
     <string name="hue">Farbton</string>
     <string name="saturation">Sättigung</string>
     <string name="lightness">Leichtigkeit</string>
@@ -30,8 +30,7 @@
     <string name="settings_check_for_updates">Suche nach Updates</string>
     <string name="dl_and_install">Herunterladen &amp; Installieren</string>
     <string name="tweak">Farben optimieren</string>
-    <string name="tweak_summary">Farbton, Sättigung und Helligkeit der gewählten Farben ändern</string>
-
+    <string name="tweak_summary">Erlaubt das ändern vom Farbton, der Sättigung und der Helligkeit beim Erstellen einer Farbe</string>
     <string name="picker_title_text">Wähle deinen Akzent</string>
     <string name="picker_title_text_light">Wähle deinen Akzent für das helle Design</string>
     <string name="picker_title_text_dark">Wähle deinen Akzent für das dunkele Design</string>
@@ -83,11 +82,11 @@
     <string name="telegram_group">Telegram Gruppe</string>
     <string name="xda_thread">XDA Beitrag</string>
 
-    <string name="telegram_channel">Telegram channel (enthält Beta-Versionen)</string>
-    <string name="toast_light_theme_not_selected">Akzentfarbe für helles Design nicht ausgewählt</string>
-    <string name="toast_color_not_selected">Akzentfarbe nicht ausgewählt</string>
-    <string name="toast_name_not_set">Akzentname wurde nicht gesetzt</string>
-    <string name="storage_permission_rationale">Dateiberechtigung werden für die Farben des Hintergrundbildes benötigt</string>
+    <string name="telegram_channel">Telegram Kanal (enthält Beta-Versionen)</string>
+    <string name="toast_light_theme_not_selected">Keine Akzentfarbe für das helle Design gewählt</string>
+    <string name="toast_color_not_selected">Akzentfarbe nicht gewählt</string>
+    <string name="toast_name_not_set">Name fehlt!</string>
+    <string name="storage_permission_rationale">Es werden Dateiberechtigung benötigt um die Farben aus dem Hintergrundbild abzurufen.</string>
     <!--
         "%s" in the below 3 strings is a placeholder for the accent name set by the user
     -->
@@ -95,19 +94,19 @@
     <string name="accent_removed">%s gelöscht</string>
     <string name="oos_accent_set">%s aktiviert</string>
 
-    <string name="no_root_access_title">Fehlende Root-Rechte</string>
-    <string name="no_root_access_message">Bitte beachte:\n1. Dein Gerät ist gerootet mit Magisk\n2. ACC werden Root-Rechte gewährt</string>
+    <string name="no_root_access_title">Fehlende Superuser Rechte</string>
+    <string name="no_root_access_message">Bitte beachte:\n1. Dein Gerät ist gerootet mit Magisk\n2. ACC werden Superuser-Rechte gewährt</string>
     <string name="magisk_not_detected">Magisk nicht gefunden!</string>
     <string name="exit">Beenden</string>
     <string name="aapt_error">Erstellen fehlgeschlagen</string>
-    <string name="backup_restore">Backup and restore</string>
-    <string name="backup_restore_summary">Save your accents and restore them when needed</string>
-    <string name="restore">Restore</string>
-    <string name="local_backups">Backups in storage</string>
+    <string name="backup_restore">Sichern und wiederherstellen</string>
+    <string name="backup_restore_summary">Sichere deine Einstellungen und stelle sie bei Bedarf wiederher</string>
+    <string name="restore">Wiederherstellen</string>
+    <string name="local_backups">Gefundene Sicherungen</string>
     <string name="hex_code">Hex code</string>
-    <string name="backup_deleted">Backup file deleted</string>
-    <string name="backup_created">Backup created!</string>
-    <string name="accents_restored">Accents restored!</string>
+    <string name="backup_deleted">Backup gelöscht</string>
+    <string name="backup_created">Backup erstellt!</string>
+    <string name="accents_restored">Akzente wiederhergestellt!</string>
     <string name="brand_colors">Brand colors</string>
     <string name="adobe">Adobe</string>
     <string name="airbnb">Airbnb</string>
@@ -146,9 +145,11 @@
     <string name="whatsapp">Whatsapp</string>
     <string name="xda">XDA Developers</string>
     <string name="windows">Windows</string>
-    <string name="dark_mode_on">On</string>
-    <string name="dark_mode_off">Off</string>
-    <string name="dark_mode_set_by_battery_saver">Set by battery saver</string>
-    <string name="dark_mode_system_default">System default</string>
-
+    <string name="color_rename">Umbenennen</string>
+    <string name="backup_contents">Sicherungsinhalt</string>
+    <string name="version">Version</string>
+    <string name="dark_mode_on">An</string>
+    <string name="dark_mode_off">Aus</string>
+    <string name="dark_mode_set_by_battery_saver">Bei Energiesparmodus</string>
+    <string name="dark_mode_system_default">Systemstandard</string>
 </resources>
