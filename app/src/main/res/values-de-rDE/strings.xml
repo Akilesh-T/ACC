@@ -19,9 +19,7 @@
     <string name="light">Hell</string>
     <string name="dark">Dunkel</string>
     <string name="info">Info</string>
-    <string name="separate_accent_summary_off">Die aktuelle Akzentfarbe wird für das helle und das dunkele Design
-        genutzt.
-    </string>
+    <string name="separate_accent_summary_off">Die aktuelle Akzentfarbe wird für das helle und das dunkele Design genutzt.</string>
     <string name="separate_accent_summary_on">Helles und dunkeles Design nutzen verschieden Akzente</string>
     <string name="hue">Farbton</string>
     <string name="saturation">Sättigung</string>
@@ -32,10 +30,7 @@
     <string name="settings_check_for_updates">Suche nach Updates</string>
     <string name="dl_and_install">Herunterladen &amp; Installieren</string>
     <string name="tweak">Farben optimieren</string>
-    <string name="tweak_summary">Erlaubt dsa ändern des Farbton, der Sättigung und der Helligkeit beim Erstellen der
-        Farbe
-    </string>
-
+    <string name="tweak_summary">Erlaubt das ändern vom Farbton, der Sättigung und der Helligkeit beim Erstellen einer Farbe</string>
     <string name="picker_title_text">Wähle deinen Akzent</string>
     <string name="picker_title_text_light">Wähle deinen Akzent für das helle Design</string>
     <string name="picker_title_text_dark">Wähle deinen Akzent für das dunkele Design</string>
@@ -91,9 +86,7 @@
     <string name="toast_light_theme_not_selected">Keine Akzentfarbe für das helle Design gewählt</string>
     <string name="toast_color_not_selected">Akzentfarbe nicht gewählt</string>
     <string name="toast_name_not_set">Name fehlt!</string>
-    <string name="storage_permission_rationale">Es werden Dateiberechtigung benötigt um die Farben aus dem
-        Hintergrundbild abzurufen.
-    </string>
+    <string name="storage_permission_rationale">Es werden Dateiberechtigung benötigt um die Farben aus dem Hintergrundbild abzurufen.</string>
     <!--
         "%s" in the below 3 strings is a placeholder for the accent name set by the user
     -->
@@ -102,12 +95,12 @@
     <string name="oos_accent_set">%s aktiviert</string>
 
     <string name="no_root_access_title">Fehlende Superuser Rechte</string>
-    <string name="no_root_access_message">Bitte beachte:\n1. Dein Gerät ist gerootet mit Magisk\n2. ACC werden Root-Rechte gewährt</string>
+    <string name="no_root_access_message">Bitte beachte:\n1. Dein Gerät ist gerootet mit Magisk\n2. ACC werden Superuser-Rechte gewährt</string>
     <string name="magisk_not_detected">Magisk nicht gefunden!</string>
     <string name="exit">Beenden</string>
     <string name="aapt_error">Erstellen fehlgeschlagen</string>
     <string name="backup_restore">Sichern und wiederherstellen</string>
-    <string name="backup_restore_summary">Sichere deine Einstellungen und stelle sie bei Bedarf wieder her</string>
+    <string name="backup_restore_summary">Sichere deine Einstellungen und stelle sie bei Bedarf wiederher</string>
     <string name="restore">Wiederherstellen</string>
     <string name="local_backups">Gefundene Sicherungen</string>
     <string name="hex_code">Hex code</string>
