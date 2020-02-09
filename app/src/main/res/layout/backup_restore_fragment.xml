@@ -34,7 +34,7 @@
                 android:drawableTint="?colorPrimary"
                 android:drawablePadding="16dp"
                 android:padding="16dp"
-                android:text="@string/create_new"/>
+                android:text="@string/create_backup"/>
 
         </com.google.android.material.card.MaterialCardView>
 

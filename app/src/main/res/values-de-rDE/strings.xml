@@ -152,4 +152,5 @@
     <string name="dark_mode_off">Aus</string>
     <string name="dark_mode_set_by_battery_saver">Bei Energiesparmodus</string>
     <string name="dark_mode_system_default">Systemstandard</string>
+    <string name="create_backup">Backup</string>
 </resources>
