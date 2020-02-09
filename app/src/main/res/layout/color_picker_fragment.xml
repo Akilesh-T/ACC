@@ -90,7 +90,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableStart="@drawable/ic_palette_24dp"
+                android:drawableStart="@drawable/ic_outline_edit"
                 android:drawablePadding="16dp"
                 android:drawableTint="?colorPrimary"
                 android:ellipsize="end"
