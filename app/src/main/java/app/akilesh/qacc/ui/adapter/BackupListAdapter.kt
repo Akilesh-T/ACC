@@ -12,7 +12,8 @@ import com.google.android.material.textview.MaterialTextView
 class BackupListAdapter internal constructor(
     context: Context,
     private var filesList: MutableList<String>,
-    val onClick : (String) -> Unit
+    val preview : (String) -> Unit,
+    val restore : (String) -> Unit
 ) : RecyclerView.Adapter<BackupListAdapter.BackupsViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -20,6 +21,7 @@ class BackupListAdapter internal constructor(
     inner class BackupsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val file: MaterialTextView = itemView.findViewById(R.id.backup_file)
         val viewContents: AppCompatImageView = itemView.findViewById(R.id.view_content)
+        val restore: AppCompatImageView = itemView.findViewById(R.id.restore)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BackupsViewHolder {
@@ -30,7 +32,8 @@ class BackupListAdapter internal constructor(
     override fun onBindViewHolder(holder: BackupsViewHolder, position: Int) {
         val file = filesList[position]
         holder.file.text = file.removeSuffix(".tar.gz").replace('-', ' ')
-        holder.viewContents.setOnClickListener { onClick(file) }
+        holder.viewContents.setOnClickListener { preview(file) }
+        holder.restore.setOnClickListener { restore(file) }
     }
 
     internal fun setFiles(files: MutableList<String>) {

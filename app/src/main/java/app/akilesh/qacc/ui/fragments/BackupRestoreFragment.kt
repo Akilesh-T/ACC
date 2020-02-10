@@ -58,31 +58,37 @@ class BackupRestoreFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.newBackup.setOnClickListener { createBackup() }
-        binding.restore.setOnClickListener { restore() }
+        binding.restore.setOnClickListener { selectBackupFile() }
 
-        val adapter = BackupListAdapter(context!!, getBackupFiles()) { file ->
-            val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
-            val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
-            dialogTitleBinding.titleText.text = String.format(resources.getString(R.string.backup_contents))
-            dialogTitleBinding.titleIcon.setImageResource(R.drawable.ic_palette_24dp)
+        val adapter = BackupListAdapter(
+            context!!, getBackupFiles(), { file ->
+                val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
+                val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
+                dialogTitleBinding.titleText.text = String.format(resources.getString(R.string.backup_contents))
+                dialogTitleBinding.titleIcon.setImageResource(R.drawable.ic_backup_contents)
 
-            val contents = getBackupContents(file)
-            contents.removeIf { it == "./" }
-            contents.replaceAll { s -> s.removePrefix("./hex").removePrefix("_").removeSuffix(".apk").substringBefore('_') }
-            Log.d("contents", contents.toString())
+                val contents = getBackupContents(file)
+                contents.removeIf { it == "./" }
+                contents.replaceAll { s -> s.removePrefix("./hex").removePrefix("_").removeSuffix(".apk").substringBefore('_') }
+                Log.d("contents", contents.toString())
 
-            val accents: List<Colour> = contents.map { Colour("#$it", getString(R.string.hex_code)) }
-            val adapter = ColorListAdapter(context!!, accents) {}
+                val accents: List<Colour> = contents.map { Colour("#$it", getString(R.string.hex_code)) }
+                val adapter = ColorListAdapter(context!!, accents) {}
 
-            colorPreviewBinding.recyclerViewColor.adapter = adapter
-            colorPreviewBinding.recyclerViewColor.layoutManager = LinearLayoutManager(context)
+                colorPreviewBinding.recyclerViewColor.adapter = adapter
+                colorPreviewBinding.recyclerViewColor.layoutManager = LinearLayoutManager(context)
 
-            MaterialAlertDialogBuilder(context)
-                .setCustomTitle(dialogTitleBinding.root)
-                .setView(colorPreviewBinding.root)
-                .create()
-                .show()
-        }
+                MaterialAlertDialogBuilder(context)
+                    .setCustomTitle(dialogTitleBinding.root)
+                    .setView(colorPreviewBinding.root)
+                    .create()
+                    .show()
+            },
+            {
+                val backupFile = File(backupFolder, it)
+                restore(backupFile)
+            }
+        )
 
         binding.recyclerViewBackupFiles.adapter = adapter
         binding.recyclerViewBackupFiles.layoutManager = LinearLayoutManager(context)
@@ -154,7 +160,7 @@ class BackupRestoreFragment: Fragment() {
         }
     }
 
-    private fun restore() {
+    private fun selectBackupFile() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "application/gzip"
         startActivityForResult(intent, 3)
@@ -173,37 +179,7 @@ class BackupRestoreFragment: Fragment() {
                     stream.copyTo(it)
                 }
             }
-
-            if (SDK_INT >= P) {
-                val result = Shell.su("[ -d $modPath ]").exec()
-                if (!result.isSuccess) {
-                    Shell.su("mkdir -p $overlayPath").exec()
-                    Shell.su(context!!.resources.openRawResource(R.raw.create_module)).exec()
-                }
-
-                val restoreResult = Shell.su(
-                    ".$busyBox tar x -zv -f ${backupFile.absolutePath} -C $overlayPath"
-                ).exec()
-                Log.d("restore", restoreResult.out.toString())
-                if (restoreResult.isSuccess) {
-                    insertToDB(getAppList(backupFile.absolutePath))
-                    context!!.cacheDir.deleteRecursively()
-                    showSnackbar(this.view!!, getString(R.string.accents_restored))
-                }
-            }
-            else {
-                context!!.cacheDir.deleteRecursively()
-                val apps = getAppList(backupFile.absolutePath)
-                apps?.forEach {
-                    val result = Shell.su(
-                        "chmod 644 ${it.absolutePath}",
-                        "pm install -r ${it.absolutePath}"
-                    ).exec()
-                    Log.d("pm-install", result.out.toString())
-                }
-                insertToDB(apps)
-                context!!.cacheDir.deleteRecursively()
-            }
+            restore(backupFile)
         }
     }
 
@@ -213,6 +189,39 @@ class BackupRestoreFragment: Fragment() {
         ).exec()
         return context!!.cacheDir.listFiles { file ->
             file.length() > 0 && file.extension == "apk" && file.name.startsWith("hex")
+        }
+    }
+
+    private fun restore(backupFile: File) {
+        if (SDK_INT >= P) {
+            val result = Shell.su("[ -d $modPath ]").exec()
+            if (!result.isSuccess) {
+                Shell.su("mkdir -p $overlayPath").exec()
+                Shell.su(context!!.resources.openRawResource(R.raw.create_module)).exec()
+            }
+
+            val restoreResult = Shell.su(
+                ".$busyBox tar x -zv -f ${backupFile.absolutePath} -C $overlayPath"
+            ).exec()
+            Log.d("restore", restoreResult.out.toString())
+            if (restoreResult.isSuccess) {
+                insertToDB(getAppList(backupFile.absolutePath))
+                context!!.cacheDir.deleteRecursively()
+                showSnackbar(this.view!!, getString(R.string.accents_restored))
+            }
+        }
+        else {
+            context!!.cacheDir.deleteRecursively()
+            val apps = getAppList(backupFile.absolutePath)
+            apps?.forEach {
+                val result = Shell.su(
+                    "chmod 644 ${it.absolutePath}",
+                    "pm install -r ${it.absolutePath}"
+                ).exec()
+                Log.d("pm-install", result.out.toString())
+            }
+            insertToDB(apps)
+            context!!.cacheDir.deleteRecursively()
         }
     }
 
