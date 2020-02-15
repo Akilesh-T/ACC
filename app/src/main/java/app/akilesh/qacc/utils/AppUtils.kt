@@ -114,6 +114,9 @@ object AppUtils {
         }
     }
 
+    val installedAccents: MutableList<String> = Shell.su(
+        "pm list packages -f $prefix | sed s/package://"
+    ).exec().out
 
     fun setPreview(binding: ColorPickerFragmentBinding, accentColor: Int) {
 

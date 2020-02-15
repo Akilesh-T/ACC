@@ -7,7 +7,7 @@
         android:title="@string/info"
         android:icon="@drawable/ic_outline_info"
         android:orderInCategory="1"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/settings"

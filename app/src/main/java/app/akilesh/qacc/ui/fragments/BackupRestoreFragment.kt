@@ -28,6 +28,7 @@ import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.adapter.BackupListAdapter
 import app.akilesh.qacc.ui.adapter.ColorListAdapter
+import app.akilesh.qacc.utils.AppUtils.installedAccents
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.utils.SwipeToDelete
@@ -119,7 +120,7 @@ class BackupRestoreFragment: Fragment() {
 
     private fun getBackupFiles(): MutableList<String> {
         return Shell.su(
-            "ls $backupFolder"
+            "ls -1 $backupFolder"
         ).exec().out
     }
 
@@ -127,22 +128,22 @@ class BackupRestoreFragment: Fragment() {
 
         Shell.su("mkdir -p $backupFolder").exec()
         if (SDK_INT >= P) {
-            compress(overlayPath)
+            if (Shell.su("[ \"$(ls -A $overlayPath)\" ]").exec().isSuccess)
+                compress(overlayPath)
         }
         else {
-            val overlays = Shell.su(
-                "pm list packages -f ${prefix}hex | sed s/package://"
-            ).exec().out
-            context!!.cacheDir.deleteRecursively()
-            overlays.forEach {
-                val path = it.substringBeforeLast('=')
-                val pkgName = it.substringAfterLast('=')
-                val apkName = pkgName.substringAfter(prefix)
-                Shell.su(
-                    "cp -f $path ${context!!.cacheDir.absolutePath}/$apkName.apk"
-                ).exec()
+            if (installedAccents.isNotEmpty()) {
+                context!!.cacheDir.deleteRecursively()
+                installedAccents.forEach {
+                    val path = it.substringBeforeLast('=')
+                    val pkgName = it.substringAfterLast('=')
+                    val apkName = pkgName.substringAfter(prefix)
+                    Shell.su(
+                        "cp -f $path ${context!!.cacheDir.absolutePath}/$apkName.apk"
+                    ).exec()
+                }
+                compress(context!!.cacheDir.absolutePath)
             }
-            compress(context!!.cacheDir.absolutePath)
         }
     }
 
