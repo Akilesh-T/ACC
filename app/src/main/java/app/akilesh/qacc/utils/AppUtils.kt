@@ -178,10 +178,10 @@ object AppUtils {
             ).exec()
             Log.d("aapt", aaptResult.code.toString())
 
-            if (aaptResult.isSuccess && File("$filesDir/qacc.apk").exists()) {
+            if (aaptResult.isSuccess && File(filesDir, "qacc.apk").exists()) {
                 val certFile = context.assets.open("testkey.x509.pem")
                 val keyFile = context.assets.open("testkey.pk8")
-                val out = FileOutputStream(File("$filesDir/signed.apk").path)
+                val out = FileOutputStream(File(filesDir, "signed.apk").path)
 
                 val cert = readCertificate(certFile)
                 val key = readPrivateKey(keyFile)
