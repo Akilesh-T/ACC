@@ -19,10 +19,10 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         WhatTheStack(this).init()
+        setContext(this)
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val theme = sharedPreferences.getString("themePref", AppUtils.default)
         AppUtils.applyTheme(theme)
-        setContext(this)
     }
 
 }

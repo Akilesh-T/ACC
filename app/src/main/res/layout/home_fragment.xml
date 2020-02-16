@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/recycler_view"
-    tools:listitem="@layout/recyclerview_item"
+    tools:listitem="@layout/recyclerview_item_accents"
     android:layout_marginStart="12dp"
     android:layout_marginEnd="12dp"
     android:layout_marginTop="25dp"

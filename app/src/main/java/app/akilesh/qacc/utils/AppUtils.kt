@@ -114,9 +114,10 @@ object AppUtils {
         }
     }
 
-    val installedAccents: MutableList<String> = Shell.su(
+    val installedAccents: MutableList<String> = if (SDK_INT < P) Shell.su(
         "pm list packages -f $prefix | sed s/package://"
     ).exec().out
+    else Shell.su("ls -1 $overlayPath").exec().out
 
     fun setPreview(binding: ColorPickerFragmentBinding, accentColor: Int) {
 

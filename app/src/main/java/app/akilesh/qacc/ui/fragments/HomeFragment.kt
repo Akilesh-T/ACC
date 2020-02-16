@@ -86,7 +86,12 @@ class HomeFragment: Fragment() {
            inDB.addAll(accents.map { it.pkgName })
 
         if (installedAccents.isNotEmpty())
-            installed.addAll(installedAccents.map { it.substringAfterLast('=') })
+            installed.addAll(
+                if (SDK_INT < P)
+                    installedAccents.map { it.substringAfterLast('=') }
+                else
+                    installedAccents.map { prefix+it.removeSuffix(".apk") }
+            )
 
         val missingAccents = installed.subtract(inDB)
         if (missingAccents.isNotEmpty()) {

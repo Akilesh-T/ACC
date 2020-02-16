@@ -1,25 +1,27 @@
 package app.akilesh.qacc.ui.adapter
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.Q
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 import com.topjohnwu.superuser.Shell
 
 class AccentListAdapter internal constructor(
     private val context: Context,
-    val onLongClick: (Accent) -> Unit
+    val edit: (Accent) -> Unit
 ): RecyclerView.Adapter<AccentListAdapter.AccentViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var accents = mutableListOf<Accent>()
@@ -27,13 +29,15 @@ class AccentListAdapter internal constructor(
 
     inner class AccentViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val card: MaterialCardView = itemView.findViewById(R.id.cardView)
-        val name: MaterialTextView = itemView.findViewById(R.id.name)
-        val color: AppCompatImageView = itemView.findViewById(R.id.color)
-        val box: MaterialCheckBox = itemView.findViewById(R.id.enable_or_disable_accent)
+        val name: MaterialTextView = itemView.findViewById(R.id.color_name)
+        val switchMaterial: SwitchMaterial = itemView.findViewById(R.id.enable_disable_accent)
+        val lightAccent: MaterialTextView = itemView.findViewById(R.id.light_accent)
+        val darkAccent: MaterialTextView = itemView.findViewById(R.id.dark_accent)
+        val edit: MaterialButton = itemView.findViewById(R.id.edit)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccentViewHolder {
-        val itemView = inflater.inflate(R.layout.recyclerview_item, parent, false)
+        val itemView = inflater.inflate(R.layout.recyclerview_item_accents, parent, false)
         return AccentViewHolder(itemView)
     }
 
@@ -41,30 +45,39 @@ class AccentListAdapter internal constructor(
 
         val current = accents[position]
         val colorLight = Color.parseColor(current.colorLight)
-        var text = current.name + " - " + current.colorLight
-        holder.card.setOnLongClickListener {
-            onLongClick(current)
-            return@setOnLongClickListener true
+        val colorDark = Color.parseColor(current.colorDark)
+        holder.edit.apply {
+            rippleColor = ColorStateList.valueOf(colorLight)
+            setOnClickListener {
+                edit(current)
+            }
         }
 
-        if (current.colorDark.isNotBlank() && current.colorDark != current.colorLight) text +=  " & " + current.colorDark
-        holder.name.text = text
-        holder.color.setColorFilter(colorLight)
-
+        holder.name.text = current.name
+        holder.lightAccent.text = current.colorLight
+        holder.lightAccent.compoundDrawableTintList = ColorStateList.valueOf(colorLight)
+        if (current.colorDark.isNotBlank() && current.colorDark != current.colorLight) {
+            holder.darkAccent.text = current.colorDark
+            holder.darkAccent.compoundDrawableTintList = ColorStateList.valueOf(colorDark)
+        }
+        else {
+            holder.darkAccent.visibility = View.GONE
+        }
 
         if (isOverlayInstalled(current.pkgName)) {
 
             if (isOverlayEnabled(current.pkgName)) {
-                holder.box.isChecked = true
                 val accentColor = context.getColorAccent()
-                holder.color.setColorFilter(accentColor)
-                holder.card.strokeWidth = 3
-                holder.card.strokeColor = accentColor
-
+                holder.switchMaterial.apply {
+                    isChecked = true
+                    thumbTintList = ColorStateList.valueOf(accentColor)
+                    trackTintList =
+                        ColorStateList.valueOf(ColorUtils.setAlphaComponent(accentColor, 150))
+                }
             }
-            else holder.box.isChecked = false
+            else holder.switchMaterial.isChecked = false
 
-            holder.box.setOnCheckedChangeListener { _, isChecked ->
+            holder.switchMaterial.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     accents.forEach {
                         Shell.su("cmd overlay disable ${it.pkgName}").exec()
@@ -81,9 +94,12 @@ class AccentListAdapter internal constructor(
             }
         }
         else {
-            holder.box.hint = "Not installed"
-            holder.box.isClickable = false
-            holder.box.buttonDrawable = null
+            holder.switchMaterial.apply {
+                hint = "Not installed"
+                isClickable = false
+                thumbDrawable = null
+                trackDrawable = null
+            }
         }
     }
 
