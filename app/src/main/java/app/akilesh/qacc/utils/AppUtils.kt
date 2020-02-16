@@ -114,11 +114,6 @@ object AppUtils {
         }
     }
 
-    val installedAccents: MutableList<String> = if (SDK_INT < P) Shell.su(
-        "pm list packages -f $prefix | sed s/package://"
-    ).exec().out
-    else Shell.su("ls -1 $overlayPath").exec().out
-
     fun setPreview(binding: ColorPickerFragmentBinding, accentColor: Int) {
 
         val accentTintList = ColorStateList.valueOf(accentColor)
@@ -161,6 +156,7 @@ object AppUtils {
         var created = false
         val appName = accent.pkgName.substringAfter(prefix)
         val filesDir = context.filesDir
+        val tempFiles = arrayOf("qacc.apk", "signed.apk", "aligned.apk")
 
         val manifest = File(filesDir, "AndroidManifest.xml")
         val values = File(filesDir, "/src/values")
@@ -175,42 +171,40 @@ object AppUtils {
             Shell.su("cd ${filesDir.absolutePath}").exec()
             val aaptResult = Shell.su(
                 "chmod +x aapt",
-                "./aapt p -f -M AndroidManifest.xml -I  /system/framework/framework-res.apk -S src -F qacc.apk"
+                "./aapt p -f -M AndroidManifest.xml -I  /system/framework/framework-res.apk -S src -F ${tempFiles[0]}"
             ).exec()
             Log.d("aapt", aaptResult.code.toString())
 
-            if (aaptResult.isSuccess && File(filesDir, "qacc.apk").exists()) {
+            if (aaptResult.isSuccess && File(filesDir, tempFiles[0]).exists()) {
                 val certFile = context.assets.open("testkey.x509.pem")
                 val keyFile = context.assets.open("testkey.pk8")
-                val out = FileOutputStream(File(filesDir, "signed.apk").path)
 
                 val cert = readCertificate(certFile)
                 val key = readPrivateKey(keyFile)
+                val jar = JarMap.open(File(filesDir, tempFiles[0]).path)
 
-                val jar = JarMap.open(File(filesDir, "qacc.apk").path)
-
+                val out = FileOutputStream(File(filesDir, tempFiles[1]).path)
                 SignAPK.sign(cert, key, jar, out.buffered())
 
-                if (File(filesDir, "signed.apk").exists())
+                if (File(filesDir, tempFiles[1]).exists())
                     Shell.su(context.resources.openRawResource(R.raw.zipalign)).exec()
                 else
                     Toast.makeText(context, "Signed overlay not created", Toast.LENGTH_SHORT).show()
 
-                if (File(filesDir, "aligned.apk").exists()) {
+                if (File(filesDir, tempFiles[2]).exists()) {
 
                     if (SDK_INT >= P) {
                         Shell.su("mkdir -p $overlayPath").exec()
                         Shell.su(context.resources.openRawResource(R.raw.create_module)).exec()
                         val result = Shell.su(
-                            "cp -f $filesDir/aligned.apk $overlayPath/$appName.apk"
+                            "cp -f $filesDir/${tempFiles[2]} $overlayPath/$appName.apk"
                         ).exec()
                         Log.d("inject", result.code.toString())
                         Shell.su("chmod 644 $overlayPath/$appName.apk").exec()
 
                         if (result.isSuccess) {
                             created = true
-                            val createdApks = listOf("qacc.apk", "signed.apk", "aligned.apk")
-                            createdApks.forEach {
+                            tempFiles.forEach {
                                 File(filesDir, it).delete()
                             }
                             accentViewModel.insert(accent)
@@ -218,15 +212,14 @@ object AppUtils {
                     }
                     else {
                         val result = Shell.su(
-                            "chmod 644 $filesDir/aligned.apk",
-                            "pm install -r $filesDir/aligned.apk"
+                            "chmod 644 $filesDir/${tempFiles[2]}",
+                            "pm install -r $filesDir/${tempFiles[2]}"
                         ).exec()
                         Log.d("pm-install", result.code.toString())
 
                         if (result.isSuccess) {
                             created = true
-                            val createdApks = listOf("qacc.apk", "signed.apk", "aligned.apk")
-                            createdApks.forEach {
+                            tempFiles.forEach {
                                 File(filesDir, it).delete()
                             }
                             accentViewModel.insert(accent)

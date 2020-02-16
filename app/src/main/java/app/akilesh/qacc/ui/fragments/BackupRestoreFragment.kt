@@ -28,7 +28,6 @@ import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.adapter.BackupListAdapter
 import app.akilesh.qacc.ui.adapter.ColorListAdapter
-import app.akilesh.qacc.utils.AppUtils.installedAccents
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.utils.SwipeToDelete
@@ -132,6 +131,10 @@ class BackupRestoreFragment: Fragment() {
                 compress(overlayPath)
         }
         else {
+            val installedAccents: MutableList<String> = Shell.su(
+                "pm list packages -f $prefix | sed s/package://"
+            ).exec().out
+
             if (installedAccents.isNotEmpty()) {
                 context!!.cacheDir.deleteRecursively()
                 installedAccents.forEach {

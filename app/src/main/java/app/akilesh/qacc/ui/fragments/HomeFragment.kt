@@ -20,7 +20,6 @@ import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.HomeFragmentBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.ui.adapter.AccentListAdapter
-import app.akilesh.qacc.utils.AppUtils.installedAccents
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.utils.SwipeToDelete
@@ -85,13 +84,25 @@ class HomeFragment: Fragment() {
         if (accents.isNotEmpty())
            inDB.addAll(accents.map { it.pkgName })
 
+        val installedAccents: MutableList<String> =  Shell.su(
+            "pm list packages -f $prefix | sed s/package://"
+        ).exec().out
+
         if (installedAccents.isNotEmpty())
             installed.addAll(
-                if (SDK_INT < P)
                     installedAccents.map { it.substringAfterLast('=') }
-                else
-                    installedAccents.map { prefix+it.removeSuffix(".apk") }
             )
+        if (SDK_INT > P) {
+            val list = Shell.su("ls -1 $overlayPath").exec().out
+            if (list.isNotEmpty()) {
+                val inModule = list.map {
+                    prefix + it.removeSuffix(".apk")
+                }
+                val deleted = installed.subtract(inModule)
+                if (deleted.isNotEmpty())
+                    installed.removeAll(deleted)
+            }
+        }
 
         val missingAccents = installed.subtract(inDB)
         if (missingAccents.isNotEmpty()) {
