@@ -45,7 +45,6 @@ class AccentListAdapter internal constructor(
 
         val current = accents[position]
         val colorLight = Color.parseColor(current.colorLight)
-        val colorDark = Color.parseColor(current.colorDark)
         holder.edit.apply {
             rippleColor = ColorStateList.valueOf(colorLight)
             setOnClickListener {
@@ -58,6 +57,7 @@ class AccentListAdapter internal constructor(
         holder.lightAccent.compoundDrawableTintList = ColorStateList.valueOf(colorLight)
         if (current.colorDark.isNotBlank() && current.colorDark != current.colorLight) {
             holder.darkAccent.text = current.colorDark
+            val colorDark = Color.parseColor(current.colorDark)
             holder.darkAccent.compoundDrawableTintList = ColorStateList.valueOf(colorDark)
         }
         else {
