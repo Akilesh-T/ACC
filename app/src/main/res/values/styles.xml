@@ -10,7 +10,6 @@
         <item name="colorSurface">@color/colorCustom</item>
         <item name="buttonBarButtonStyle">@style/Button</item>
         <item name="android:statusBarColor">?colorSurface</item>
-        <item name="android:navigationBarColor">?colorSurface</item>
         <item name="dialogCornerRadius">8dp</item>
     </style>
 

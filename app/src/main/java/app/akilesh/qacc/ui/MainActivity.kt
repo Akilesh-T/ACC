@@ -1,6 +1,7 @@
 package app.akilesh.qacc.ui
 
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -39,6 +40,7 @@ class MainActivity: AppCompatActivity() {
             Configuration.UI_MODE_NIGHT_NO -> {
                 decorView.systemUiVisibility =
                     View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                window.navigationBarColor = Color.TRANSPARENT
             }
         }
 
@@ -52,10 +54,20 @@ class MainActivity: AppCompatActivity() {
                 R.id.color_picker, R.id.dark_accent, R.id.customisation -> {
                     binding.bottomAppBar.visibility = View.GONE
                     binding.xFab.visibility = View.GONE
+                    when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                        Configuration.UI_MODE_NIGHT_YES -> {
+                            window.navigationBarColor = Color.TRANSPARENT
+                        }
+                    }
                 }
                 else -> {
                     binding.bottomAppBar.visibility = View.VISIBLE
                     binding.xFab.visibility = View.VISIBLE
+                    when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                        Configuration.UI_MODE_NIGHT_YES -> {
+                            window.navigationBarColor = Color.parseColor("#1E1E1E")
+                        }
+                    }
                 }
             }
         }
