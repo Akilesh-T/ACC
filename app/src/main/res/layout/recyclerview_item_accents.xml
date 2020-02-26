@@ -19,7 +19,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_margin="4dp"
             tools:layout_gravity="center">
 
             <com.google.android.material.textview.MaterialTextView
@@ -43,28 +43,14 @@
                 app:layout_constraintTop_toTopOf="@id/color_name"
                 app:layout_constraintBottom_toBottomOf="@id/color_name"
                 app:layout_constraintStart_toEndOf="@id/color_name"
-                app:layout_constraintEnd_toStartOf="@id/top_barrier" />
+                app:layout_constraintEnd_toStartOf="@id/vertical_barrier" />
 
             <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/top_barrier"
+                android:id="@+id/vertical_barrier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="edit"
+                app:constraint_referenced_ids="enable_disable_accent"
                 app:barrierDirection="start" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/edit"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="@id/color_name"
-                app:layout_constraintBottom_toBottomOf="@id/color_name"
-                app:layout_constraintEnd_toStartOf="@+id/enable_disable_accent"
-                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-                android:textAllCaps="false"
-                android:text="@string/edit"
-                app:iconTint="?colorOnSurface"
-                android:textColor="?colorOnSurface"
-                app:icon="@drawable/ic_outline_edit" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/enable_disable_accent"
@@ -85,43 +71,54 @@
                 app:constraint_referenced_ids="color_name, enable_disable_accent"
                 app:barrierDirection="bottom" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintTop_toBottomOf="@+id/barrier" >
+                android:layout_margin="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/edit"
+                app:layout_constraintBottom_toBottomOf="@+id/edit"
+                app:layout_constraintTop_toTopOf="@+id/edit"
+                >
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/light_accent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    >
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dark_accent"
+                    android:layout_marginEnd="8dp"
+                    android:drawableStart="@drawable/ic_palette_24dp"
+                    android:drawablePadding="8dp"
+                    />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/light_accent"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/dark_accent"
-                        android:layout_marginEnd="8dp"
-                        android:drawableStart="@drawable/ic_palette_24dp"
-                        android:drawablePadding="8dp"
-                        />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/dark_accent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/light_accent"
+                    android:drawableStart="@drawable/ic_palette_24dp"
+                    android:drawablePadding="8dp"
+                    />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/dark_accent"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/light_accent"
-                        android:drawableStart="@drawable/ic_palette_24dp"
-                        android:drawablePadding="8dp"
-                        />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/barrier"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:textAllCaps="false"
+                android:text="@string/edit"
+                app:iconTint="?colorControlNormal"
+                android:textColor="?colorControlNormal"
+                app:icon="@drawable/ic_outline_edit" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
