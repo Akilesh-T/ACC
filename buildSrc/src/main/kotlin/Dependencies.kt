@@ -1,11 +1,11 @@
 const val kotlinVersion = "1.3.61"
-const val navigationVersion = "2.2.0-rc04"
+const val navigationVersion = "2.2.1"
 
 
 object BuildPlugins {
 
     object Versions {
-        const val gradleBuildToolsVersion = "4.0.0-alpha09"
+        const val gradleBuildToolsVersion = "4.0.0-beta01"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradleBuildToolsVersion}"
@@ -23,25 +23,25 @@ object BuildPlugins {
 object AndroidSdk {
     const val min = 26
     const val compile = 29
-    const val target = compile
+    const val target = 29
 }
 
 object Libraries {
     private object Versions {
         const val jetpack = "1.1.0"
         const val constraintLayout = "2.0.0-beta4"
-        const val core = "1.2.0-rc01"
+        const val core = "1.2.0"
         const val preference = "1.1.0"
         const val palette = "1.0.0"
-        const val room = "2.2.3"
-        const val lifecycle = "2.2.0-rc03"
+        const val room = "2.2.4"
+        const val lifecycle = "2.2.0"
         const val coroutines = "1.3.3"
-        const val fragment = "1.2.0-rc05"
-        const val material = "1.2.0-alpha04"
+        const val fragment = "1.2.2"
+        const val material = "1.2.0-alpha05"
         const val libSu = "2.5.1"
         const val chroma = "1.2.6"
-        const val bouncycastle = "1.63"
-        const val assent = "3.0.0-RC1"
+        const val bouncycastle = "1.64"
+        const val assent = "3.0.0-RC4"
         const val about = "2.4.2"
         const val appUpdater = "2.7"
         const val whatTheStack = "0.0.1"
@@ -59,8 +59,8 @@ object Libraries {
     const val roomKtx             = "androidx.room:room-ktx:${Versions.room}"
     const val roomCompiler        = "androidx.room:room-compiler:${Versions.room}"
 
-    const val lifecycleExtensions = "androidx.lifecycle:lifecycle-extensions:${Versions.lifecycle}"
     const val lifecycleCommon     = "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
+    const val lifecycleLiveData   = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
     const val lifecycleViewModel  = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
 
     const val coroutines          = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"

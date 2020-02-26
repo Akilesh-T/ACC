@@ -8,7 +8,7 @@ plugins {
 
 android {
     compileSdkVersion(AndroidSdk.compile)
-    buildToolsVersion = "29.0.2"
+    buildToolsVersion = "29.0.3"
     defaultConfig {
         applicationId = "app.akilesh.qacc"
         minSdkVersion(AndroidSdk.min)
@@ -56,7 +56,7 @@ dependencies {
     kapt(Libraries.roomCompiler)
 
     // Lifecycle components
-    implementation(Libraries.lifecycleExtensions)
+    implementation(Libraries.lifecycleLiveData)
     implementation(Libraries.lifecycleCommon)
 
     // ViewModel Kotlin support
