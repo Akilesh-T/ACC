@@ -34,14 +34,14 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="12dp"
             app:layout_constrainedHeight="true"
-            app:layout_constraintBottom_toTopOf="@+id/chip_group"
+            app:layout_constraintBottom_toTopOf="@+id/toggleButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/preview_light"
             />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group"
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -51,27 +51,31 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/preview_dark"
             app:selectionRequired="true"
-            app:singleLine="true"
             app:singleSelection="true"
+            app:checkedButton="@+id/light_toggle"
             >
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/light_chip"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                android:id="@+id/light_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAllCaps="false"
                 android:text="@string/light"
+                app:icon="@drawable/ic_outline_wb_sunny"
                 />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/dark_chip"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                android:id="@+id/dark_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAllCaps="false"
                 android:text="@string/dark"
+                app:icon="@drawable/ic_outline_nights_stay"
                 />
 
-        </com.google.android.material.chip.ChipGroup>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/reset_chip"
@@ -85,7 +89,7 @@
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chip_group"
+            app:layout_constraintTop_toBottomOf="@+id/toggleButton"
             />
 
         <include

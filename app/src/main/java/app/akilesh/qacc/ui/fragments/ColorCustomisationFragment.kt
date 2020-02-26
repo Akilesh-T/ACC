@@ -87,14 +87,13 @@ class ColorCustomisationFragment: Fragment() {
             setPreviewLight(colorLight, accentLight)
         }
         model.lightAccent.observe(viewLifecycleOwner, lightAccentObserver)
+        editAccentLight()
 
         if (!separateAccents && SDK_INT < Q) {
-            binding.chipGroup.visibility = View.GONE
+            binding.toggleButton.visibility = View.GONE
             binding.previewDark.root.visibility = View.GONE
-            editAccentLight()
         }
         else {
-            binding.lightSliders.root.visibility = View.GONE
             colorDark = if (accentDark.isNotBlank()) Color.parseColor(accentDark) else colorLight
             setPreviewDark(colorDark, accentDark)
             ColorUtils.colorToHSL(colorDark, hsl)
@@ -110,14 +109,14 @@ class ColorCustomisationFragment: Fragment() {
             model.darkAccent.observe(viewLifecycleOwner, darkAccentObserver)
         }
 
-        binding.chipGroup.setOnCheckedChangeListener { _, checkedId ->
-            when(checkedId) {
-                binding.lightChip.id -> {
+        binding.toggleButton.addOnButtonCheckedListener { group, _, _ ->
+            when(group.checkedButtonId) {
+                binding.lightToggle.id -> {
                     binding.lightSliders.root.visibility = View.VISIBLE
                     binding.darkSliders.root.visibility = View.GONE
                     editAccentLight()
                 }
-                binding.darkChip.id -> {
+                binding.darkToggle.id -> {
                     binding.lightSliders.root.visibility = View.GONE
                     binding.darkSliders.root.visibility = View.VISIBLE
                     editAccentDark()
@@ -157,7 +156,7 @@ class ColorCustomisationFragment: Fragment() {
                 val pkgName = prefix + suffix
                 val accent = Accent(pkgName, accentName, accentLight, dark)
                 Log.d("accent", accent.toString())
-                if (createAccent(context!!, accentViewModel, accent)) {
+                if (createAccent(requireContext(), accentViewModel, accent)) {
                     showSnackbar(
                         view,
                         String.format(getString(R.string.accent_created), args.accentName)
@@ -171,21 +170,24 @@ class ColorCustomisationFragment: Fragment() {
     }
 
     private fun setPreviewLight(color: Int, hex: String) {
-        val colorName = if (SDK_INT < Q) args.accentName else context!!.resources.getString(R.string.light)
-        binding.previewLight.colorName.text = String.format(context!!.resources.getString(R.string.colour), colorName, hex)
+        val colorName = if (SDK_INT < Q) args.accentName else requireContext().resources.getString(R.string.light)
+        binding.previewLight.colorName.text = String.format(requireContext().resources.getString(R.string.colour), colorName, hex)
         val textColorLight = Palette.Swatch(color, 1).bodyTextColor
         binding.previewLight.colorName.setTextColor(textColorLight)
         binding.previewLight.colorCard.backgroundTintList = ColorStateList.valueOf(color)
     }
 
     private fun setPreviewDark(color: Int, hex: String) {
-        binding.previewDark.colorName.text = String.format(context!!.resources.getString(R.string.colour), context!!.resources.getString(R.string.dark), hex)
+        binding.previewDark.colorName.text = String.format(requireContext().resources.getString(R.string.colour), requireContext().resources.getString(R.string.dark), hex)
         val textColorDark = Palette.Swatch(color, 1).bodyTextColor
         binding.previewDark.colorName.setTextColor(textColorDark)
         binding.previewDark.colorCard.backgroundTintList = ColorStateList.valueOf(color)
     }
 
     private fun editAccentLight() {
+
+        binding.lightSliders.root.visibility = View.VISIBLE
+        binding.darkSliders.root.visibility = View.GONE
 
         var newColor: Int
         val hsl = FloatArray(3)
