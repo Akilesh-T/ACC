@@ -25,13 +25,14 @@
                 android:layout_gravity="center"
                 android:id="@+id/preview_color_qs_0_bg"
                 android:background="@drawable/circular_bg"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="?colorPrimary"
                 android:layout_width="@dimen/preview_theme_icon_size"
                 android:layout_height="@dimen/preview_theme_icon_size"/>
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_gravity="center"
                 android:id="@+id/preview_color_qs_0_icon"
                 app:srcCompat="@drawable/ic_wifi"
+                app:tint="?android:textColorPrimaryInverse"
                 android:layout_width="@dimen/preview_theme_tile_size"
                 android:layout_height="@dimen/preview_theme_tile_size"/>
         </FrameLayout>
@@ -46,13 +47,14 @@
                 android:layout_gravity="center"
                 android:id="@+id/preview_color_qs_1_bg"
                 android:background="@drawable/circular_bg"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="?colorPrimary"
                 android:layout_width="@dimen/preview_theme_icon_size"
                 android:layout_height="@dimen/preview_theme_icon_size"/>
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_gravity="center"
                 android:id="@+id/preview_color_qs_1_icon"
                 app:srcCompat="@drawable/ic_bluetooth"
+                app:tint="?android:textColorPrimaryInverse"
                 android:layout_width="@dimen/preview_theme_tile_size"
                 android:layout_height="@dimen/preview_theme_tile_size" />
         </FrameLayout>
@@ -67,13 +69,14 @@
                 android:layout_gravity="center"
                 android:id="@+id/preview_color_qs_2_bg"
                 android:background="@drawable/circular_bg"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="?colorPrimary"
                 android:layout_width="@dimen/preview_theme_icon_size"
                 android:layout_height="@dimen/preview_theme_icon_size"/>
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_gravity="center"
                 android:id="@+id/preview_color_qs_2_icon"
                 app:srcCompat="@drawable/ic_flashlight"
+                app:tint="?android:textColorPrimaryInverse"
                 android:layout_width="@dimen/preview_theme_tile_size"
                 android:layout_height="@dimen/preview_theme_tile_size"/>
         </FrameLayout>
