@@ -131,14 +131,14 @@ class MainActivity: AppCompatActivity() {
     }
 
     private fun copyAssets() {
-        if( !File("$filesDir/src/values").exists() )
-            File("$filesDir/src/values").mkdirs()
+        if( !File(filesDir, "/src/values").exists() )
+            File(filesDir, "/src/values").mkdirs()
 
         val assetFiles = getAssetFiles()
         assetFiles.forEach {
             val file = it.removeSuffix("64")
             assets.open(file).use { stream ->
-                File("${filesDir}/$file").outputStream().use { fileOutputStream ->
+                File(filesDir, file).outputStream().use { fileOutputStream ->
                     stream.copyTo(fileOutputStream)
                 }
             }

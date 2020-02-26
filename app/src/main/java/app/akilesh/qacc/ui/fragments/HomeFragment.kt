@@ -44,12 +44,12 @@ class HomeFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = AccentListAdapter(context!!) {
+        val adapter = AccentListAdapter(requireContext()) {
             val navDirections = HomeFragmentDirections.edit(it.colorLight, it.colorDark, it.name, true)
             findNavController().navigate(navDirections)
         }
         binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(context!!)
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
         accentViewModel.allAccents.observe(viewLifecycleOwner, Observer { accents ->
@@ -57,7 +57,7 @@ class HomeFragment: Fragment() {
             insertMissing(accents)
         })
 
-        val swipeHandler = object : SwipeToDelete(context!!) {
+        val swipeHandler = object : SwipeToDelete(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                val accent = adapter.getAccentAndRemoveAt(viewHolder.adapterPosition)
                 accentViewModel.delete(accent)
@@ -92,15 +92,16 @@ class HomeFragment: Fragment() {
             installed.addAll(
                     installedAccents.map { it.substringAfterLast('=') }
             )
-        if (SDK_INT > P) {
+        if (SDK_INT >= P) {
             val list = Shell.su("ls -1 $overlayPath").exec().out
             if (list.isNotEmpty()) {
                 val inModule = list.map {
                     prefix + it.removeSuffix(".apk")
                 }
                 val deleted = installed.subtract(inModule)
-                if (deleted.isNotEmpty())
+                if (deleted.isNotEmpty()) {
                     installed.removeAll(deleted)
+                }
             }
         }
 
@@ -108,11 +109,11 @@ class HomeFragment: Fragment() {
         if (missingAccents.isNotEmpty()) {
             Log.w("Missing in db", missingAccents.toString())
             missingAccents.forEach { pkgName ->
-                val packageInfo = context!!.packageManager.getPackageInfo(pkgName, 0)
+                val packageInfo = requireContext().packageManager.getPackageInfo(pkgName, 0)
                 val applicationInfo = packageInfo.applicationInfo
                 val accentName =
-                    context!!.packageManager.getApplicationLabel(applicationInfo).toString()
-                val resources = context!!.packageManager.getResourcesForApplication(applicationInfo)
+                    requireContext().packageManager.getApplicationLabel(applicationInfo).toString()
+                val resources = requireContext().packageManager.getResourcesForApplication(applicationInfo)
                 val accentLightId =
                     resources.getIdentifier("accent_device_default_light", "color", pkgName)
                 val colorLight = resources.getColor(accentLightId, null)
