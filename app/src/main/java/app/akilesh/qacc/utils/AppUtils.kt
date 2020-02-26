@@ -1,7 +1,10 @@
 package app.akilesh.qacc.utils
 
+import android.app.WallpaperColors
+import android.app.WallpaperManager
 import android.content.Context
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.P
 import android.os.Build.VERSION_CODES.Q
@@ -10,14 +13,19 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.navOptions
+import androidx.palette.graphics.Palette
 import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
 import app.akilesh.qacc.model.Accent
+import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.signing.ByteArrayStream
 import app.akilesh.qacc.signing.JarMap
 import app.akilesh.qacc.signing.SignAPK
@@ -92,17 +100,20 @@ object AppUtils {
 
     fun showSnackbar(view: View, text: String) {
 
-        Snackbar.make(
+        val snackbar = Snackbar.make(
             view,
             text,
-            Snackbar.LENGTH_INDEFINITE
+            if (SDK_INT >= P) Snackbar.LENGTH_INDEFINITE
+            else Snackbar.LENGTH_SHORT
         )
-            .setAnchorView(R.id.x_fab)
-            .setAction("Reboot") {
+        snackbar.setAnchorView(R.id.x_fab)
+        if (SDK_INT >= P) {
+            snackbar.setAction("Reboot") {
                 Shell.su("/system/bin/svc power reboot || /system/bin/reboot")
                     .submit()
             }
-            .show()
+        }
+        snackbar.show()
     }
 
     val navAnim = navOptions {
@@ -131,7 +142,7 @@ object AppUtils {
             previewRadioSelected.buttonTintList = accentTintList
             previewToggleSelected.buttonTintList = accentTintList
             previewToggleSelected.thumbTintList = accentTintList
-            previewToggleSelected.trackTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(accentColor, 51))
+            previewToggleSelected.trackTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(accentColor, 127))
         }
 
         binding.apply {
@@ -152,15 +163,102 @@ object AppUtils {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O_MR1)
+    fun Context.getWallpaperColors(): MutableList<Colour> {
+        val wallpaperManager = WallpaperManager.getInstance(this)
+        val bitmap = if (wallpaperManager.wallpaperInfo == null)
+            wallpaperManager.drawable.toBitmap()
+        else
+            wallpaperManager.wallpaperInfo.loadThumbnail(packageManager).toBitmap()
+        val wallColors = WallpaperColors.fromBitmap(bitmap)
+
+        val primary = wallColors.primaryColor.toArgb()
+        val secondary = wallColors.secondaryColor?.toArgb()
+        val tertiary = wallColors.tertiaryColor?.toArgb()
+
+
+        val primaryHex = toHex(primary)
+        val wallpaperColours = mutableListOf(Colour(primaryHex, getString(R.string.wallpaper_primary)))
+        if (secondary != null) {
+            val secondaryHex = toHex(secondary)
+            wallpaperColours.add(Colour(secondaryHex, getString(R.string.wallpaer_secondary)))
+        }
+        if (tertiary != null) {
+            val tertiaryHex = toHex(tertiary)
+            wallpaperColours.add(Colour(tertiaryHex, getString(R.string.wallpaper_tertiary)))
+        }
+
+        val palette = Palette.from(bitmap).generate()
+        val defaultColor =
+            ResourcesCompat.getColor(resources, android.R.color.transparent, null)
+
+        val vibrant = palette.getVibrantColor(defaultColor)
+        if (vibrant != defaultColor) wallpaperColours.add(
+            Colour(
+                toHex(vibrant),
+                "Vibrant"
+            )
+        )
+
+        val darkVibrant = palette.getDarkVibrantColor(defaultColor)
+        if (darkVibrant != defaultColor) wallpaperColours.add(
+            Colour(
+                toHex(
+                    darkVibrant
+                ), "Dark Vibrant"
+            )
+        )
+
+        val lightVibrant = palette.getLightVibrantColor(defaultColor)
+        if (lightVibrant != defaultColor) wallpaperColours.add(
+            Colour(
+                toHex(
+                    lightVibrant
+                ), "Light Vibrant"
+            )
+        )
+
+        val muted = palette.getMutedColor(defaultColor)
+        if (muted != defaultColor) wallpaperColours.add(
+            Colour(
+                toHex(muted),
+                "Muted"
+            )
+        )
+
+        val darkMuted = palette.getDarkMutedColor(defaultColor)
+        if (darkMuted != defaultColor) wallpaperColours.add(
+            Colour(
+                toHex(darkMuted),
+                "Dark Muted"
+            )
+        )
+
+        val lightMuted = palette.getLightMutedColor(defaultColor)
+        if (lightMuted != defaultColor) wallpaperColours.add(
+            Colour(
+                toHex(lightMuted),
+                "Light Muted"
+            )
+        )
+        return wallpaperColours
+    }
+
+
     fun createAccent(context: Context, accentViewModel: AccentViewModel, accent: Accent): Boolean {
         var created = false
         val appName = accent.pkgName.substringAfter(prefix)
         val filesDir = context.filesDir
-        val tempFiles = arrayOf("qacc.apk", "signed.apk", "aligned.apk")
+
+        val aapt = File(filesDir, "aapt")
+        val zipalign = File(filesDir, "zipalign")
+        val aaptOverlay = File(filesDir, "qacc.apk")
+        val signedOverlay = File(filesDir, "signed.apk")
+        val alignedOverlay = File(filesDir, "aligned.apk")
 
         val manifest = File(filesDir, "AndroidManifest.xml")
-        val values = File(filesDir, "/src/values")
-        val colors = File(values, "colors.xml")
+        val source = File(filesDir, "src")
+        val colors = File(source, "/values/colors.xml")
         manifest.createNewFile()
         colors.createNewFile()
 
@@ -168,63 +266,65 @@ object AppUtils {
         createColors(colors, accent.colorLight, accent.colorDark)
 
         if (manifest.exists() && colors.exists()) {
-            Shell.su("cd ${filesDir.absolutePath}").exec()
+            aapt.setExecutable(true)
             val aaptResult = Shell.su(
-                "chmod +x aapt",
-                "./aapt p -f -M AndroidManifest.xml -I  /system/framework/framework-res.apk -S src -F ${tempFiles[0]}"
+                "./${aapt.absolutePath} p -f -M ${manifest.absolutePath} -I  /system/framework/framework-res.apk -S ${source.absolutePath} -F ${aaptOverlay.absolutePath}"
             ).exec()
             Log.d("aapt", aaptResult.code.toString())
 
-            if (aaptResult.isSuccess && File(filesDir, tempFiles[0]).exists()) {
+            if (aaptResult.isSuccess  && aaptOverlay.exists()) {
+                aaptOverlay.setReadable(true)
                 val certFile = context.assets.open("testkey.x509.pem")
                 val keyFile = context.assets.open("testkey.pk8")
 
                 val cert = readCertificate(certFile)
                 val key = readPrivateKey(keyFile)
-                val jar = JarMap.open(File(filesDir, tempFiles[0]).path)
+                val jar = JarMap.open(aaptOverlay.path)
 
-                val out = FileOutputStream(File(filesDir, tempFiles[1]).path)
+                val out = FileOutputStream(signedOverlay.path)
                 SignAPK.sign(cert, key, jar, out.buffered())
 
-                if (File(filesDir, tempFiles[1]).exists())
-                    Shell.su(context.resources.openRawResource(R.raw.zipalign)).exec()
-                else
-                    Toast.makeText(context, "Signed overlay not created", Toast.LENGTH_SHORT).show()
+                if (signedOverlay.exists()) {
+                    signedOverlay.setReadable(true)
+                    zipalign.setExecutable(true)
+                    val zipalignResult = Shell.su(
+                        "./${zipalign.absolutePath} -v -p 4 ${signedOverlay.absolutePath} ${alignedOverlay.absolutePath}"
+                    ).exec()
+                    Log.d("zipalign", zipalignResult.code.toString())
 
-                if (File(filesDir, tempFiles[2]).exists()) {
+                    if (alignedOverlay.exists() && zipalignResult.isSuccess) {
 
-                    if (SDK_INT >= P) {
-                        Shell.su("mkdir -p $overlayPath").exec()
-                        Shell.su(context.resources.openRawResource(R.raw.create_module)).exec()
-                        val result = Shell.su(
-                            "cp -f $filesDir/${tempFiles[2]} $overlayPath/$appName.apk"
-                        ).exec()
-                        Log.d("inject", result.code.toString())
-                        Shell.su("chmod 644 $overlayPath/$appName.apk").exec()
+                        if (SDK_INT >= P) {
+                            Shell.su("mkdir -p $overlayPath").exec()
+                            Shell.su(context.resources.openRawResource(R.raw.create_module)).exec()
+                            val result = Shell.su(
+                                "cp -f ${alignedOverlay.absolutePath} $overlayPath/$appName.apk"
+                            ).exec()
+                            Log.d("inject", result.code.toString())
+                            Shell.su("chmod 644 $overlayPath/$appName.apk").exec()
 
-                        if (result.isSuccess) {
-                            created = true
-                            tempFiles.forEach {
-                                File(filesDir, it).delete()
+                            if (result.isSuccess) {
+                                created = true
+                                aaptOverlay.delete()
+                                signedOverlay.delete()
+                                alignedOverlay.delete()
+                                accentViewModel.insert(accent)
                             }
-                            accentViewModel.insert(accent)
-                        }
-                    }
-                    else {
-                        val result = Shell.su(
-                            "chmod 644 $filesDir/${tempFiles[2]}",
-                            "pm install -r $filesDir/${tempFiles[2]}"
-                        ).exec()
-                        Log.d("pm-install", result.code.toString())
+                        } else {
+                            val result = Shell.su(
+                                "chmod 644 ${alignedOverlay.absolutePath}",
+                                "pm install -r ${alignedOverlay.absolutePath}"
+                            ).exec()
+                            Log.d("pm-install", result.code.toString())
 
-                        if (result.isSuccess) {
-                            created = true
-                            tempFiles.forEach {
-                                File(filesDir, it).delete()
-                            }
-                            accentViewModel.insert(accent)
+                            if (result.isSuccess) {
+                                created = true
+                                aaptOverlay.delete()
+                                signedOverlay.delete()
+                                alignedOverlay.delete()
+                                accentViewModel.insert(accent)
+                            } else Log.e("pm-install", result.err.toString())
                         }
-                        else Log.e("pm-install", result.err.toString())
                     }
                 }
             }
