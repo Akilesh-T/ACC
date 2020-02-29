@@ -1,6 +1,7 @@
 package app.akilesh.qacc.ui.fragments
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.P
@@ -61,7 +62,7 @@ class BackupRestoreFragment: Fragment() {
         binding.restore.setOnClickListener { selectBackupFile() }
 
         val adapter = BackupListAdapter(
-            context!!, getBackupFiles(), { file ->
+            requireContext(), getBackupFiles(), { file ->
                 val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
                 val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
                 dialogTitleBinding.titleText.text = String.format(resources.getString(R.string.backup_contents))
@@ -73,7 +74,7 @@ class BackupRestoreFragment: Fragment() {
                 Log.d("contents", contents.toString())
 
                 val accents: List<Colour> = contents.map { Colour("#$it", getString(R.string.hex_code)) }
-                val adapter = ColorListAdapter(context!!, accents) {}
+                val adapter = ColorListAdapter(requireContext(), accents) {}
 
                 colorPreviewBinding.recyclerViewColor.adapter = adapter
                 colorPreviewBinding.recyclerViewColor.layoutManager = LinearLayoutManager(context)
@@ -98,7 +99,7 @@ class BackupRestoreFragment: Fragment() {
             files.let { adapter.setFiles(it) }
         })
 
-        val swipeToDelete = object : SwipeToDelete(context!!) {
+        val swipeToDelete = object : SwipeToDelete(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val file = adapter.getFileAndRemoveAt(viewHolder.adapterPosition)
                 val result = Shell.su(
@@ -119,7 +120,7 @@ class BackupRestoreFragment: Fragment() {
 
     private fun getBackupFiles(): MutableList<String> {
         return Shell.su(
-            "ls -1 $backupFolder"
+            "ls -1tr $backupFolder"
         ).exec().out
     }
 
@@ -136,16 +137,16 @@ class BackupRestoreFragment: Fragment() {
             ).exec().out
 
             if (installedAccents.isNotEmpty()) {
-                context!!.cacheDir.deleteRecursively()
+                requireContext().cacheDir.deleteRecursively()
                 installedAccents.forEach {
                     val path = it.substringBeforeLast('=')
                     val pkgName = it.substringAfterLast('=')
                     val apkName = pkgName.substringAfter(prefix)
                     Shell.su(
-                        "cp -f $path ${context!!.cacheDir.absolutePath}/$apkName.apk"
+                        "cp -f $path ${requireContext().cacheDir.absolutePath}/$apkName.apk"
                     ).exec()
                 }
-                compress(context!!.cacheDir.absolutePath)
+                compress(requireContext().cacheDir.absolutePath)
             }
         }
     }
@@ -165,8 +166,10 @@ class BackupRestoreFragment: Fragment() {
     }
 
     private fun selectBackupFile() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "application/gzip"
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "*/*"
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/x-gzip", "application/gzip", "application/octet-stream"))
         startActivityForResult(intent, 3)
     }
 
@@ -175,23 +178,30 @@ class BackupRestoreFragment: Fragment() {
 
         if (requestCode == 3 && resultCode == RESULT_OK && data != null) {
             val selectedUri = data.data
-            val parcelFileDescriptor = selectedUri?.let { context!!.contentResolver.openFileDescriptor(it, "r", null) }
-            val inputStream = FileInputStream(parcelFileDescriptor?.fileDescriptor)
-            val backupFile = File(context!!.cacheDir, "acc.tar.gz")
-            inputStream.use { stream ->
-                backupFile.outputStream().use {
-                    stream.copyTo(it)
+            Log.d("mime-type",
+                selectedUri?.let { requireContext().contentResolver.getType(it)}.toString() )
+            val parcelFileDescriptor =
+                selectedUri?.let { requireContext().contentResolver.openFileDescriptor(it, "r") }
+            val backupFile = File(requireContext().filesDir, "acc.tar.gz")
+            parcelFileDescriptor?.let {
+                val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+                inputStream.use { stream ->
+                    backupFile.outputStream().use {
+                        stream.copyTo(it)
+                    }
                 }
             }
+            backupFile.setReadable(true)
             restore(backupFile)
         }
     }
 
     private fun getAppList(path: String): Array<File>? {
+        val temp = requireContext().getDir("tmp", Context.MODE_PRIVATE)
         Shell.su(
-            ".$busyBox tar x -zv -f $path -C ${context!!.cacheDir.absolutePath}"
+            ".$busyBox tar x -zv -f $path -C ${temp.absolutePath}"
         ).exec()
-        return context!!.cacheDir.listFiles { file ->
+        return temp.listFiles { file ->
             file.length() > 0 && file.extension == "apk" && file.name.startsWith("hex")
         }
     }
@@ -201,7 +211,7 @@ class BackupRestoreFragment: Fragment() {
             val result = Shell.su("[ -d $modPath ]").exec()
             if (!result.isSuccess) {
                 Shell.su("mkdir -p $overlayPath").exec()
-                Shell.su(context!!.resources.openRawResource(R.raw.create_module)).exec()
+                Shell.su(requireContext().resources.openRawResource(R.raw.create_module)).exec()
             }
 
             val restoreResult = Shell.su(
@@ -210,12 +220,13 @@ class BackupRestoreFragment: Fragment() {
             Log.d("restore", restoreResult.out.toString())
             if (restoreResult.isSuccess) {
                 insertToDB(getAppList(backupFile.absolutePath))
-                context!!.cacheDir.deleteRecursively()
-                showSnackbar(this.view!!, getString(R.string.accents_restored))
+                backupFile.delete()
+                requireContext().getDir("tmp", Context.MODE_PRIVATE).deleteRecursively()
+                showSnackbar(this.requireView(), getString(R.string.accents_restored))
             }
         }
         else {
-            context!!.cacheDir.deleteRecursively()
+            requireContext().getDir("tmp", Context.MODE_PRIVATE).deleteRecursively()
             val apps = getAppList(backupFile.absolutePath)
             apps?.forEach {
                 val result = Shell.su(
@@ -225,12 +236,13 @@ class BackupRestoreFragment: Fragment() {
                 Log.d("pm-install", result.out.toString())
             }
             insertToDB(apps)
-            context!!.cacheDir.deleteRecursively()
+            backupFile.delete()
+            requireContext().getDir("tmp", Context.MODE_PRIVATE).deleteRecursively()
         }
     }
 
     private fun insertToDB(appList: Array<File>?) {
-        val packageManager = context!!.packageManager
+        val packageManager = requireContext().packageManager
         appList?.forEach {
             val packageInfo = packageManager.getPackageArchiveInfo(it.absolutePath, 0)!!
             val applicationInfo = packageInfo.applicationInfo
