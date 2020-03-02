@@ -1,15 +1,14 @@
 {
-  "latestVersion": "1.60",
-  "latestVersionCode": "10",
+  "latestVersion": "1.70",
+  "latestVersionCode": "11",
   "url": "https://github.com/Akilesh-T/ACC/releases/latest",
   "releaseNotes": [
-    "- App shows more wallpapers colours",
-    "- Edit created accent colours",
-    "* Long press on an accent in the home screen to modify it",
-    "- [Android 10] Tweak dark theme accent even if separate accent option is disabled",
-    "- Minor improvements to HSL sliders",
-    "- Added German and Chinese translations",
-    "- Custom app crash screen",
-    "- [Beta][Android 9+]Backup & restore accents"
+    "- New app icon & launch screen.",
+    "- Redesigned home & colour picker layouts.",
+    "- Added brand colours.",
+    "- Rename accent after creation.",
+    "- Restore directly from listed backups.",
+    "- The app will list installed accents even if its data is cleared.",
+    "- Updated translations."
   ]
 }
