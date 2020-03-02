@@ -229,11 +229,12 @@ class BackupRestoreFragment: Fragment() {
             requireContext().getDir("tmp", Context.MODE_PRIVATE).deleteRecursively()
             val apps = getAppList(backupFile.absolutePath)
             apps?.forEach {
-                val result = Shell.su(
+                Shell.su(
                     "chmod 644 ${it.absolutePath}",
                     "pm install -r ${it.absolutePath}"
-                ).exec()
-                Log.d("pm-install", result.out.toString())
+                ).submit { result ->
+                    Log.d("pm-install", it.name + "\n" + result.code.toString())
+                }
             }
             insertToDB(apps)
             backupFile.delete()
