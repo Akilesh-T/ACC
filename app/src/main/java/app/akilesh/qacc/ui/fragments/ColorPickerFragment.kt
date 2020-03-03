@@ -230,7 +230,7 @@ class ColorPickerFragment: Fragment() {
         val rationaleHandler = createDialogRationale(R.string.app_name) {
             onPermission(
                 Permission.READ_EXTERNAL_STORAGE,
-                getString(R.string.storage_permission_rationale)
+                getString(R.string.read_storage_permission_rationale)
             )
         }
 

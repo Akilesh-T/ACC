@@ -2,6 +2,8 @@ package app.akilesh.qacc.ui
 
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -16,6 +18,9 @@ import app.akilesh.qacc.databinding.ActivityMainBinding
 import app.akilesh.qacc.utils.AppUtils.navAnim
 import app.akilesh.qacc.utils.DownloadUtils.download
 import app.akilesh.qacc.viewmodel.InstallApkViewModel
+import com.afollestad.assent.Permission
+import com.afollestad.assent.rationale.createDialogRationale
+import com.afollestad.assent.runWithPermissions
 import com.github.javiersantos.appupdater.AppUpdaterUtils
 import com.github.javiersantos.appupdater.enums.AppUpdaterError
 import com.github.javiersantos.appupdater.enums.UpdateFrom.JSON
@@ -48,7 +53,7 @@ class MainActivity: AppCompatActivity() {
         val navController = navHostFragment.navController
 
 
-         // Hide bottom app bar & ext. fab while creating an accent
+        // Hide bottom app bar & ext. fab while creating an accent
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id) {
                 R.id.color_picker, R.id.dark_accent, R.id.customisation -> {
@@ -101,31 +106,47 @@ class MainActivity: AppCompatActivity() {
             .setUpdateJSON("https://raw.githubusercontent.com/Akilesh-T/ACC/master/app/update-changelog.json")
             .withListener(object : AppUpdaterUtils.UpdateListener {
 
-                     override fun onSuccess(update: Update?, isUpdateAvailable: Boolean?) {
-                         if (isUpdateAvailable!!) {
-                             binding.updateCard.visibility = View.VISIBLE
-                             val url = "${update!!.urlToDownload}/download/acc-v${update.latestVersion}.apk"
-                             binding.update.setOnClickListener {
-                                 MaterialAlertDialogBuilder(this@MainActivity)
-                                     .setTitle("What's new in v${update.latestVersion}:")
-                                     .setMessage(update.releaseNotes)
-                                     .setPositiveButton(getString(R.string.dl_and_install)) { _, _ ->
-                                         val model = ViewModelProvider(this@MainActivity).get(
-                                             InstallApkViewModel::class.java)
-                                         Toast.makeText(this@MainActivity, "Downloading v${update.latestVersion}", Toast.LENGTH_SHORT).show()
-                                         download(this@MainActivity, url, update.latestVersion,  model)
-                                     }
-                                     .create()
-                                     .show()
-                             }
-                         }
-                         else binding.updateCard.visibility = View.GONE
-                     }
+                override fun onSuccess(update: Update?, isUpdateAvailable: Boolean?) {
+                    if (isUpdateAvailable!!) {
+                        binding.updateCard.visibility = View.VISIBLE
+                        val url = "${update!!.urlToDownload}/download/acc-v${update.latestVersion}.apk"
+                        binding.update.setOnClickListener {
+                            MaterialAlertDialogBuilder(this@MainActivity)
+                                .setTitle("What's new in v${update.latestVersion}:")
+                                .setMessage(update.releaseNotes)
+                                .setPositiveButton(getString(R.string.dl_and_install)) { _, _ ->
+                                    val model = ViewModelProvider(this@MainActivity).get(
+                                        InstallApkViewModel::class.java)
+                                    if (SDK_INT < Q) {
+                                        val rationaleHandler = createDialogRationale(R.string.app_name) {
+                                            onPermission(
+                                                Permission.WRITE_EXTERNAL_STORAGE,
+                                                getString(R.string.write_storage_permission_rationale)
+                                            )
+                                        }
+                                        runWithPermissions(Permission.WRITE_EXTERNAL_STORAGE, rationaleHandler = rationaleHandler) {
+                                            if (it.isAllGranted()) {
+                                                download(this@MainActivity, url, update.latestVersion,  model)
+                                                Toast.makeText(this@MainActivity, "Downloading v${update.latestVersion}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        download(this@MainActivity, url, update.latestVersion,  model)
+                                        Toast.makeText(this@MainActivity, "Downloading v${update.latestVersion}", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                .create()
+                                .show()
+                        }
+                    }
+                    else binding.updateCard.visibility = View.GONE
+                }
 
-                     override fun onFailed(error: AppUpdaterError?) {
-                         Log.e("UpdaterError", error.toString())
-                     }
-                 }
+                override fun onFailed(error: AppUpdaterError?) {
+                    Log.e("UpdaterError", error.toString())
+                }
+            }
             )
             .start()
     }
