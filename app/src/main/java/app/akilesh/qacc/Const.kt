@@ -7,7 +7,6 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.Q
 import android.os.Environment.DIRECTORY_DOCUMENTS
 import app.akilesh.qacc.model.Colour
-import com.topjohnwu.superuser.Shell
 
 object Const {
 
@@ -107,8 +106,6 @@ object Const {
     }
 
     const val prefix = "com.android.theme.color.custom."
-
-    val isOOS = Shell.sh("getprop ro.oxygen.version").exec().out.component1().isNotBlank()
 
     fun getAssetFiles(): MutableList<String> {
 

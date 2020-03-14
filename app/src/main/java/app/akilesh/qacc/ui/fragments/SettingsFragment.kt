@@ -8,7 +8,6 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
-import app.akilesh.qacc.Const.isOOS
 import app.akilesh.qacc.R
 import app.akilesh.qacc.utils.AppUtils
 import app.akilesh.qacc.utils.AppUtils.navAnim
@@ -25,7 +24,7 @@ class SettingsFragment: PreferenceFragmentCompat() {
             true
         }
 
-        if (SDK_INT < Q || isOOS)
+        if (SDK_INT < Q)
             findPreference<SwitchPreferenceCompat>("separate_accent")?.isVisible = false
 
         findPreference<Preference>("prefUpdate")?.setOnPreferenceClickListener {

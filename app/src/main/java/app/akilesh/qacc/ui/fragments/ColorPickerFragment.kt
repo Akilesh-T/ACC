@@ -22,7 +22,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.akilesh.qacc.Const.Colors.AEX
 import app.akilesh.qacc.Const.Colors.brandColors
-import app.akilesh.qacc.Const.isOOS
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
@@ -42,7 +41,6 @@ import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.topjohnwu.superuser.Shell
 import me.priyesh.chroma.ChromaDialog
 import me.priyesh.chroma.ColorMode
 import me.priyesh.chroma.ColorSelectListener
@@ -77,7 +75,7 @@ class ColorPickerFragment: Fragment() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         var separateAccents = sharedPreferences.getBoolean("separate_accent", false)
         val customise = sharedPreferences.getBoolean("customise", false)
-        if (SDK_INT < Q || isOOS) separateAccents = false
+        if (SDK_INT < Q) separateAccents = false
 
         if (separateAccents) {
             binding.title.text = String.format(getString(R.string.picker_title_text_light))
@@ -122,43 +120,26 @@ class ColorPickerFragment: Fragment() {
                 }
             }
             else {
-                if (isOOS) {
-                    if (accentColor.isNotBlank()) {
-                        val result = Shell.su("settings put system oem_black_mode_accent_color \'$accentColor\'")
-                            .exec()
-                        if (result.isSuccess) {
-                            showSnackbar(view, String.format(getString(R.string.oos_accent_set), accentName))
-                            findNavController().navigate(R.id.back_home)
-                        }
+                if (accentColor.isNotBlank() && accentName.isNotBlank()) {
+                    val suffix = "hex_" + accentColor.removePrefix("#")
+                    val pkgName = prefix + suffix
+                    val accent = Accent(pkgName, accentName, accentColor, accentColor)
+                    Log.d("accent", accent.toString())
+                    if (createAccent(requireContext(), accentViewModel, accent)) {
+                        showSnackbar(view, String.format(getString(R.string.accent_created), accentName))
+                        findNavController().navigate(R.id.back_home)
                     }
-                    else
-                        Toast.makeText(
-                            context,
-                            getString(R.string.toast_color_not_selected),
-                            Toast.LENGTH_SHORT
-                        ).show()
                 } else {
-                    if (accentColor.isNotBlank() && accentName.isNotBlank()) {
-                        val suffix = "hex_" + accentColor.removePrefix("#")
-                        val pkgName = prefix + suffix
-                        val accent = Accent(pkgName, accentName, accentColor, accentColor)
-                        Log.d("accent", accent.toString())
-                        if (createAccent(requireContext(), accentViewModel, accent)) {
-                            showSnackbar(view, String.format(getString(R.string.accent_created), accentName))
-                            findNavController().navigate(R.id.back_home)
-                        }
-                    } else {
-                        if (accentColor.isBlank()) Toast.makeText(
-                            context,
-                            getString(R.string.toast_color_not_selected),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        if (accentName.isBlank()) Toast.makeText(
-                            context,
-                            getString(R.string.toast_name_not_set),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    if (accentColor.isBlank()) Toast.makeText(
+                        context,
+                        getString(R.string.toast_color_not_selected),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    if (accentName.isBlank()) Toast.makeText(
+                        context,
+                        getString(R.string.toast_name_not_set),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }

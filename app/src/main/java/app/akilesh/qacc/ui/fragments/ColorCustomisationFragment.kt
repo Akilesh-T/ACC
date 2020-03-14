@@ -19,7 +19,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
-import app.akilesh.qacc.Const.isOOS
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorCustomisationFragmentBinding
@@ -29,7 +28,6 @@ import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.viewmodel.AccentViewModel
 import app.akilesh.qacc.viewmodel.CustomisationViewModel
-import com.topjohnwu.superuser.Shell
 import kotlin.properties.Delegates
 
 class ColorCustomisationFragment: Fragment() {
@@ -134,15 +132,6 @@ class ColorCustomisationFragment: Fragment() {
         }
 
         binding.buttonNext.setOnClickListener {
-
-            if (isOOS) {
-                val result = Shell.su("settings put system oem_black_mode_accent_color \'$accentLight\'")
-                    .exec()
-                if (result.isSuccess) {
-                    showSnackbar(view, String.format(getString(R.string.oos_accent_set), args.accentName))
-                    findNavController().navigate(R.id.back_home)
-                }
-            }
 
             if (accentName.isNotBlank()) {
                 var suffix = "hex_" + accentLight.removePrefix("#")
