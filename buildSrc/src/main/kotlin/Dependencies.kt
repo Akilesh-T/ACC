@@ -5,7 +5,7 @@ const val navigationVersion = "2.2.1"
 object BuildPlugins {
 
     object Versions {
-        const val gradleBuildToolsVersion = "4.0.0-beta01"
+        const val gradleBuildToolsVersion = "4.0.0-beta02"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradleBuildToolsVersion}"
