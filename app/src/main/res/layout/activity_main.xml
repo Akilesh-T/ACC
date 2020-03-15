@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                app:icon="@drawable/ic_update"
+                app:icon="@drawable/ic_round_update"
                 android:text="@string/appupdater_btn_update" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

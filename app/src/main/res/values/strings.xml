@@ -147,5 +147,8 @@
     <string name="create_backup">Backup</string>
     <string name="edit">Edit</string>
     <string name="write_storage_permission_rationale">Storage permission is required to save the new update</string>
+    <string name="pref_accent">Follow system accent</string>
+    <string name="pref_accent_on">Using default app colour</string>
+    <string name="pref_accent_off">Using system accent colour</string>
 
 </resources>

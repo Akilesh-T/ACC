@@ -1,16 +1,19 @@
 package app.akilesh.qacc.ui.adapter
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
+import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import com.google.android.material.textview.MaterialTextView
 
 class BackupListAdapter internal constructor(
-    context: Context,
+    val context: Context,
     private var filesList: MutableList<String>,
     val preview : (String) -> Unit,
     val restore : (String) -> Unit
@@ -34,6 +37,14 @@ class BackupListAdapter internal constructor(
         holder.file.text = file.removeSuffix(".tar.gz").replace('-', ' ')
         holder.viewContents.setOnClickListener { preview(file) }
         holder.restore.setOnClickListener { restore(file) }
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
+        if (useSystemAccent) {
+            val colorStateList = ColorStateList.valueOf(context.getColorAccent())
+            holder.viewContents.imageTintList = colorStateList
+            holder.restore.imageTintList = colorStateList
+        }
     }
 
     internal fun setFiles(files: MutableList<String>) {

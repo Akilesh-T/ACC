@@ -3,6 +3,7 @@ package app.akilesh.qacc.ui.fragments
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +31,7 @@ import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.adapter.BackupListAdapter
 import app.akilesh.qacc.ui.adapter.ColorListAdapter
+import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.utils.SwipeToDelete
@@ -57,6 +60,10 @@ class BackupRestoreFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
+        if (useSystemAccent) setColor(requireContext().getColorAccent())
 
         binding.newBackup.setOnClickListener { createBackup() }
         binding.restore.setOnClickListener { selectBackupFile() }
@@ -110,6 +117,16 @@ class BackupRestoreFragment: Fragment() {
         }
         val itemTouchHelper = ItemTouchHelper(swipeToDelete)
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewBackupFiles)
+    }
+
+    private fun setColor(colorAccent: Int) {
+        binding.apply {
+            val colorStateList = ColorStateList.valueOf(colorAccent)
+            newBackupText.compoundDrawableTintList = colorStateList
+            restoreText.compoundDrawableTintList = colorStateList
+            localBackupTitle.setTextColor(colorAccent)
+            recyclerViewBackupFiles
+        }
     }
 
     private fun getBackupContents(file: String): MutableList<String> {

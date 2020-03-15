@@ -1,10 +1,11 @@
 <androidx.preference.PreferenceScreen
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory
+    <app.akilesh.qacc.ui.preferences.StyledPreferenceCategory
         app:key="general_category"
         app:title="@string/general_header"
-        app:allowDividerBelow="false">
+        app:allowDividerBelow="false"
+        app:initialExpandedChildrenCount="2">
 
         <ListPreference
             app:key="themePref"
@@ -16,21 +17,24 @@
             app:entryValues="@array/themeEntryArray"
             app:useSimpleSummaryProvider="true"/>
 
-        <Preference
-            app:key="prefUpdate"
-            app:title="@string/settings_app_update"
-            app:summary="@string/settings_check_for_updates"
-            app:icon="@drawable/ic_round_update"/>
+        <app.akilesh.qacc.ui.preferences.StyledSwitchPreferenceCompat
+            app:key="system_accent"
+            app:title="@string/pref_accent"
+            app:summaryOff="@string/pref_accent_on"
+            app:summaryOn="@string/pref_accent_off"
+            app:icon="@drawable/ic_palette_24dp"
+            app:defaultValue="false"
+            />
 
-    </PreferenceCategory>
+    </app.akilesh.qacc.ui.preferences.StyledPreferenceCategory>
 
-    <PreferenceCategory
+    <app.akilesh.qacc.ui.preferences.StyledPreferenceCategory
         app:key="accents_category"
         app:title="@string/accents_header"
         app:allowDividerAbove="false"
         app:initialExpandedChildrenCount="2">
 
-        <SwitchPreferenceCompat
+        <app.akilesh.qacc.ui.preferences.StyledSwitchPreferenceCompat
             app:key="separate_accent"
             app:icon="@drawable/ic_invert_colors"
             app:title="@string/separate_accents_title"
@@ -38,7 +42,7 @@
             app:summaryOff="@string/separate_accent_summary_off"
             app:summaryOn="@string/separate_accent_summary_on"/>
 
-        <SwitchPreferenceCompat
+        <app.akilesh.qacc.ui.preferences.StyledSwitchPreferenceCompat
             app:key="customise"
             app:title="@string/tweak"
             app:icon="@drawable/ic_colorize"
@@ -51,6 +55,6 @@
             app:title="@string/backup_restore"
             app:summary="@string/backup_restore_summary"/>
 
-    </PreferenceCategory>
+    </app.akilesh.qacc.ui.preferences.StyledPreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

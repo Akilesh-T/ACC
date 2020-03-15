@@ -1,5 +1,6 @@
 package app.akilesh.qacc.ui
 
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
@@ -10,11 +11,15 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
+import androidx.preference.PreferenceManager
 import app.akilesh.qacc.Const.getAssetFiles
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ActivityMainBinding
+import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.navAnim
 import app.akilesh.qacc.utils.DownloadUtils.download
 import app.akilesh.qacc.viewmodel.InstallApkViewModel
@@ -48,6 +53,12 @@ class MainActivity: AppCompatActivity() {
                 window.navigationBarColor = Color.TRANSPARENT
             }
         }
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
+        val color = if (useSystemAccent) getColorAccent()
+        else ResourcesCompat.getColor(resources, R.color.colorPrimary, theme)
+        setColor(color)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment) as NavHostFragment
         val navController = navHostFragment.navController
@@ -162,6 +173,25 @@ class MainActivity: AppCompatActivity() {
                 File(filesDir, file).outputStream().use { fileOutputStream ->
                     stream.copyTo(fileOutputStream)
                 }
+            }
+        }
+    }
+
+    private fun setColor(
+        colorAccent: Int
+    ) {
+        val colorStateList = ColorStateList.valueOf(colorAccent)
+        binding.apply {
+            updateCard.strokeColor = colorAccent
+            update.iconTint = colorStateList
+            update.setTextColor(colorAccent)
+            xFab.apply {
+                strokeColor = colorStateList
+                setTextColor(colorAccent)
+            }
+            bottomAppBar.navigationIcon?.setTintList(colorStateList)
+            bottomAppBar.menu.forEach {
+                it.iconTintList = colorStateList
             }
         }
     }
