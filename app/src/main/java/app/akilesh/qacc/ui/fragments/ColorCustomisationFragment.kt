@@ -6,6 +6,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -160,23 +161,77 @@ class ColorCustomisationFragment: Fragment() {
 
     private fun setPreviewLight(color: Int, hex: String) {
         val colorName = if (SDK_INT < Q) args.accentName else requireContext().resources.getString(R.string.light)
-        binding.previewLight.colorName.text = String.format(requireContext().resources.getString(R.string.colour), colorName, hex)
         val textColorLight = Palette.Swatch(color, 1).bodyTextColor
-        binding.previewLight.colorName.setTextColor(textColorLight)
-        binding.previewLight.colorCard.backgroundTintList = ColorStateList.valueOf(color)
+        val colorStateList = ColorStateList.valueOf(color)
+
+        binding.apply {
+            previewLight.colorName.text = String.format(requireContext().resources.getString(R.string.colour), colorName, hex)
+            previewLight.colorName.setTextColor(textColorLight)
+            previewLight.colorCard.backgroundTintList = colorStateList
+        }
+
+        binding.lightSliders.apply {
+            hue.apply {
+                thumbColor = colorStateList
+                haloColor = colorStateList
+                trackColorActive = colorStateList
+                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
+            }
+            saturation.apply {
+                thumbColor = colorStateList
+                haloColor = colorStateList
+                trackColorActive = colorStateList
+                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
+            }
+            lightness.apply {
+                thumbColor = colorStateList
+                haloColor = colorStateList
+                trackColorActive = colorStateList
+                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
+            }
+        }
+        setPreview(color)
     }
 
     private fun setPreviewDark(color: Int, hex: String) {
-        binding.previewDark.colorName.text = String.format(requireContext().resources.getString(R.string.colour), requireContext().resources.getString(R.string.dark), hex)
         val textColorDark = Palette.Swatch(color, 1).bodyTextColor
-        binding.previewDark.colorName.setTextColor(textColorDark)
-        binding.previewDark.colorCard.backgroundTintList = ColorStateList.valueOf(color)
+        val colorStateList = ColorStateList.valueOf(color)
+
+        binding.apply {
+            previewDark.colorName.text = String.format(requireContext().resources.getString(R.string.colour), requireContext().resources.getString(R.string.dark), hex)
+            previewDark.colorName.setTextColor(textColorDark)
+            previewDark.colorCard.backgroundTintList = colorStateList
+        }
+
+        binding.darkSliders.apply {
+            hue.apply {
+                thumbColor = colorStateList
+                haloColor = colorStateList
+                trackColorActive = colorStateList
+                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
+            }
+            saturation.apply {
+                thumbColor = colorStateList
+                haloColor = colorStateList
+                trackColorActive = colorStateList
+                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
+            }
+            lightness.apply {
+                thumbColor = colorStateList
+                haloColor = colorStateList
+                trackColorActive = colorStateList
+                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
+            }
+        }
+
+        setPreview(color)
     }
 
     private fun editAccentLight() {
 
         binding.lightSliders.root.visibility = View.VISIBLE
         binding.darkSliders.root.visibility = View.GONE
+        setPreview(colorLight)
 
         var newColor: Int
         val hsl = FloatArray(3)
@@ -203,6 +258,7 @@ class ColorCustomisationFragment: Fragment() {
 
     private fun editAccentDark() {
 
+        setPreview(colorDark)
         var newColor: Int
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(colorDark, hsl)
@@ -223,6 +279,65 @@ class ColorCustomisationFragment: Fragment() {
             hsl[2] = value
             newColor = ColorUtils.HSLToColor(hsl)
             model.darkAccent.value = toHex(newColor)
+        }
+    }
+
+    private fun setPreview(color: Int) {
+        val colorStateList = ColorStateList.valueOf(color)
+        binding.apply {
+            resetChip.chipIconTint = colorStateList
+            textInputLayout.apply {
+                hintTextColor = colorStateList
+                setBoxStrokeColorStateList(colorStateList)
+            }
+            if (SDK_INT >= Q) {
+                name.textCursorDrawable?.setTintList(colorStateList)
+                name.textSelectHandle?.setTintList(colorStateList)
+                name.textSelectHandleLeft?.setTintList(colorStateList)
+                name.textSelectHandleRight?.setTintList(colorStateList)
+            }
+            buttonPrevious.setTextColor(color)
+            buttonPrevious.rippleColor = colorStateList
+            buttonNext.backgroundTintList = colorStateList
+
+            val typedValue = TypedValue()
+            requireContext().theme.resolveAttribute(R.attr.colorOnSurface, typedValue, true)
+            val disabledColor = ColorUtils.setAlphaComponent(typedValue.data, 127)
+            val disabledStateList =  ColorStateList.valueOf(disabledColor)
+            when (toggleButton.checkedButtonId) {
+                lightToggle.id -> {
+                    lightToggle.apply {
+                        iconTint = colorStateList
+                        rippleColor = colorStateList
+                        strokeColor = colorStateList
+                        backgroundTintList = colorStateList.withAlpha(50)
+                        setTextColor(color)
+                    }
+                    darkToggle.apply {
+                        iconTint = disabledStateList
+                        rippleColor = disabledStateList
+                        strokeColor = disabledStateList
+                        backgroundTintList = disabledStateList.withAlpha(0)
+                        setTextColor(disabledColor)
+                    }
+                }
+                darkToggle.id -> {
+                    darkToggle.apply {
+                        iconTint = colorStateList
+                        rippleColor = colorStateList
+                        strokeColor = colorStateList
+                        backgroundTintList = colorStateList.withAlpha(50)
+                        setTextColor(color)
+                    }
+                    lightToggle.apply {
+                        iconTint = disabledStateList
+                        rippleColor = disabledStateList
+                        strokeColor = disabledStateList
+                        backgroundTintList = disabledStateList.withAlpha(0)
+                        setTextColor(disabledColor)
+                    }
+                }
+            }
         }
     }
 }
