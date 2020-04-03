@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    >
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/color_card"
@@ -12,6 +13,19 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/color_name"
             style="@style/PreviewText" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/create_all_selector"
+            android:layout_marginStart="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="0dp"
+            android:visibility="gone"
+            android:clickable="false"
+            />
+
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

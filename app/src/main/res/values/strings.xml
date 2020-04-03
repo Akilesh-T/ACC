@@ -150,5 +150,13 @@
     <string name="pref_accent">Follow system accent</string>
     <string name="pref_accent_on">Using default app colour</string>
     <string name="pref_accent_off">Using system accent colour</string>
+    <string name="create_all">Create all accents</string>
+    <string name="create_all_summary">Create all brand, preset and wallpaper colours</string>
+    <string name="select_all">Select all</string>
+    <string name="deselect_all">Deselect all</string>
+    <string name="create_selected">Create selected accents</string>
+    <string name="accents_created">Accents created</string>
+    <string name="restoring_accents">Restoring accents</string>
+    <string name="empty_backup">Extracted backup is empty</string>
 
 </resources>

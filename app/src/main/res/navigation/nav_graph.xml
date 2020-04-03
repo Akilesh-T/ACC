@@ -110,14 +110,6 @@
                 app:argType="string"
                 android:defaultValue="Custom" />
         </action>
-
-        <action
-            android:id="@+id/back_home"
-            app:popUpTo="@id/home"
-            app:enterAnim="@anim/fragment_enter"
-            app:exitAnim="@anim/fragment_exit"
-            app:popEnterAnim="@anim/fragment_enter_pop"
-            app:popExitAnim="@anim/fragment_exit_pop"/>
     </fragment>
 
     <fragment
@@ -138,10 +130,6 @@
             android:name="accentName"
             app:argType="string"
             android:defaultValue="Custom" />
-
-        <action
-            android:id="@+id/back_home"
-            app:popUpTo="@id/home" />
 
         <action
             android:id="@+id/to_customise"
@@ -191,10 +179,6 @@
             android:defaultValue="false"/>
 
         <action
-            android:id="@+id/to_home"
-            app:popUpTo="@id/home" />
-
-        <action
             android:id="@+id/reset"
             app:destination="@id/customisation"
             app:enterAnim="@anim/fragment_enter"
@@ -220,5 +204,19 @@
         android:id="@+id/backup_fragment"
         android:name="app.akilesh.qacc.ui.fragments.BackupRestoreFragment"
         tools:layout="@layout/backup_restore_fragment" />
+        
+    <fragment
+    	android:id="@+id/create_all_fragment"
+    	android:name="app.akilesh.qacc.ui.fragments.CreateAllFragment"
+    	tools:layout="@layout/create_all_fragment"
+     />
+
+    <action android:id="@+id/action_global_home"
+        app:popUpTo="@id/home"
+        app:destination="@id/home"
+        app:enterAnim="@anim/fragment_enter"
+        app:exitAnim="@anim/fragment_exit"
+        app:popEnterAnim="@anim/fragment_enter_pop"
+        app:popExitAnim="@anim/fragment_exit_pop"/>
 
 </navigation>

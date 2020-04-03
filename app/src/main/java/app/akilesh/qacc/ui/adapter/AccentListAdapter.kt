@@ -14,7 +14,6 @@ import app.akilesh.qacc.R
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 import com.topjohnwu.superuser.Shell
@@ -25,10 +24,11 @@ class AccentListAdapter internal constructor(
 ): RecyclerView.Adapter<AccentListAdapter.AccentViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var accents = mutableListOf<Accent>()
-
+    init {
+        setHasStableIds(true)
+    }
 
     inner class AccentViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val card: MaterialCardView = itemView.findViewById(R.id.cardView)
         val name: MaterialTextView = itemView.findViewById(R.id.color_name)
         val switchMaterial: SwitchMaterial = itemView.findViewById(R.id.enable_disable_accent)
         val lightAccent: MaterialTextView = itemView.findViewById(R.id.light_accent)
@@ -115,6 +115,8 @@ class AccentListAdapter internal constructor(
         return current
     }
     override fun getItemCount() = accents.size
+
+    override fun getItemId(position: Int): Long = position.toLong()
 
     private fun isOverlayInstalled(pkgName: String): Boolean {
         return try {

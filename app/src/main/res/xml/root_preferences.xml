@@ -55,6 +55,13 @@
             app:title="@string/backup_restore"
             app:summary="@string/backup_restore_summary"/>
 
+        <Preference
+            app:key="create_all"
+            app:icon="@drawable/ic_round_select_all"
+            app:title="@string/create_all"
+            app:summary="@string/create_all_summary"
+            />
+
     </app.akilesh.qacc.ui.preferences.StyledPreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

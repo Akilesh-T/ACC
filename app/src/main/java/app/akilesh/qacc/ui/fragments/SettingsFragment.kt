@@ -24,9 +24,10 @@ class SettingsFragment: PreferenceFragmentCompat() {
         val separateAccentPref = findPreference<SwitchPreferenceCompat>("separate_accent")
         val tweakPref = findPreference<SwitchPreferenceCompat>("customise")
         val backupPref = findPreference<Preference>("backups")
+        val createAllPref = findPreference<Preference>("create_all")
 
         val preferences = listOf(
-            themePref, accentPref, tweakPref, separateAccentPref, backupPref
+            themePref, accentPref, tweakPref, separateAccentPref, backupPref, createAllPref
         )
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
@@ -59,6 +60,13 @@ class SettingsFragment: PreferenceFragmentCompat() {
 
         accentPref?.setOnPreferenceChangeListener { _, _ ->
             requireActivity().recreate()
+            true
+        }
+
+        createAllPref?.setOnPreferenceClickListener {
+           /* val createAllViewModel = ViewModelProvider(this).get(CreateAllViewModel::class.java)
+            createAllViewModel.createAll()*/
+            findNavController().navigate(R.id.create_all_fragment, null, navAnim)
             true
         }
     }
