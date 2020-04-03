@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:visibility="invisible"
+        android:background="?colorSurface"
         app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior"
         >
 
