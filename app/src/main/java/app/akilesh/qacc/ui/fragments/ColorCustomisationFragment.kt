@@ -20,14 +20,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
+import androidx.work.WorkInfo
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorCustomisationFragmentBinding
 import app.akilesh.qacc.model.Accent
-import app.akilesh.qacc.utils.AppUtils.createAccent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.viewmodel.AccentViewModel
+import app.akilesh.qacc.viewmodel.CreatorViewModel
 import app.akilesh.qacc.viewmodel.CustomisationViewModel
 import kotlin.properties.Delegates
 
@@ -145,14 +146,22 @@ class ColorCustomisationFragment: Fragment() {
                 }
                 val pkgName = prefix + suffix
                 val accent = Accent(pkgName, accentName, accentLight, dark)
-                Log.d("accent", accent.toString())
-                if (createAccent(requireContext(), accentViewModel, accent)) {
-                    showSnackbar(
-                        view,
-                        String.format(getString(R.string.accent_created), args.accentName)
-                    )
-                    findNavController().navigate(R.id.to_home)
-                }
+                Log.d("accent-s", accent.toString())
+                val creatorViewModel = ViewModelProvider(this).get(CreatorViewModel::class.java)
+                creatorViewModel.create(accent)
+                creatorViewModel.outputWorkInfo.observe(viewLifecycleOwner, Observer { listOfWorkInfo ->
+                    if (listOfWorkInfo.isNullOrEmpty()) {
+                        return@Observer
+                    }
+
+                    val workInfo = listOfWorkInfo[0]
+                    if (workInfo.state.isFinished && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                        val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+                        accentViewModel.insert(accent)
+                        showSnackbar(view, String.format(getString(R.string.accent_created), accentName))
+                        findNavController().navigate(R.id.action_global_home)
+                    }
+                })
             }
             else Toast.makeText(context, getString(R.string.toast_name_not_set), Toast.LENGTH_SHORT).show()
         }

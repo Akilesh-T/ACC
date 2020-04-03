@@ -1,6 +1,6 @@
 package app.akilesh.qacc.model
 
-class Colour(
-    val hex: String,
-    val name: String
+data class Colour(
+    var hex: String,
+    var name: String
 )

@@ -10,7 +10,6 @@ import android.os.Build.VERSION_CODES.P
 import android.os.Build.VERSION_CODES.Q
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.RequiresApi
@@ -31,7 +30,6 @@ import app.akilesh.qacc.signing.JarMap
 import app.akilesh.qacc.signing.SignAPK
 import app.akilesh.qacc.utils.XmlUtils.createColors
 import app.akilesh.qacc.utils.XmlUtils.createOverlayManifest
-import app.akilesh.qacc.viewmodel.AccentViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.topjohnwu.superuser.Shell
 import org.bouncycastle.asn1.ASN1InputStream
@@ -103,10 +101,8 @@ object AppUtils {
         val snackbar = Snackbar.make(
             view,
             text,
-            if (SDK_INT >= P) Snackbar.LENGTH_INDEFINITE
-            else Snackbar.LENGTH_SHORT
-        )
-        snackbar.setAnchorView(R.id.x_fab)
+            Snackbar.LENGTH_SHORT
+        ).setAnchorView(R.id.x_fab)
         if (SDK_INT >= P) {
             snackbar.setAction("Reboot") {
                 Shell.su("/system/bin/svc power reboot || /system/bin/reboot")
@@ -245,7 +241,7 @@ object AppUtils {
     }
 
 
-    fun createAccent(context: Context, accentViewModel: AccentViewModel, accent: Accent): Boolean {
+    fun createAccent(context: Context, accent: Accent): Boolean {
         var created = false
         val appName = accent.pkgName.substringAfter(prefix)
         val filesDir = context.filesDir
@@ -270,7 +266,8 @@ object AppUtils {
             val aaptResult = Shell.su(
                 "./${aapt.absolutePath} p -f -M ${manifest.absolutePath} -I  /system/framework/framework-res.apk -S ${source.absolutePath} -F ${aaptOverlay.absolutePath}"
             ).exec()
-            Log.d("aapt", aaptResult.code.toString())
+            Log.d("aapt-code", aaptResult.code.toString())
+            Log.d("aapt-out", aaptResult.out.toString())
 
             if (aaptResult.isSuccess  && aaptOverlay.exists()) {
                 aaptOverlay.setReadable(true)
@@ -290,7 +287,9 @@ object AppUtils {
                     val zipalignResult = Shell.su(
                         "./${zipalign.absolutePath} -v -p 4 ${signedOverlay.absolutePath} ${alignedOverlay.absolutePath}"
                     ).exec()
-                    Log.d("zipalign", zipalignResult.code.toString())
+                    Log.d("zipalign-code", zipalignResult.code.toString())
+                    Log.d("zipalign-out", zipalignResult.out.toString())
+
 
                     if (alignedOverlay.exists() && zipalignResult.isSuccess) {
 
@@ -308,29 +307,27 @@ object AppUtils {
                                 aaptOverlay.delete()
                                 signedOverlay.delete()
                                 alignedOverlay.delete()
-                                accentViewModel.insert(accent)
                             }
                         } else {
                             val result = Shell.su(
                                 "chmod 644 ${alignedOverlay.absolutePath}",
                                 "pm install -r ${alignedOverlay.absolutePath}"
                             ).exec()
-                            Log.d("pm-install", result.code.toString())
+                            Log.d("pm-install-code", result.code.toString())
+                            Log.d("pm-install-out", result.out.toString())
 
                             if (result.isSuccess) {
                                 created = true
                                 aaptOverlay.delete()
                                 signedOverlay.delete()
                                 alignedOverlay.delete()
-                                accentViewModel.insert(accent)
-                            } else Log.e("pm-install", result.err.toString())
+                            }
                         }
                     }
                 }
             }
             else {
-                Toast.makeText(context, context.getString(R.string.aapt_error), Toast.LENGTH_SHORT).show()
-                Log.e("aapt-e", aaptResult.err.toString())
+                Log.e("aapt-e", aaptResult.out.toString())
             }
         }
         return created

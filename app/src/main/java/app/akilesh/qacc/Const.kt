@@ -107,6 +107,10 @@ object Const {
 
     const val prefix = "com.android.theme.color.custom."
 
+    const val busyBox = "/data/adb/magisk/busybox"
+
+    var selected = setOf<Colour>()
+
     fun getAssetFiles(): MutableList<String> {
 
         val assetFiles = mutableListOf<String>()

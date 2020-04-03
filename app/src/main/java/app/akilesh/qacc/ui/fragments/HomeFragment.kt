@@ -44,33 +44,39 @@ class HomeFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = AccentListAdapter(requireContext()) {
+        val accentListAdapter = AccentListAdapter(requireContext()) {
             val navDirections = HomeFragmentDirections.edit(it.colorLight, it.colorDark, it.name, true)
             findNavController().navigate(navDirections)
         }
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
+        binding.recyclerView.apply {
+            adapter = accentListAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            setItemViewCacheSize(5)
+        }
         accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
         accentViewModel.allAccents.observe(viewLifecycleOwner, Observer { accents ->
-            accents?.let { adapter.setAccents(it) }
+            accents?.let { accentListAdapter.setAccents(it) }
             insertMissing(accents)
         })
 
         val swipeHandler = object : SwipeToDelete(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-               val accent = adapter.getAccentAndRemoveAt(viewHolder.adapterPosition)
+                val accent = accentListAdapter.getAccentAndRemoveAt(viewHolder.adapterPosition)
                 accentViewModel.delete(accent)
                 val appName = accent.pkgName.substringAfter(prefix)
-                val result = if (SDK_INT >= P)
-                    Shell.su("rm -f $overlayPath/$appName.apk").exec()
-                else
+                Shell.su("cmd overlay disable ${accent.pkgName}").exec()
+                if (SDK_INT >= P) {
                     Shell.su(
-                        "cmd overlay disable ${accent.pkgName}",
-                        "pm uninstall ${accent.pkgName}"
-                    ).exec()
-                if (result.isSuccess)
-                    showSnackbar(view, String.format(getString(R.string.accent_removed), accent.name))
+                        "rm -f $overlayPath/$appName.apk").exec().apply {
+                        if (isSuccess)
+                            showSnackbar(view, String.format(getString(R.string.accent_removed), accent.name))
+                    }
+                } else {
+                    Shell.su("pm uninstall ${accent.pkgName}").submit {
+                        if (it.isSuccess)
+                            showSnackbar(view, String.format(getString(R.string.accent_removed), accent.name))
+                    }
+                }
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)

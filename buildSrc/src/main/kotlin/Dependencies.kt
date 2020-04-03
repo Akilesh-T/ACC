@@ -1,11 +1,11 @@
-const val kotlinVersion = "1.3.70"
+const val kotlinVersion = "1.3.71"
 const val navigationVersion = "2.2.1"
 
 
 object BuildPlugins {
 
     object Versions {
-        const val gradleBuildToolsVersion = "4.0.0-beta02"
+        const val gradleBuildToolsVersion = "4.0.0-beta03"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradleBuildToolsVersion}"
@@ -33,10 +33,10 @@ object Libraries {
         const val core = "1.2.0"
         const val preference = "1.1.0"
         const val palette = "1.0.0"
-        const val room = "2.2.4"
+        const val room = "2.2.5"
         const val lifecycle = "2.2.0"
         const val coroutines = "1.3.3"
-        const val fragment = "1.2.2"
+        const val fragment = "1.2.3"
         const val material = "1.2.0-alpha05"
         const val libSu = "2.5.1"
         const val chroma = "1.2.6"
@@ -45,6 +45,9 @@ object Libraries {
         const val about = "2.4.2"
         const val appUpdater = "2.7"
         const val whatTheStack = "0.0.1"
+        const val workManager = "2.3.4"
+        const val recyclerView = "1.1.0"
+        const val recyclerViewSelection = "1.1.0-rc01"
     }
 
     const val kotlinStdLib        = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -85,4 +88,9 @@ object Libraries {
     const val appUpdater          = "com.github.javiersantos:AppUpdater:${Versions.appUpdater}"
 
     const val whatTheStack        = "com.github.haroldadmin:WhatTheStack:${Versions.whatTheStack}"
+
+    const val workManager         = "androidx.work:work-runtime-ktx:${Versions.workManager}"
+
+    const val recyclerView        = "androidx.recyclerview:recyclerview:${Versions.recyclerView}"
+    const val rvSelection         = "androidx.recyclerview:recyclerview-selection:${Versions.recyclerViewSelection}"
 }

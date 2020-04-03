@@ -16,6 +16,12 @@ android {
         versionCode = 11
         versionName = "1.70"
         vectorDrawables.useSupportLibrary = true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = mapOf("room.incremental" to "true")
+            }
+        }
     }
     buildFeatures {
         viewBinding = true
@@ -37,7 +43,10 @@ android {
         }
     }
     packagingOptions {
-        exclude("META-INF/atomicfu.kotlin_module")
+        exclude("META-INF/**")
+        exclude( "/org/bouncycastle/**")
+        exclude("/kotlin/**")
+        exclude("/okhttp3/**")
     }
 }
 
@@ -87,5 +96,10 @@ dependencies {
     implementation(Libraries.appUpdater)
 
     implementation(Libraries.whatTheStack)
+
+    implementation(Libraries.workManager)
+
+    implementation(Libraries.recyclerView)
+    implementation(Libraries.rvSelection)
 
 }

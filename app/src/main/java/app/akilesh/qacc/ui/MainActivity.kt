@@ -67,7 +67,7 @@ class MainActivity: AppCompatActivity() {
         // Hide bottom app bar & ext. fab while creating an accent
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id) {
-                R.id.color_picker, R.id.dark_accent, R.id.customisation -> {
+                R.id.color_picker, R.id.dark_accent, R.id.customisation, R.id.create_all_fragment -> {
                     binding.bottomAppBar.visibility = View.GONE
                     binding.xFab.visibility = View.GONE
                     when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {

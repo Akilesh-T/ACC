@@ -30,6 +30,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/spacer"
                 android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
                 android:maxLines="1"
                 android:ellipsize="end"
@@ -72,13 +73,13 @@
                 app:barrierDirection="bottom" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/colors"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/edit"
-                app:layout_constraintBottom_toBottomOf="@+id/edit"
-                app:layout_constraintTop_toTopOf="@+id/edit"
+                app:layout_constraintTop_toBottomOf="@id/barrier"
                 >
 
                 <com.google.android.material.textview.MaterialTextView
@@ -91,6 +92,9 @@
                     android:layout_marginEnd="8dp"
                     android:drawableStart="@drawable/ic_palette_24dp"
                     android:drawablePadding="8dp"
+                    android:textIsSelectable="true"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     />
 
                 <com.google.android.material.textview.MaterialTextView
@@ -102,6 +106,9 @@
                     app:layout_constraintStart_toEndOf="@id/light_accent"
                     android:drawableStart="@drawable/ic_palette_24dp"
                     android:drawablePadding="8dp"
+                    android:textIsSelectable="true"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -110,7 +117,8 @@
                 android:id="@+id/edit"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/barrier"
+                app:layout_constraintTop_toTopOf="@id/colors"
+                app:layout_constraintBottom_toBottomOf="@id/colors"
                 app:layout_constraintEnd_toEndOf="parent"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                 android:textAllCaps="false"

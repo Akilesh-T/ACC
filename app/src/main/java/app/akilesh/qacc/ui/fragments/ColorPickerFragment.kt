@@ -1,7 +1,6 @@
 package app.akilesh.qacc.ui.fragments
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
 import android.os.Build.VERSION_CODES.Q
@@ -11,48 +10,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkInfo
 import app.akilesh.qacc.Const.Colors.AEX
 import app.akilesh.qacc.Const.Colors.brandColors
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
-import app.akilesh.qacc.databinding.ColorPreviewBinding
-import app.akilesh.qacc.databinding.DialogTitleBinding
 import app.akilesh.qacc.model.Accent
-import app.akilesh.qacc.model.Colour
-import app.akilesh.qacc.ui.adapter.ColorListAdapter
-import app.akilesh.qacc.utils.AppUtils.createAccent
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.getWallpaperColors
 import app.akilesh.qacc.utils.AppUtils.setPreview
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
-import app.akilesh.qacc.utils.AppUtils.toHex
+import app.akilesh.qacc.utils.ColorPicker
 import app.akilesh.qacc.viewmodel.AccentViewModel
+import app.akilesh.qacc.viewmodel.ColorPickerViewModel
+import app.akilesh.qacc.viewmodel.CreatorViewModel
 import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import me.priyesh.chroma.ChromaDialog
-import me.priyesh.chroma.ColorMode
-import me.priyesh.chroma.ColorSelectListener
-import kotlin.properties.Delegates
 
-class ColorPickerFragment: Fragment() {
+class ColorPickerFragment: Fragment(), ColorPicker {
 
-    var accentColor = ""
-    private var accentName = ""
-    private var previewColor by Delegates.notNull<Int>()
-    private lateinit var binding: ColorPickerFragmentBinding
-    private lateinit var accentViewModel: AccentViewModel
+    override lateinit var binding: ColorPickerFragmentBinding
+    override lateinit var viewModel: ColorPickerViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,11 +52,11 @@ class ColorPickerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        previewColor = if (accentColor.isBlank()) requireContext().getColorAccent()
-        else Color.parseColor(accentColor)
-        setPreview(binding, previewColor)
+        viewModel = ViewModelProvider(this).get(ColorPickerViewModel::class.java)
 
-        accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+        val previewColor = if (viewModel.colour.hex.isBlank()) requireContext().getColorAccent()
+        else Color.parseColor(viewModel.colour.hex)
+        setPreview(binding, previewColor)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         var separateAccents = sharedPreferences.getBoolean("separate_accent", false)
@@ -92,8 +78,8 @@ class ColorPickerFragment: Fragment() {
         binding.buttonNext.setOnClickListener {
 
             if (separateAccents) {
-                if (accentColor.isNotBlank()) {
-                    val action = ColorPickerFragmentDirections.toDark(accentColor)
+                if (viewModel.colour.hex.isNotBlank()) {
+                    val action = ColorPickerFragmentDirections.toDark(viewModel.colour.hex)
                     findNavController().navigate(action)
                 }
                 else
@@ -102,17 +88,17 @@ class ColorPickerFragment: Fragment() {
                     ).show()
             }
             else if (customise) {
-                if (accentColor.isNotBlank() && accentName.isNotBlank()) {
-                    val action = ColorPickerFragmentDirections.toCustomise(accentColor, accentName, accentColor)
+                if (viewModel.colour.hex.isNotBlank() && viewModel.colour.name.isNotBlank()) {
+                    val action = ColorPickerFragmentDirections.toCustomise(viewModel.colour.hex, viewModel.colour.name, viewModel.colour.hex)
                     findNavController().navigate(action)
                 }
                 else {
-                    if (accentColor.isBlank()) Toast.makeText(
+                    if (viewModel.colour.hex.isBlank()) Toast.makeText(
                         context,
                         getString(R.string.toast_color_not_selected),
                         Toast.LENGTH_SHORT
                     ).show()
-                    if (accentName.isBlank()) Toast.makeText(
+                    if (viewModel.colour.name.isBlank()) Toast.makeText(
                         context,
                         getString(R.string.toast_name_not_set),
                         Toast.LENGTH_SHORT
@@ -120,22 +106,36 @@ class ColorPickerFragment: Fragment() {
                 }
             }
             else {
-                if (accentColor.isNotBlank() && accentName.isNotBlank()) {
-                    val suffix = "hex_" + accentColor.removePrefix("#")
+                if (viewModel.colour.hex.isNotBlank() && viewModel.colour.name.isNotBlank()) {
+                    val suffix = "hex_" + viewModel.colour.hex.removePrefix("#")
                     val pkgName = prefix + suffix
-                    val accent = Accent(pkgName, accentName, accentColor, accentColor)
-                    Log.d("accent", accent.toString())
-                    if (createAccent(requireContext(), accentViewModel, accent)) {
-                        showSnackbar(view, String.format(getString(R.string.accent_created), accentName))
-                        findNavController().navigate(R.id.back_home)
-                    }
+                    val accent = Accent(pkgName, viewModel.colour.name, viewModel.colour.hex, viewModel.colour.hex)
+                    Log.d("accent-s", accent.toString())
+                    val creatorViewModel = ViewModelProvider(this).get(CreatorViewModel::class.java)
+                    creatorViewModel.create(accent)
+                    creatorViewModel.outputWorkInfo.observe(viewLifecycleOwner, Observer { listOfWorkInfo ->
+                        if (listOfWorkInfo.isNullOrEmpty()) {
+                            return@Observer
+                        }
+
+                        var workInfo = listOfWorkInfo.find { it.tags.contains(creatorViewModel.tag) }
+                        if (workInfo == null) workInfo = listOfWorkInfo[0]
+
+                        if (workInfo.state.isFinished && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                            val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+                            accentViewModel.insert(accent)
+                            showSnackbar(view, String.format(getString(R.string.accent_created), viewModel.colour.name))
+                            findNavController().navigate(R.id.action_global_home)
+                        }
+                    })
+
                 } else {
-                    if (accentColor.isBlank()) Toast.makeText(
+                    if (viewModel.colour.hex.isBlank()) Toast.makeText(
                         context,
                         getString(R.string.toast_color_not_selected),
                         Toast.LENGTH_SHORT
                     ).show()
-                    if (accentName.isBlank()) Toast.makeText(
+                    if (viewModel.colour.name.isBlank()) Toast.makeText(
                         context,
                         getString(R.string.toast_name_not_set),
                         Toast.LENGTH_SHORT
@@ -148,100 +148,34 @@ class ColorPickerFragment: Fragment() {
             findNavController().navigateUp()
         }
 
-        binding.brandColors.setOnClickListener { chooseFromPresets(R.string.brand_colors, R.drawable.ic_palette_24dp, brandColors) }
-        binding.custom.setOnClickListener { setCustomColor() }
-        binding.preset.setOnClickListener { chooseFromPresets(R.string.presets, R.drawable.ic_preset, AEX) }
+        binding.brandColors.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.brand_colors, R.drawable.ic_palette_24dp, brandColors) }
+        binding.custom.setOnClickListener {
+            customColorPicker(previewColor, parentFragmentManager)
+        }
+
+        binding.preset.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.presets, R.drawable.ic_preset, AEX) }
         if (SDK_INT > O)
-            binding.wallColors.setOnClickListener { chooseFromWallpaperColors() }
+            binding.wallColors.setOnClickListener {
+                val rationaleHandler = createDialogRationale(R.string.app_name) {
+                    onPermission(
+                        Permission.READ_EXTERNAL_STORAGE,
+                        getString(R.string.read_storage_permission_rationale)
+                    )
+                }
+                runWithPermissions(
+                    Permission.READ_EXTERNAL_STORAGE,
+                    rationaleHandler = rationaleHandler
+                ) {
+                    if (it.isAllGranted()) {
+                        showColorPickerDialog(requireContext(), layoutInflater, R.string.color_wallpaper, R.drawable.ic_wallpaper, requireContext().getWallpaperColors())
+                    }
+                }
+            }
         else
             binding.wallColors.visibility = View.GONE
 
         binding.name.doAfterTextChanged {
-            accentName = it.toString().trim()
-        }
-
-    }
-
-    private fun setCustomColor() {
-
-        ChromaDialog.Builder()
-            .initialColor(previewColor)
-            .colorMode(ColorMode.ARGB)
-            .onColorSelected(object : ColorSelectListener {
-                override fun onColorSelected(color: Int) {
-                    accentColor = toHex(color)
-                    setPreview(binding, color)
-                    binding.name.text = null
-                }
-            })
-            .create()
-            .show(parentFragmentManager, "ChromaDialog")
-
-    }
-
-    private fun chooseFromPresets(@StringRes title: Int, @DrawableRes icon: Int, colorList: List<Colour>) {
-
-        val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
-        val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
-        dialogTitleBinding.titleText.text = String.format(resources.getString(title))
-        dialogTitleBinding.titleIcon.setImageResource(icon)
-        val builder = MaterialAlertDialogBuilder(context)
-            .setCustomTitle(dialogTitleBinding.root)
-            .setView(colorPreviewBinding.root)
-        val dialog = builder.create()
-
-        val adapter = ColorListAdapter(requireContext(), colorList) { colour ->
-            accentColor = colour.hex
-            accentName = colour.name
-            binding.name.setText(colour.name)
-            setPreview(binding, Color.parseColor(accentColor))
-            dialog.cancel()
-        }
-
-        colorPreviewBinding.recyclerViewColor.adapter = adapter
-        colorPreviewBinding.recyclerViewColor.layoutManager = LinearLayoutManager(context)
-
-        dialog.show()
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O_MR1)
-    private fun chooseFromWallpaperColors() {
-
-        val rationaleHandler = createDialogRationale(R.string.app_name) {
-            onPermission(
-                Permission.READ_EXTERNAL_STORAGE,
-                getString(R.string.read_storage_permission_rationale)
-            )
-        }
-
-        runWithPermissions(
-            Permission.READ_EXTERNAL_STORAGE,
-            rationaleHandler = rationaleHandler
-        ) {
-            if (it.isAllGranted()) {
-                val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
-                val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
-                dialogTitleBinding.titleText.text = String.format(resources.getString(R.string.color_wallpaper))
-                dialogTitleBinding.titleIcon.setImageResource(R.drawable.ic_wallpaper)
-                val builder = MaterialAlertDialogBuilder(context)
-                    .setCustomTitle(dialogTitleBinding.root)
-                    .setView(colorPreviewBinding.root)
-                val dialog = builder.create()
-
-                val adapter = ColorListAdapter(requireContext(), requireContext().getWallpaperColors()) { colour ->
-                    accentColor = colour.hex
-                    accentName = colour.name
-                    setPreview(binding, Color.parseColor(accentColor))
-                    binding.name.text = null
-                    dialog.cancel()
-                }
-
-                colorPreviewBinding.recyclerViewColor.adapter = adapter
-                colorPreviewBinding.recyclerViewColor.layoutManager = LinearLayoutManager(context)
-
-                dialog.show()
-            }
+            viewModel.colour.name = it.toString().trim()
         }
     }
 }

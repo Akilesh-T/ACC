@@ -11,7 +11,6 @@ class App: Application() {
 
     init {
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR)
-        Shell.Config.setFlags(Shell.FLAG_VERBOSE_LOGGING)
         Shell.Config.verboseLogging(true)
         Shell.Config.setTimeout(10)
     }
