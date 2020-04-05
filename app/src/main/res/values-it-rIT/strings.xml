@@ -82,7 +82,7 @@
 
     <string name="accent_created">%s creato</string>
     <string name="accent_removed">%s rimosso</string>
-    <string name="oos_accent_set">%s impostato</string>
+    <string name="oos_accent_set">%s attivato</string>
 
     <string name="no_root_access_title">Impossibile ottenere i permessi di root</string>
     <string name="no_root_access_message">Per favore assicurati che:\n1. Il tuo dispositivo sia stato modificato con Magisk\n2. ACC abbia ottenuto i permessi di root</string>
@@ -149,7 +149,7 @@
     <string name="write_storage_permission_rationale">L’autorizzazione Archiviazione è necessaria per salvare il nuovo aggiornamento</string>
     <string name="pref_accent">Segui accent di sistema</string>
     <string name="pref_accent_on">È in uso il colore predefinito dell’app</string>
-    <string name="pref_accent_off"> È in uso il colore accent di sistema</string>
+    <string name="pref_accent_off">È in uso il colore accent di sistema</string>
     <string name="create_all">Crea tutti gli accent</string>
     <string name="create_all_summary">Crea tutti i colori dei marchi, quelli predefiniti e quelli dello sfondo</string>
     <string name="select_all">Seleziona tutto</string>
