@@ -5,25 +5,25 @@
     <string name="app_name_short">ACC</string>
     <string name="color_custom">Colore personalizzato</string>
     <string name="set_custom_color">Tocca per impostare un colore personalizzato</string>
-    <string name="color_name">Dai un nome al tuo colore accent</string>
+    <string name="color_name">Dai un nome al tuo colore</string>
     <string name="color_wallpaper">Colori dello sfondo</string>
-    <string name="created_accents">Colori accent creati</string>
+    <string name="created_accents">Colori creati</string>
     <string name="presets">Colori predefiniti</string>
     <string name="set_preset_color">Tocca per usare i colori predefiniti</string>
     <string name="set_wallpaper_color">Tocca per usare i colori dal tuo sfondo</string>
     <string name="general_header">Generali</string>
     <string name="display_title">Tema scuro</string>
     <string name="colour" translatable="false">%1$s - %2$s</string>
-    <string name="accents_header">Accents</string>
-    <string name="separate_accents_title">Accents separati</string>
+    <string name="accents_header">Colori</string>
+    <string name="separate_accents_title">Colori separati</string>
     <string name="create_new">Crea</string>
     <string name="previous">Precedente</string>
     <string name="next">Successivo</string>
     <string name="light">Chiaro</string>
     <string name="dark">Scuro</string>
     <string name="info">Informazioni</string>
-    <string name="separate_accent_summary_off">Lo stesso colore accent verrà usato per il tema chiaro e per quello scuro</string>
-    <string name="separate_accent_summary_on">Ora è possibile utilizzare colori di accent diversi per i temi chiari e quelli scuri</string>
+    <string name="separate_accent_summary_off">Lo stesso colore verrà usato per il tema chiaro e per quello scuro</string>
+    <string name="separate_accent_summary_on">Ora è possibile utilizzare colori diversi per i temi chiari e quelli scuri</string>
     <string name="hue">Tonalità</string>
     <string name="saturation">Saturazione</string>
     <string name="lightness">Luminosità</string>
@@ -35,9 +35,9 @@
     <string name="tweak">Modifica colori</string>
     <string name="tweak_summary">Modifica tonalità, saturazione e luminosità dei colori scelti</string>
 
-    <string name="picker_title_text">Scegli il tuo accent</string>
-    <string name="picker_title_text_light">Scegli il tuo accent per il tema chiaro</string>
-    <string name="picker_title_text_dark">Scegli il tuo accent per il tema scuro</string>
+    <string name="picker_title_text">Scegli il tuo colore</string>
+    <string name="picker_title_text_light">Scegli il tuo colore per il tema chiaro</string>
+    <string name="picker_title_text_dark">Scegli il tuo colore per il tema scuro</string>
 
     <string name="amber">Ambra</string>
     <string name="blue">Blu</string>
@@ -75,14 +75,14 @@
     <string name="downloads">Download</string>
     <string name="github_releases">Release su Github</string>
     <string name="telegram_channel">Canale Telegram (include le versioni beta)</string>
-    <string name="toast_light_theme_not_selected">Il colore accent per il tema chiaro non è stato selezionato</string>
-    <string name="toast_color_not_selected">Il colore accent non è stato selezionato</string>
-    <string name="toast_name_not_set">Il nome dell’accent non è stato impostato</string>
+    <string name="toast_light_theme_not_selected">Il colore per il tema chiaro non è stato selezionato</string>
+    <string name="toast_color_not_selected">Il colore non è stato selezionato</string>
+    <string name="toast_name_not_set">Il nome del colore non è stato impostato</string>
     <string name="read_storage_permission_rationale">L’autorizzazione Archiviazione è necessaria per ottenere i colori dello sfondo</string>
 
     <string name="accent_created">%s creato</string>
     <string name="accent_removed">%s rimosso</string>
-    <string name="oos_accent_set">%s attivato</string>
+    <string name="oos_accent_set">%s impostato</string>
 
     <string name="no_root_access_title">Impossibile ottenere i permessi di root</string>
     <string name="no_root_access_message">Per favore assicurati che:\n1. Il tuo dispositivo sia stato modificato con Magisk\n2. ACC abbia ottenuto i permessi di root</string>
@@ -90,14 +90,14 @@
     <string name="exit">Esci</string>
     <string name="aapt_error">Impossibile creare overlay</string>
     <string name="backup_restore">Backup e ripristino</string>
-    <string name="backup_restore_summary">Salva i tuoi accents e ripristinali quando necessario</string>
+    <string name="backup_restore_summary">Salva i tuoi colori e ripristinali quando necessario</string>
     <string name="restore">Ripristina</string>
     <string name="local_backups">Backups in archivio</string>
     <string name="backup_contents">Backup contenuti</string>
     <string name="hex_code">Codice esadecimale</string>
     <string name="backup_deleted">File di backup eliminato</string>
     <string name="backup_created">Backup creato!</string>
-    <string name="accents_restored">Accent ripristinati!</string>
+    <string name="accents_restored">Colori ripristinati!</string>
     <string name="color_rename">Rinomina accent</string>
     <string name="brand_colors">Colori di marchi</string>
     <string name="fiveHundredpx">500px</string>
@@ -143,20 +143,20 @@
     <string name="dark_mode_on">On</string>
     <string name="dark_mode_off">Off</string>
     <string name="dark_mode_set_by_battery_saver">Impostato dal risparmio energetico</string>
-    <string name="dark_mode_system_default">Default di sistema</string>
+    <string name="dark_mode_system_default">Sistema</string>
     <string name="create_backup">Backup</string>
     <string name="edit">Modifica</string>
     <string name="write_storage_permission_rationale">L’autorizzazione Archiviazione è necessaria per salvare il nuovo aggiornamento</string>
-    <string name="pref_accent">Segui accent di sistema</string>
+    <string name="pref_accent">Segui colore di sistema</string>
     <string name="pref_accent_on">È in uso il colore predefinito dell’app</string>
-    <string name="pref_accent_off">È in uso il colore accent di sistema</string>
-    <string name="create_all">Crea tutti gli accent</string>
+    <string name="pref_accent_off">È in uso il colore di sistema</string>
+    <string name="create_all">Crea tutti i colori</string>
     <string name="create_all_summary">Crea tutti i colori dei marchi, quelli predefiniti e quelli dello sfondo</string>
     <string name="select_all">Seleziona tutto</string>
     <string name="deselect_all">Deseleziona tutto</string>
-    <string name="create_selected">Crea accent selezionati</string>
-    <string name="accents_created">Accent creati</string>
-    <string name="restoring_accents">Ripristinando accent</string>
+    <string name="create_selected">Crea colori selezionati</string>
+    <string name="accents_created">Colori creati</string>
+    <string name="restoring_accents">Ripristino colori in corso</string>
     <string name="empty_backup">Il backup estratto è vuoto</string>
 
 </resources>
