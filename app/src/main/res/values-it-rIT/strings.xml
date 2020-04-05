@@ -63,9 +63,9 @@
     <string name="teal">Verde Acqua</string>
     <!--Not a typo, Google it :D--> <string name="yellove">Giallo</string>
 
-    <string name="wallpaper_primary">Colore principale dello sfondo</string>
-    <string name="wallpaer_secondary">Colore secondario dello sfondo</string>
-    <string name="wallpaper_tertiary">Colore terziario dello sfondo</string>
+    <string name="wallpaper_primary">Colore principale</string>
+    <string name="wallpaer_secondary">Colore secondario</string>
+    <string name="wallpaper_tertiary">Colore terziario</string>
     <string name="about_title_desc">Di Akilesh</string>
     <string name="version">Versione</string>
     <string name="links">Link</string>
