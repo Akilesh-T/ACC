@@ -19,6 +19,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.navOptions
 import androidx.palette.graphics.Palette
+import app.akilesh.qacc.Const.Colors.nokiaBlue
 import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
@@ -259,7 +260,7 @@ object AppUtils {
         colors.createNewFile()
 
         createOverlayManifest(manifest, accent.pkgName, accent.name)
-        createColors(colors, accent.colorLight, accent.colorDark)
+        createColors(colors, accent.colorLight, accent.colorDark, hasNokiaBlue(context))
 
         if (manifest.exists() && colors.exists()) {
             aapt.setExecutable(true)
@@ -333,6 +334,14 @@ object AppUtils {
         return created
     }
 
+    private fun hasNokiaBlue(context: Context): Boolean {
+        val packageName = "android"
+        val packageManager = context.packageManager
+        val resources = packageManager.getResourcesForApplication(packageName)
+        val nokiaBlue = resources.getIdentifier(nokiaBlue, "color", packageName)
+        Log.d("FIH-Pie", nokiaBlue.toString())
+        return nokiaBlue != 0
+    }
 
     @Throws(IOException::class, GeneralSecurityException::class)
     fun readCertificate(inputStream: InputStream): X509Certificate {

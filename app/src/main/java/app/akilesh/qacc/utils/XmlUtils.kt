@@ -3,6 +3,7 @@ package app.akilesh.qacc.utils
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.Q
 import app.akilesh.qacc.BuildConfig
+import app.akilesh.qacc.Const.Colors.nokiaBlue
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.File
@@ -65,7 +66,7 @@ object XmlUtils {
         }
     }
 
-    fun createColors(file: File, colorLight: String, colorDark: String) {
+    fun createColors(file: File, colorLight: String, colorDark: String, hasNokiaBlue: Boolean) {
         val document = documentBuilder.newDocument()
         val resourcesElement = document.createElement("resources")
         addColor(document, resourcesElement, "accent_device_default_light", colorLight)
@@ -83,6 +84,7 @@ object XmlUtils {
             addColor(document, resourcesElement, "accent_device_default_50", colorLight)
             addColor(document, resourcesElement, "material_deep_teal_200", colorLight)
             addColor(document, resourcesElement, "material_deep_teal_500", colorLight)
+            if (hasNokiaBlue) addColor(document, resourcesElement, nokiaBlue, colorLight)
         }
         document.appendChild(resourcesElement)
 

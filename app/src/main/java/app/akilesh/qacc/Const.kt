@@ -86,6 +86,7 @@ object Const {
             Colour("#F59714", contextConst.getString(R.string.xda))
             )
 
+        const val nokiaBlue = "zzz_nokia_blue"
     }
 
     object Links {
