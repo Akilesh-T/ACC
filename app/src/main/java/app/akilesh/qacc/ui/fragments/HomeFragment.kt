@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -62,19 +63,26 @@ class HomeFragment: Fragment() {
         val swipeHandler = object : SwipeToDelete(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val accent = accentListAdapter.getAccentAndRemoveAt(viewHolder.adapterPosition)
-                accentViewModel.delete(accent)
                 val appName = accent.pkgName.substringAfter(prefix)
                 Shell.su("cmd overlay disable ${accent.pkgName}").exec()
                 if (SDK_INT >= P) {
                     Shell.su(
                         "rm -f $overlayPath/$appName.apk").exec().apply {
-                        if (isSuccess)
+                        if (isSuccess) {
+                            accentViewModel.delete(accent)
                             showSnackbar(view, String.format(getString(R.string.accent_removed), accent.name))
+                        }
                     }
                 } else {
-                    Shell.su("pm uninstall ${accent.pkgName}").submit {
-                        if (it.isSuccess)
+                    Toast.makeText(requireContext().applicationContext,
+                        String.format(getString(R.string.uninstalling), accent.name), Toast.LENGTH_LONG).show()
+                    Shell.su("pm uninstall ${accent.pkgName}").submit { result ->
+                        val out = result.out.component1()
+                        Log.d("pm-uninstall", accent.name + " - " + out)
+                        if (out == "Success") {
+                            accentViewModel.delete(accent)
                             showSnackbar(view, String.format(getString(R.string.accent_removed), accent.name))
+                        }
                     }
                 }
             }

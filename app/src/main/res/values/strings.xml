@@ -88,7 +88,7 @@
     <string name="no_root_access_message">Please ensure that:\n1. Your device is rooted using Magisk\n2. ACC is granted root access</string>
     <string name="magisk_not_detected">Magisk not detected!</string>
     <string name="exit">Exit</string>
-    <string name="aapt_error">Couldn\'t create overlay</string>
+    <string name="error">Couldn\'t create overlay</string>
     <string name="backup_restore">Backup and restore</string>
     <string name="backup_restore_summary">Save your accents and restore them when needed</string>
     <string name="restore">Restore</string>
@@ -150,13 +150,16 @@
     <string name="pref_accent">Follow system accent</string>
     <string name="pref_accent_on">Using default app colour</string>
     <string name="pref_accent_off">Using system accent colour</string>
-    <string name="create_all">Create all accents</string>
-    <string name="create_all_summary">Create all brand, preset and wallpaper colours</string>
+    <string name="create_all">Create multiple accents</string>
+    <string name="create_all_summary">Create multiple brand, preset and wallpaper colours at once</string>
     <string name="select_all">Select all</string>
     <string name="deselect_all">Deselect all</string>
     <string name="create_selected">Create selected accents</string>
     <string name="accents_created">Accents created</string>
     <string name="restoring_accents">Restoring accents</string>
     <string name="empty_backup">Extracted backup is empty</string>
+    <string name="uninstalling">Uninstalling %s</string>
+    <string name="creating">Creating %s</string>
+    <string name="error_restoring">Couldn\'t restore accents</string>
 
 </resources>

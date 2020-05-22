@@ -2,8 +2,7 @@ package app.akilesh.qacc.ui.fragments
 
 import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.O
-import android.os.Build.VERSION_CODES.Q
+import android.os.Build.VERSION_CODES.*
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -113,21 +112,26 @@ class ColorPickerFragment: Fragment(), ColorPicker {
                     Log.d("accent-s", accent.toString())
                     val creatorViewModel = ViewModelProvider(this).get(CreatorViewModel::class.java)
                     creatorViewModel.create(accent)
-                    creatorViewModel.outputWorkInfo.observe(viewLifecycleOwner, Observer { listOfWorkInfo ->
-                        if (listOfWorkInfo.isNullOrEmpty()) {
-                            return@Observer
-                        }
+                    creatorViewModel.createWorkerId?.let { uuid ->
+                        creatorViewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(
+                            viewLifecycleOwner, Observer { workInfo ->
+                                Log.d("id", workInfo.id.toString())
+                                Log.d("tag", workInfo.tags.toString())
+                                Log.d("state", workInfo.state.name)
 
-                        var workInfo = listOfWorkInfo.find { it.tags.contains(creatorViewModel.tag) }
-                        if (workInfo == null) workInfo = listOfWorkInfo[0]
+                                if (workInfo.state == WorkInfo.State.RUNNING && SDK_INT < P)
+                                    Toast.makeText(requireContext(), String.format(getString(R.string.creating, viewModel.colour.name)), Toast.LENGTH_SHORT).show()
 
-                        if (workInfo.state.isFinished && workInfo.state == WorkInfo.State.SUCCEEDED) {
-                            val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
-                            accentViewModel.insert(accent)
-                            showSnackbar(view, String.format(getString(R.string.accent_created), viewModel.colour.name))
-                            findNavController().navigate(R.id.action_global_home)
-                        }
-                    })
+                                if (workInfo.state == WorkInfo.State.SUCCEEDED && workInfo.state.isFinished) {
+                                    val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+                                    accentViewModel.insert(accent)
+                                    showSnackbar(view, String.format(getString(R.string.accent_created), viewModel.colour.name))
+                                    findNavController().navigate(R.id.action_global_home)
+                                }
+                                if (workInfo.state == WorkInfo.State.FAILED)
+                                    Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_LONG).show()
+                            })
+                    }
 
                 } else {
                     if (viewModel.colour.hex.isBlank()) Toast.makeText(

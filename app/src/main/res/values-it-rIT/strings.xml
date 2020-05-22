@@ -88,7 +88,7 @@
     <string name="no_root_access_message">Per favore assicurati che:\n1. Il tuo dispositivo sia stato modificato con Magisk\n2. ACC abbia ottenuto i permessi di root</string>
     <string name="magisk_not_detected">Magisk non rilevato!</string>
     <string name="exit">Esci</string>
-    <string name="aapt_error">Impossibile creare overlay</string>
+    <string name="error">Impossibile creare overlay</string>
     <string name="backup_restore">Backup e ripristino</string>
     <string name="backup_restore_summary">Salva i tuoi colori e ripristinali quando necessario</string>
     <string name="restore">Ripristina</string>
@@ -158,5 +158,9 @@
     <string name="accents_created">Colori creati</string>
     <string name="restoring_accents">Ripristino colori in corso</string>
     <string name="empty_backup">Il backup estratto è vuoto</string>
+    <string name="uninstalling">Uninstalling %s</string>
+    <string name="creating">Creating %s</string>
+    <string name="error_restoring">Couldn\'t restore accents</string>
+
 
 </resources>

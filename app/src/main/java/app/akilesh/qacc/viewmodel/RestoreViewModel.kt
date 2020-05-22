@@ -8,11 +8,13 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import app.akilesh.qacc.utils.workers.RestoreWorker
+import java.util.*
 
 class RestoreViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val workManager = WorkManager.getInstance(application)
+    val workManager = WorkManager.getInstance(application)
     internal val outputWorkInfo: LiveData<List<WorkInfo>>
+    var restoreWorkerId: UUID? = null
     private val tag = "restore"
     init {
         outputWorkInfo = workManager.getWorkInfosByTagLiveData(tag)
@@ -25,6 +27,7 @@ class RestoreViewModel(application: Application) : AndroidViewModel(application)
             .setInputData(builder.build())
             .addTag(tag)
             .build()
+        restoreWorkerId = restoreRequest.id
         workManager.enqueue(restoreRequest)
     }
 }

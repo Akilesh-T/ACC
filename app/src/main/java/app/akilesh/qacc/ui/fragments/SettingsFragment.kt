@@ -64,8 +64,6 @@ class SettingsFragment: PreferenceFragmentCompat() {
         }
 
         createAllPref?.setOnPreferenceClickListener {
-           /* val createAllViewModel = ViewModelProvider(this).get(CreateAllViewModel::class.java)
-            createAllViewModel.createAll()*/
             findNavController().navigate(R.id.create_all_fragment, null, navAnim)
             true
         }

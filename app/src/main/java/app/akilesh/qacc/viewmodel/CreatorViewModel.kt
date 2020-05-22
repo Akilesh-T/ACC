@@ -7,18 +7,28 @@ import androidx.work.*
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.utils.workers.CreateAllWorker
 import app.akilesh.qacc.utils.workers.CreateWorker
+import java.util.*
 
 class CreatorViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val workManager = WorkManager.getInstance(application)
-    internal val outputWorkInfo: LiveData<List<WorkInfo>>
-    val tag: String = "create"
+    val workManager = WorkManager.getInstance(application)
+    internal var outputWorkInfo: LiveData<List<WorkInfo>>
+    private val outputWorkInfoAll: LiveData<List<WorkInfo>>
+    var createWorkerId: UUID? = null
+    var createAllWorkerId: UUID? = null
+    private val tag: String = "create"
+    private val createAllTag = "create-all"
     init {
         outputWorkInfo = workManager.getWorkInfosByTagLiveData(tag)
+        outputWorkInfoAll = workManager.getWorkInfosByTagLiveData(createAllTag)
     }
 
     internal fun createAll() {
-        workManager.enqueue(OneTimeWorkRequest.from(CreateAllWorker::class.java))
+        val createAllRequest = OneTimeWorkRequestBuilder<CreateAllWorker>()
+            .addTag(createAllTag)
+            .build()
+        createAllWorkerId = createAllRequest.id
+        workManager.enqueue(createAllRequest)
     }
 
     internal fun create(accent: Accent) {
@@ -32,6 +42,7 @@ class CreatorViewModel(application: Application) : AndroidViewModel(application)
             .setInputData(data)
             .addTag(tag)
             .build()
+        createWorkerId = createRequest.id
         workManager.enqueue(createRequest)
     }
 }

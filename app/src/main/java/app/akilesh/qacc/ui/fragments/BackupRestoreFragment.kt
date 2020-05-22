@@ -39,15 +39,14 @@ import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.utils.SwipeToDelete
-import app.akilesh.qacc.utils.workers.WorkerUtils.makeStatusNotification
 import app.akilesh.qacc.viewmodel.AccentViewModel
 import app.akilesh.qacc.viewmodel.BackupFileViewModel
 import app.akilesh.qacc.viewmodel.RestoreViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.topjohnwu.superuser.Shell
+import com.topjohnwu.superuser.io.SuFileOutputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.util.*
 
 class BackupRestoreFragment: Fragment() {
@@ -101,7 +100,7 @@ class BackupRestoreFragment: Fragment() {
                     setHasFixedSize(true)
                 }
 
-                MaterialAlertDialogBuilder(context)
+                MaterialAlertDialogBuilder(requireContext())
                     .setCustomTitle(dialogTitleBinding.root)
                     .setView(colorPreviewBinding.root)
                     .create()
@@ -221,17 +220,16 @@ class BackupRestoreFragment: Fragment() {
                 )
                 val parcelFileDescriptor =
                     selectedUri?.let {
-                        requireContext().applicationContext.contentResolver.openFileDescriptor(
+                        requireContext().contentResolver.openFileDescriptor(
                             it,
                             "r"
                         )
                     }
-                val backupFile = File(requireContext().applicationContext.filesDir, "acc.tar.gz")
-                backupFile.setWritable(true)
+                val backupFile = File(requireContext().filesDir, "acc.tar.gz")
                 parcelFileDescriptor?.let {
                     val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
                     inputStream.use { stream ->
-                        FileOutputStream(backupFile.absolutePath).use {
+                        SuFileOutputStream(backupFile.absolutePath).use {
                             stream.copyTo(it)
                         }
                     }
@@ -285,7 +283,7 @@ class BackupRestoreFragment: Fragment() {
                 insertToDB(getAppList(backupFile.absolutePath))
                 backupFile.delete()
                 Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
-                showSnackbar(this.requireView(), getString(R.string.accents_restored))
+                showSnackbar(requireView(), getString(R.string.accents_restored))
             }
         }
         else {
@@ -296,23 +294,23 @@ class BackupRestoreFragment: Fragment() {
                 File(it).setReadable(true, false)
             }
             val filesList = apps.toTypedArray()
-            Log.d("files-list", filesList.toString())
+            Log.d("files-list", apps.toString())
             val restoreViewModel = ViewModelProvider(this).get(RestoreViewModel::class.java)
             if (filesList.isNotEmpty()) {
-                makeStatusNotification(requireContext(), true)
                 restoreViewModel.restore(filesList)
-                restoreViewModel.outputWorkInfo.observe(viewLifecycleOwner, Observer { listOfWorkInfo ->
-                    if (listOfWorkInfo.isNullOrEmpty()) {
-                        return@Observer
-                    }
-
-                    val workInfo = listOfWorkInfo[0]
-                    if (workInfo.state.isFinished && workInfo.state == WorkInfo.State.SUCCEEDED) {
-                        makeStatusNotification(requireContext(), false)
-                        backupFile.delete()
-                        Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
-                    }
-                })
+                restoreViewModel.restoreWorkerId?.let { uuid ->
+                    restoreViewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(viewLifecycleOwner, Observer { workInfo ->
+                        Log.d("id", workInfo.id.toString())
+                        Log.d("state", workInfo.state.name)
+                        if (workInfo != null && workInfo.state.isFinished && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                            backupFile.delete()
+                            showSnackbar(requireView(), getString(R.string.accents_restored))
+                            //Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
+                        }
+                        if (workInfo.state == WorkInfo.State.FAILED)
+                            Toast.makeText(requireContext(), getString(R.string.error_restoring), Toast.LENGTH_LONG).show()
+                    })
+                }
             }
             else Toast.makeText(requireContext(), getString(R.string.empty_backup), Toast.LENGTH_SHORT).show()
         }

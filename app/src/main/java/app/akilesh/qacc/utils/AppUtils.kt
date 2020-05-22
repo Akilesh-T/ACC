@@ -286,7 +286,7 @@ object AppUtils {
                     signedOverlay.setReadable(true)
                     zipalign.setExecutable(true)
                     val zipalignResult = Shell.su(
-                        "./${zipalign.absolutePath} -v -p 4 ${signedOverlay.absolutePath} ${alignedOverlay.absolutePath}"
+                        "./${zipalign.absolutePath} -f -v -p 4 ${signedOverlay.absolutePath} ${alignedOverlay.absolutePath}"
                     ).exec()
                     Log.d("zipalign-code", zipalignResult.code.toString())
                     Log.d("zipalign-out", zipalignResult.out.toString())
@@ -339,7 +339,7 @@ object AppUtils {
         val packageManager = context.packageManager
         val resources = packageManager.getResourcesForApplication(packageName)
         val nokiaBlue = resources.getIdentifier(nokiaBlue, "color", packageName)
-        Log.d("FIH-Pie", nokiaBlue.toString())
+        Log.d("FIH", nokiaBlue.toString())
         return nokiaBlue != 0
     }
 
