@@ -1,7 +1,6 @@
 package app.akilesh.qacc.ui.fragments
 
 import android.content.Context
-import android.content.res.Configuration
 import android.net.Uri
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
@@ -21,22 +20,13 @@ import com.danielstone.materialaboutlibrary.model.MaterialAboutList
 
 class InfoFragment: MaterialAboutFragment() {
 
-    override fun getTheme(): Int {
-        var theme: Int = R.style.AppTheme
-        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> {
-                theme =  R.style.AppTheme_AboutCardLight
-            }
-            Configuration.UI_MODE_NIGHT_YES -> {
-                theme = R.style.AppTheme_AboutCardDark
-            }
-        }
-        return theme
-    }
-
     override fun getMaterialAboutList(context: Context?): MaterialAboutList {
 
-        var tintColor = ResourcesCompat.getColor(requireContext().resources, R.color.colorPrimary, requireContext().theme)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
+        val tintColor =
+            if (useSystemAccent) requireContext().getColorAccent()
+            else ResourcesCompat.getColor(requireContext().resources, R.color.colorPrimary, requireContext().theme)
         val icons = listOf(
             ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_outline_info, requireContext().theme),
             ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_github, requireContext().theme),
@@ -44,14 +34,6 @@ class InfoFragment: MaterialAboutFragment() {
             ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_xda, requireContext().theme),
             ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_outline_get_app, requireContext().theme)
         )
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
-        if (useSystemAccent) {
-            tintColor = requireContext().getColorAccent()
-            icons.forEach {
-                it?.setTint(tintColor)
-            }
-        }
 
         val appInfoCard = MaterialAboutCard.Builder()
             .addItem(

@@ -82,7 +82,9 @@ dependencies {
 
     implementation(Libraries.materialComponents)
 
-    implementation(Libraries.libSu)
+    implementation(Libraries.libSuCore)
+    implementation(Libraries.libsuIO)
+
     implementation(Libraries.lawnchairChroma)
 
     api(Libraries.bcProv)
@@ -95,7 +97,7 @@ dependencies {
 
     implementation(Libraries.appUpdater)
 
-    implementation(Libraries.whatTheStack)
+    debugImplementation(Libraries.whatTheStack)
 
     implementation(Libraries.workManager)
 

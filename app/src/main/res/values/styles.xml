@@ -26,17 +26,6 @@
         <item name="textAllCaps">false</item>
     </style>
 
-<!--
-    MAL doesn't use Theme.MaterialComponents.DayNight yet
--->
-    <style name="AppTheme.AboutCardLight" parent="Theme.Mal.Light">
-        <item name="mal_card_background">@color/aboutCardBackground</item>
-    </style>
-
-    <style name="AppTheme.AboutCardDark" parent="Theme.Mal.Dark">
-        <item name="mal_card_background">@color/aboutCardBackground</item>
-    </style>
-    
     <style name="PreviewCards" parent="Widget.MaterialComponents.CardView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
