@@ -24,9 +24,6 @@ class AccentListAdapter internal constructor(
 ): RecyclerView.Adapter<AccentListAdapter.AccentViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var accents = mutableListOf<Accent>()
-    init {
-        setHasStableIds(true)
-    }
 
     inner class AccentViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val name: MaterialTextView = itemView.findViewById(R.id.color_name)
@@ -115,8 +112,6 @@ class AccentListAdapter internal constructor(
         return current
     }
     override fun getItemCount() = accents.size
-
-    override fun getItemId(position: Int): Long = position.toLong()
 
     private fun isOverlayInstalled(pkgName: String): Boolean {
         return try {

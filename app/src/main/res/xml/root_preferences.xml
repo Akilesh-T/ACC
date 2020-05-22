@@ -32,7 +32,7 @@
         app:key="accents_category"
         app:title="@string/accents_header"
         app:allowDividerAbove="false"
-        app:initialExpandedChildrenCount="2">
+        app:initialExpandedChildrenCount="1">
 
         <app.akilesh.qacc.ui.preferences.StyledSwitchPreferenceCompat
             app:key="separate_accent"

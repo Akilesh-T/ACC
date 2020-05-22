@@ -23,8 +23,19 @@
         android:layout_gravity="bottom|center_horizontal"
         android:visibility="invisible"
         android:background="?colorSurface"
+        android:elevation="8dp"
         app:layout_behavior="com.google.android.material.transformation.FabTransformationSheetBehavior"
         >
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:indeterminate="true"
+            />
 
         <include
             android:id="@+id/sheet_content"
@@ -42,6 +53,7 @@
         app:backgroundTint="?colorSurface"
         app:srcCompat="@drawable/ic_unfold_more"
         app:tint="?colorOnSurface"
+        app:fabSize="auto"
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
