@@ -8,29 +8,29 @@ import android.os.Build.VERSION_CODES.Q
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.ColorUtils
+import android.widget.PopupMenu
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.topjohnwu.superuser.Shell
 
 class AccentListAdapter internal constructor(
     private val context: Context,
-    val edit: (Accent) -> Unit
+    val edit: (Accent) -> Unit,
+    val uninstall: (Accent) -> Unit
 ): RecyclerView.Adapter<AccentListAdapter.AccentViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var accents = mutableListOf<Accent>()
 
     inner class AccentViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val name: MaterialTextView = itemView.findViewById(R.id.color_name)
-        val switchMaterial: SwitchMaterial = itemView.findViewById(R.id.enable_disable_accent)
         val lightAccent: MaterialTextView = itemView.findViewById(R.id.light_accent)
         val darkAccent: MaterialTextView = itemView.findViewById(R.id.dark_accent)
-        val edit: MaterialButton = itemView.findViewById(R.id.edit)
+        val card: MaterialCardView = itemView.findViewById(R.id.cardView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccentViewHolder {
@@ -42,60 +42,54 @@ class AccentListAdapter internal constructor(
 
         val current = accents[position]
         val colorLight = Color.parseColor(current.colorLight)
-        holder.edit.apply {
-            rippleColor = ColorStateList.valueOf(colorLight)
-            setOnClickListener {
-                edit(current)
-            }
-        }
+        val isInstalled = isOverlayInstalled(current.pkgName)
 
         holder.name.text = current.name
-        holder.lightAccent.text = current.colorLight
-        holder.lightAccent.compoundDrawableTintList = ColorStateList.valueOf(colorLight)
+        if (isInstalled.not()) holder.name.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_indeterminate, 0)
         if (current.colorDark.isNotBlank() && current.colorDark != current.colorLight) {
             holder.darkAccent.text = current.colorDark
             val colorDark = Color.parseColor(current.colorDark)
-            holder.darkAccent.compoundDrawableTintList = ColorStateList.valueOf(colorDark)
+            TextViewCompat.setCompoundDrawableTintList(holder.darkAccent, ColorStateList.valueOf(colorDark))
+            holder.lightAccent.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_outline_wb_sunny, 0, 0, 0)
         }
         else {
             holder.darkAccent.visibility = View.GONE
         }
+        holder.lightAccent.text = current.colorLight
+        TextViewCompat.setCompoundDrawableTintList(holder.lightAccent, ColorStateList.valueOf(colorLight))
 
-        if (isOverlayInstalled(current.pkgName)) {
 
-            if (isOverlayEnabled(current.pkgName)) {
-                val accentColor = context.getColorAccent()
-                holder.switchMaterial.apply {
-                    isChecked = true
-                    thumbTintList = ColorStateList.valueOf(accentColor)
-                    trackTintList =
-                        ColorStateList.valueOf(ColorUtils.setAlphaComponent(accentColor, 150))
+        val popupMenu = PopupMenu(context, holder.itemView)
+        popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+        if (SDK_INT >= Q) popupMenu.setForceShowIcon(true)
+        popupMenu.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.edit -> edit(current)
+                R.id.uninstall -> {
+                    if (isOverlayEnabled(current.pkgName)) disableAccent(current.pkgName)
+                    uninstall(current)
                 }
             }
-            else holder.switchMaterial.isChecked = false
-
-            holder.switchMaterial.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    accents.forEach {
-                        Shell.su("cmd overlay disable ${it.pkgName}").exec()
-                    }
-                    Shell.su(
-                        "cmd overlay enable ${current.pkgName}",
-                        "cmd overlay set-priority ${current.pkgName} highest"
-                    ).exec()
-                    //Shell.su("cmd overlay enable-exclusive --category ${current.pkgName}").exec()
-                }
-                else {
-                    Shell.su("cmd overlay disable ${current.pkgName}").exec()
-                }
-            }
+            true
         }
-        else {
-            holder.switchMaterial.apply {
-                hint = "Not installed"
-                isClickable = false
-                thumbDrawable = null
-                trackDrawable = null
+        holder.card.setOnLongClickListener {
+            popupMenu.show()
+            true
+        }
+
+        if (isInstalled) {
+            val isEnabled = isOverlayEnabled(current.pkgName)
+            holder.card.apply {
+                if (isEnabled) {
+                    strokeWidth = 3
+                    strokeColor = context.getColorAccent()
+                } else {
+                    strokeWidth = 0
+                }
+            }
+            holder.card.setOnClickListener {
+                if (isEnabled) disableAccent(current.pkgName)
+                else enableAccent(current.pkgName)
             }
         }
     }
@@ -105,12 +99,6 @@ class AccentListAdapter internal constructor(
         notifyDataSetChanged()
     }
 
-    internal fun getAccentAndRemoveAt(position: Int): Accent {
-        val current = accents[position]
-        accents.removeAt(position)
-        notifyItemRemoved(position)
-        return current
-    }
     override fun getItemCount() = accents.size
 
     private fun isOverlayInstalled(pkgName: String): Boolean {
@@ -133,5 +121,20 @@ class AccentListAdapter internal constructor(
             }
         }
         return isEnabled
+    }
+
+    private fun enableAccent(packageName: String) {
+        accents.forEach{ accent ->
+            if (isOverlayInstalled(accent.pkgName) && isOverlayEnabled(accent.pkgName)) disableAccent(accent.pkgName)
+        }
+        Shell.su(
+            "cmd overlay enable $packageName",
+            "cmd overlay set-priority $packageName highest"
+        ).submit()
+        //Shell.su("cmd overlay enable-exclusive --category ${current.pkgName}").exec()
+    }
+
+    private fun disableAccent(packageName: String) {
+        Shell.su("cmd overlay disable $packageName").exec()
     }
 }

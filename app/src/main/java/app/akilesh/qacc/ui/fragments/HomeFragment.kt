@@ -12,9 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.GridLayoutManager
 import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
@@ -23,7 +21,6 @@ import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.ui.adapter.AccentListAdapter
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
-import app.akilesh.qacc.utils.SwipeToDelete
 import app.akilesh.qacc.viewmodel.AccentViewModel
 import com.topjohnwu.superuser.Shell
 
@@ -45,26 +42,13 @@ class HomeFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val accentListAdapter = AccentListAdapter(requireContext()) {
-            val navDirections = HomeFragmentDirections.edit(it.colorLight, it.colorDark, it.name, true)
-            findNavController().navigate(navDirections)
-        }
-        binding.recyclerView.apply {
-            adapter = accentListAdapter
-            layoutManager = LinearLayoutManager(requireContext())
-            setItemViewCacheSize(5)
-        }
-        accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
-        accentViewModel.allAccents.observe(viewLifecycleOwner, Observer { accents ->
-            accents?.let { accentListAdapter.setAccents(it) }
-            insertMissing(accents)
-        })
-
-        val swipeHandler = object : SwipeToDelete(requireContext()) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val accent = accentListAdapter.getAccentAndRemoveAt(viewHolder.adapterPosition)
+        val accentListAdapter = AccentListAdapter(requireContext(),
+            {
+                val navDirections = HomeFragmentDirections.edit(it.colorLight, it.colorDark, it.name, true)
+                findNavController().navigate(navDirections)
+            },
+            { accent ->
                 val appName = accent.pkgName.substringAfter(prefix)
-                Shell.su("cmd overlay disable ${accent.pkgName}").exec()
                 if (SDK_INT >= P) {
                     Shell.su(
                         "rm -f $overlayPath/$appName.apk").exec().apply {
@@ -74,21 +58,26 @@ class HomeFragment: Fragment() {
                         }
                     }
                 } else {
-                    Toast.makeText(requireContext().applicationContext,
-                        String.format(getString(R.string.uninstalling), accent.name), Toast.LENGTH_LONG).show()
-                    Shell.su("pm uninstall ${accent.pkgName}").submit { result ->
-                        val out = result.out.component1()
-                        Log.d("pm-uninstall", accent.name + " - " + out)
-                        if (out == "Success") {
-                            accentViewModel.delete(accent)
-                            showSnackbar(view, String.format(getString(R.string.accent_removed), accent.name))
-                        }
+                    Toast.makeText(requireContext(),
+                        requireContext().getString(R.string.uninstalling, accent.name), Toast.LENGTH_LONG).show()
+                    val result = Shell.su("pm uninstall ${accent.pkgName}").exec()
+                    Log.d("pm-uninstall", accent.name + " - " + result.out)
+                    if (result.isSuccess) {
+                        accentViewModel.delete(accent)
+                        showSnackbar(view, getString(R.string.accent_removed, accent.name))
                     }
                 }
             }
+        )
+        binding.recyclerView.apply {
+            adapter = accentListAdapter
+            layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+        accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+        accentViewModel.allAccents.observe(viewLifecycleOwner, Observer { accents ->
+            accents?.let { accentListAdapter.setAccents(it) }
+            insertMissing(accents)
+        })
     }
 
     private fun insertMissing(accents: MutableList<Accent>) {
@@ -130,18 +119,20 @@ class HomeFragment: Fragment() {
                 val resources = requireContext().packageManager.getResourcesForApplication(applicationInfo)
                 val accentLightId =
                     resources.getIdentifier("accent_device_default_light", "color", pkgName)
-                val colorLight = resources.getColor(accentLightId, null)
                 val accentDarkId =
                     resources.getIdentifier("accent_device_default_dark", "color", pkgName)
-                val colorDark = resources.getColor(accentDarkId, null)
-                val accent = Accent(
-                    pkgName,
-                    accentName,
-                    toHex(colorLight),
-                    toHex(colorDark)
-                )
-                Log.d("inserting accent...", accent.toString())
-                accentViewModel.insert(accent)
+                if (accentLightId != 0 && accentDarkId != 0) {
+                    val colorLight = resources.getColor(accentLightId, null)
+                    val colorDark = resources.getColor(accentDarkId, null)
+                    val accent = Accent(
+                        pkgName,
+                        accentName,
+                        toHex(colorLight),
+                        toHex(colorDark)
+                    )
+                    Log.d("Inserting accent", accent.toString())
+                    accentViewModel.insert(accent)
+                }
             }
         }
     }
