@@ -125,6 +125,7 @@ abstract class SwipeToDelete(context: Context) :
     init {
         clearPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
         deleteDrawable = ContextCompat.getDrawable(context, R.drawable.ic_delete)
+        deleteDrawable?.setTint(ContextCompat.getColor(context, android.R.color.white))
         intrinsicWidth = deleteDrawable!!.intrinsicWidth
         intrinsicHeight = deleteDrawable.intrinsicHeight
     }

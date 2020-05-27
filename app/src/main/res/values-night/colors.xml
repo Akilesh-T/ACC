@@ -3,5 +3,4 @@
     <color name="colorPrimary">#BB86FC</color>
     <color name="remove">#CF6679</color>
     <color name="colorCustom">@android:color/black</color>
-    <color name="aboutCardBackground">#121212</color>
 </resources>

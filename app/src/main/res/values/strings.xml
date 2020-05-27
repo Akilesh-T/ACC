@@ -161,5 +161,7 @@
     <string name="uninstalling">Uninstalling %s</string>
     <string name="creating">Creating %s</string>
     <string name="error_restoring">Couldn\'t restore accents</string>
+    <string name="view_backup_contents">View contents (%d)</string>
+    <string name="uninstall">Uninstall</string>
 
 </resources>

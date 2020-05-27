@@ -8,11 +8,13 @@ import android.content.res.ColorStateList
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
+import android.text.format.Formatter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -32,6 +34,7 @@ import app.akilesh.qacc.databinding.BackupRestoreFragmentBinding
 import app.akilesh.qacc.databinding.ColorPreviewBinding
 import app.akilesh.qacc.databinding.DialogTitleBinding
 import app.akilesh.qacc.model.Accent
+import app.akilesh.qacc.model.BackupFile
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.adapter.BackupListAdapter
 import app.akilesh.qacc.ui.adapter.ColorListAdapter
@@ -44,6 +47,7 @@ import app.akilesh.qacc.viewmodel.BackupFileViewModel
 import app.akilesh.qacc.viewmodel.RestoreViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.topjohnwu.superuser.Shell
+import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -86,10 +90,6 @@ class BackupRestoreFragment: Fragment() {
                 }
 
                 val contents = getBackupContents(file)
-                contents.removeIf { it == "./" }
-                contents.replaceAll { s -> s.removePrefix("./hex").removePrefix("_").removeSuffix(".apk").substringBefore('_') }
-                Log.d("contents", contents.toString())
-
                 val accents: List<Colour> = contents.map { Colour("#$it", getString(R.string.hex_code)) }
                 val colorListAdapter = ColorListAdapter(requireContext(), accents) {}
 
@@ -139,23 +139,38 @@ class BackupRestoreFragment: Fragment() {
     private fun setColor(colorAccent: Int) {
         binding.apply {
             val colorStateList = ColorStateList.valueOf(colorAccent)
-            newBackupText.compoundDrawableTintList = colorStateList
-            restoreText.compoundDrawableTintList = colorStateList
+            TextViewCompat.setCompoundDrawableTintList(newBackupText, colorStateList)
+            TextViewCompat.setCompoundDrawableTintList(restoreText, colorStateList)
             localBackupTitle.setTextColor(colorAccent)
             recyclerViewBackupFiles
         }
     }
 
     private fun getBackupContents(file: String): MutableList<String> {
-        return Shell.su(
+        val contents = Shell.su(
             ".$busyBox tar t -f $backupFolder/$file"
         ).exec().out
+        contents.removeIf { it == "./" }
+        contents.replaceAll { s -> s.removePrefix("./hex").removePrefix("_").removeSuffix(".apk").substringBefore('_') }
+        Log.d("contents", contents.toString())
+        return contents
     }
 
-    private fun getBackupFiles(): MutableList<String> {
-        return Shell.su(
-            "ls -1t $backupFolder"
-        ).exec().out
+    private fun getBackupFiles(): MutableList<BackupFile> {
+        val backupFiles = mutableListOf<BackupFile>()
+        SuFile(backupFolder).walk().forEach { file ->
+            if (file.isFile) {
+                backupFiles.add(
+                    BackupFile(
+                        file.name,
+                        Formatter.formatShortFileSize(requireContext(), file.length()),
+                        getBackupContents(file.name).size
+                    )
+                )
+            }
+        }
+        Log.d("back", backupFiles.toString())
+        return backupFiles
     }
 
     private fun createBackup() {
@@ -327,12 +342,14 @@ class BackupRestoreFragment: Fragment() {
             val pkgName = packageInfo.packageName.toString()
             val resources = packageManager.getResourcesForApplication(applicationInfo)
             val accentLightId = resources.getIdentifier("accent_device_default_light", "color", pkgName)
-            val colorLight = resources.getColor(accentLightId, null)
             val accentDarkId = resources.getIdentifier("accent_device_default_dark", "color", pkgName)
-            val colorDark = resources.getColor(accentDarkId, null)
-            val accent = Accent(pkgName, accentName, toHex(colorLight), toHex(colorDark))
-            val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
-            accentViewModel.insert(accent)
+            if (accentLightId != 0 && accentDarkId != 0) {
+                val colorLight = resources.getColor(accentLightId, null)
+                val colorDark = resources.getColor(accentDarkId, null)
+                val accent = Accent(pkgName, accentName, toHex(colorLight), toHex(colorDark))
+                val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+                accentViewModel.insert(accent)
+            }
         }
     }
 }

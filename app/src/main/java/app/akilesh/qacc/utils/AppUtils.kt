@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.widget.TextViewCompat
 import androidx.navigation.navOptions
 import androidx.palette.graphics.Palette
 import app.akilesh.qacc.Const.Colors.nokiaBlue
@@ -143,10 +144,10 @@ object AppUtils {
         }
 
         binding.apply {
-            brandColorsText.compoundDrawableTintList = accentTintList
-            customText.compoundDrawableTintList = accentTintList
-            presetText.compoundDrawableTintList = accentTintList
-            wallColorsText.compoundDrawableTintList = accentTintList
+            TextViewCompat.setCompoundDrawableTintList(brandColorsText, accentTintList)
+            TextViewCompat.setCompoundDrawableTintList(customText, accentTintList)
+            TextViewCompat.setCompoundDrawableTintList(presetText, accentTintList)
+            TextViewCompat.setCompoundDrawableTintList(wallColorsText, accentTintList)
             textInputLayout.setBoxStrokeColorStateList(accentTintList)
             if (SDK_INT >= Q) {
                 name.textCursorDrawable?.setTintList(accentTintList)
