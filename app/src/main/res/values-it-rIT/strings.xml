@@ -98,7 +98,7 @@
     <string name="backup_deleted">File di backup eliminato</string>
     <string name="backup_created">Backup creato!</string>
     <string name="accents_restored">Colori ripristinati!</string>
-    <string name="color_rename">Rinomina accent</string>
+    <string name="color_rename">Rinomina colore</string>
     <string name="brand_colors">Colori di marchi</string>
     <string name="fiveHundredpx">500px</string>
     <string name="adobe">Adobe</string>
@@ -158,10 +158,10 @@
     <string name="accents_created">Colori creati</string>
     <string name="restoring_accents">Ripristino colori in corso</string>
     <string name="empty_backup">Il backup estratto è vuoto</string>
-    <string name="uninstalling">Uninstalling %s</string>
-    <string name="creating">Creating %s</string>
-    <string name="error_restoring">Couldn\'t restore accents</string>
-    <string name="view_backup_contents">View contents (%d)</string>
-    <string name="uninstall">Uninstall</string>
+    <string name="uninstalling">Disinstallazione di %s in corso</string>
+    <string name="creating">Creazione di %s in corso</string>
+    <string name="error_restoring">Impossibile ripristinare i colori</string>
+    <string name="view_backup_contents">Visualizza contenuti (%d)</string>
+    <string name="uninstall">Disinstalla</string>
 
 </resources>
