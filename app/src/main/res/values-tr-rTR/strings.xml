@@ -146,5 +146,22 @@
     <string name="dark_mode_system_default">Sistem varsayılanı</string>
     <string name="create_backup">Yedekle</string>
     <string name="edit">Düzenle</string>
+    <string name="write_storage_permission_rationale">Yeni güncellemeyi kaydedebilmek için depolama izinleri gereklidir</string>
+    <string name="pref_accent">Sistem vurgu rengini takip et</string>
+    <string name="pref_accent_on">Varsayılan uygulama rengi kullanılıyor</string>
+    <string name="pref_accent_off">Sistem vurgu rengi kullanıluyor</string>
+    <string name="create_all">Çoklu vurgu renkleri oluştur</string>
+    <string name="create_all_summary">Aynı anda çoklu marka, ön ayar ve duvar kağıdı renkleri oluştur.</string>
+    <string name="select_all">Tümünü seç</string>
+    <string name="deselect_all">Tümünü seçimi iptal et</string>
+    <string name="create_selected">Seçilen vurgu renklerini oluştur</string>
+    <string name="accents_created">Vurgu renkleri oluşturuldu</string>
+    <string name="restoring_accents">Vurgu renkleri geri yükleniyor</string>
+    <string name="empty_backup">Çıkarılan yedek boş</string>
+    <string name="uninstalling">%s kaldırılıyor</string>
+    <string name="creating">%s oluşturuluyor</string>
+    <string name="error_restoring">Vurgu renkleri geri yüklenemedi</string>
+    <string name="view_backup_contents">(%d) içeriğini göster</string>
+    <string name="uninstall">Kaldır</string>
 
 </resources>
