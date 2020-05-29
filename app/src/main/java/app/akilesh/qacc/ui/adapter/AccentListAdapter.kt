@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
 import app.akilesh.qacc.model.Accent
@@ -81,15 +83,37 @@ class AccentListAdapter internal constructor(
             val isEnabled = isOverlayEnabled(current.pkgName)
             holder.card.apply {
                 if (isEnabled) {
-                    strokeWidth = 3
-                    strokeColor = context.getColorAccent()
-                } else {
-                    strokeWidth = 0
+                   setCardBackground(holder, context.getColorAccent())
                 }
             }
             holder.card.setOnClickListener {
                 if (isEnabled) disableAccent(current.pkgName)
                 else enableAccent(current.pkgName)
+            }
+        }
+    }
+
+    private fun setCardBackground(
+        holder: AccentViewHolder,
+        colorAccent: Int
+    ) {
+        val colorStateList = ColorStateList.valueOf(colorAccent)
+        val textColor = Palette.Swatch(colorAccent, 2).bodyTextColor
+        holder.apply {
+            card.backgroundTintList = colorStateList
+            name.setTextColor(textColor)
+            lightAccent.apply {
+                setTextColor(textColor)
+                TextViewCompat.setCompoundDrawableTintList(this, ColorStateList.valueOf(textColor))
+            }
+            if (darkAccent.isVisible) {
+                darkAccent.apply {
+                    setTextColor(textColor)
+                    TextViewCompat.setCompoundDrawableTintList(
+                        this,
+                        ColorStateList.valueOf(textColor)
+                    )
+                }
             }
         }
     }
