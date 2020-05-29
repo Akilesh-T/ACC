@@ -1,4 +1,4 @@
-package app.akilesh.qacc.viewmodel
+package app.akilesh.qacc.ui.home
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

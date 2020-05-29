@@ -1,4 +1,4 @@
-package app.akilesh.qacc.viewmodel
+package app.akilesh.qacc.utils.updates
 
 import android.app.Application
 import android.app.PendingIntent
@@ -8,7 +8,6 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import app.akilesh.qacc.utils.InstallReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

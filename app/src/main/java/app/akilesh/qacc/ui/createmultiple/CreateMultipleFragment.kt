@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.fragments
+package app.akilesh.qacc.ui.createmultiple
 
 import android.content.res.ColorStateList
 import android.os.Build.VERSION.SDK_INT
@@ -28,17 +28,15 @@ import app.akilesh.qacc.Const.selected
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.CreateAllFragmentBinding
 import app.akilesh.qacc.model.Accent
-import app.akilesh.qacc.ui.adapter.CreateAllAdapter
-import app.akilesh.qacc.ui.adapter.ItemDetailsLookupUtil
+import app.akilesh.qacc.ui.home.AccentViewModel
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.getWallpaperColors
-import app.akilesh.qacc.viewmodel.AccentViewModel
-import app.akilesh.qacc.viewmodel.CreatorViewModel
 import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
 
 private lateinit var binding: CreateAllFragmentBinding
+private lateinit var viewModel: CreateMultipleViewModel
 
 class CreateAllFragment: Fragment() {
 
@@ -71,7 +69,7 @@ class CreateAllFragment: Fragment() {
             }
         }
 
-        val createAllAdapter = CreateAllAdapter(requireContext())
+        val createAllAdapter = CreateMultipleAdapter()
         createAllAdapter.colours.addAll(AEX)
         createAllAdapter.colours.addAll(brandColors)
         binding.accentListRv.apply {
@@ -98,7 +96,9 @@ class CreateAllFragment: Fragment() {
             "selection",
             binding.accentListRv,
             StableIdKeyProvider(binding.accentListRv),
-            ItemDetailsLookupUtil(binding.accentListRv),
+            CreateMultipleItemDetailsLookup(
+                binding.accentListRv
+            ),
             StorageStrategy.createLongStorage()
         ).withSelectionPredicate(
             SelectionPredicates.createSelectAnything()
@@ -142,13 +142,12 @@ class CreateAllFragment: Fragment() {
             binding.fab.isExpanded = false
         }
 
+        viewModel = ViewModelProvider(this).get(CreateMultipleViewModel::class.java)
         binding.sheetContent.create.setOnClickListener {
             Log.d("selection", selected.toString())
-            val creatorViewModel = ViewModelProvider(this).get(CreatorViewModel::class.java)
-
-            creatorViewModel.createAll()
-            creatorViewModel.createAllWorkerId?.let { uuid ->
-                creatorViewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(viewLifecycleOwner, Observer { workInfo ->
+            viewModel.createAll()
+            viewModel.createAllWorkerId?.let { uuid ->
+                viewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(viewLifecycleOwner, Observer { workInfo ->
                     Log.d("id", workInfo.id.toString())
                     Log.d("state", workInfo.state.name)
 

@@ -1,4 +1,4 @@
-package app.akilesh.qacc.viewmodel
+package app.akilesh.qacc.ui.customisation
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

@@ -1,4 +1,4 @@
-package app.akilesh.qacc.utils
+package app.akilesh.qacc.utils.updates
 
 import android.content.BroadcastReceiver
 import android.content.Context

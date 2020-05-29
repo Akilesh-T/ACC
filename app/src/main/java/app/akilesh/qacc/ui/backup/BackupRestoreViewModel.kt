@@ -1,16 +1,22 @@
-package app.akilesh.qacc.viewmodel
+package app.akilesh.qacc.ui.backup
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import app.akilesh.qacc.model.BackupFile
 import app.akilesh.qacc.utils.workers.RestoreWorker
 import java.util.*
 
-class RestoreViewModel(application: Application) : AndroidViewModel(application) {
+class BackupRestoreViewModel(application: Application) : AndroidViewModel(application) {
+
+    val backupFiles: MutableLiveData<MutableList<BackupFile>> by lazy {
+        MutableLiveData<MutableList<BackupFile>>()
+    }
 
     val workManager = WorkManager.getInstance(application)
     internal val outputWorkInfo: LiveData<List<WorkInfo>>

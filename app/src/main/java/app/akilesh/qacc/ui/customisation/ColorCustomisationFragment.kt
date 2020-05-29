@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.fragments
+package app.akilesh.qacc.ui.customisation
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -28,9 +28,8 @@ import app.akilesh.qacc.databinding.ColorCustomisationFragmentBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
-import app.akilesh.qacc.viewmodel.AccentViewModel
-import app.akilesh.qacc.viewmodel.CreatorViewModel
-import app.akilesh.qacc.viewmodel.CustomisationViewModel
+import app.akilesh.qacc.ui.home.AccentViewModel
+import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
 import kotlin.properties.Delegates
 
 class ColorCustomisationFragment: Fragment() {
@@ -126,7 +125,12 @@ class ColorCustomisationFragment: Fragment() {
         }
 
         binding.resetChip.setOnClickListener {
-            val action = ColorCustomisationFragmentDirections.reset(args.lightAccent, args.darkAccent, args.accentName)
+            val action =
+                ColorCustomisationFragmentDirections.reset(
+                    args.lightAccent,
+                    args.darkAccent,
+                    args.accentName
+                )
             findNavController().navigate(action)
         }
 
@@ -148,7 +152,7 @@ class ColorCustomisationFragment: Fragment() {
                 val pkgName = prefix + suffix
                 val accent = Accent(pkgName, accentName, accentLight, dark)
                 Log.d("accent-s", accent.toString())
-                val creatorViewModel = ViewModelProvider(this).get(CreatorViewModel::class.java)
+                val creatorViewModel = ViewModelProvider(this).get(ColorPickerViewModel::class.java)
                 creatorViewModel.create(accent)
                 creatorViewModel.createWorkerId?.let { uuid ->
                     creatorViewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(

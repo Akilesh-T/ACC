@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.fragments
+package app.akilesh.qacc.ui.home
 
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.P
@@ -18,10 +18,8 @@ import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.HomeFragmentBinding
 import app.akilesh.qacc.model.Accent
-import app.akilesh.qacc.ui.adapter.AccentListAdapter
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
-import app.akilesh.qacc.viewmodel.AccentViewModel
 import com.topjohnwu.superuser.Shell
 
 
@@ -42,33 +40,47 @@ class HomeFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val accentListAdapter = AccentListAdapter(requireContext(),
-            {
-                val navDirections = HomeFragmentDirections.edit(it.colorLight, it.colorDark, it.name, true)
-                findNavController().navigate(navDirections)
-            },
-            { accent ->
-                val appName = accent.pkgName.substringAfter(prefix)
-                if (SDK_INT >= P) {
-                    Shell.su(
-                        "rm -f $overlayPath/$appName.apk").exec().apply {
-                        if (isSuccess) {
+        val accentListAdapter =
+            AccentListAdapter(requireContext(),
+                {
+                    val navDirections =
+                        HomeFragmentDirections.edit(
+                            it.colorLight,
+                            it.colorDark,
+                            it.name,
+                            true
+                        )
+                    findNavController().navigate(navDirections)
+                },
+                { accent ->
+                    val appName = accent.pkgName.substringAfter(prefix)
+                    if (SDK_INT >= P) {
+                        Shell.su(
+                            "rm -f $overlayPath/$appName.apk"
+                        ).exec().apply {
+                            if (isSuccess) {
+                                accentViewModel.delete(accent)
+                                showSnackbar(
+                                    view,
+                                    String.format(getString(R.string.accent_removed), accent.name)
+                                )
+                            }
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            requireContext().getString(R.string.uninstalling, accent.name),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        val result = Shell.su("pm uninstall ${accent.pkgName}").exec()
+                        Log.d("pm-uninstall", accent.name + " - " + result.out)
+                        if (result.isSuccess) {
                             accentViewModel.delete(accent)
-                            showSnackbar(view, String.format(getString(R.string.accent_removed), accent.name))
+                            showSnackbar(view, getString(R.string.accent_removed, accent.name))
                         }
                     }
-                } else {
-                    Toast.makeText(requireContext(),
-                        requireContext().getString(R.string.uninstalling, accent.name), Toast.LENGTH_LONG).show()
-                    val result = Shell.su("pm uninstall ${accent.pkgName}").exec()
-                    Log.d("pm-uninstall", accent.name + " - " + result.out)
-                    if (result.isSuccess) {
-                        accentViewModel.delete(accent)
-                        showSnackbar(view, getString(R.string.accent_removed, accent.name))
-                    }
                 }
-            }
-        )
+            )
         binding.recyclerView.apply {
             adapter = accentListAdapter
             layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)

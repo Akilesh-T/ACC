@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.adapter
+package app.akilesh.qacc.ui.createmultiple
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -13,7 +13,7 @@ import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.RecyclerviewItemColorPreviewBinding
 import app.akilesh.qacc.model.Colour
 
-class CreateAllAdapter internal constructor() : RecyclerView.Adapter<CreateAllAdapter.CreateAllViewHolder>() {
+class CreateMultipleAdapter internal constructor() : RecyclerView.Adapter<CreateMultipleAdapter.CreateAllViewHolder>() {
 
     var tracker: SelectionTracker<Long>? = null
     var colours: MutableList<Colour> = mutableListOf()
@@ -21,7 +21,7 @@ class CreateAllAdapter internal constructor() : RecyclerView.Adapter<CreateAllAd
         setHasStableIds(true)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreateAllAdapter.CreateAllViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreateAllViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = RecyclerviewItemColorPreviewBinding.inflate(layoutInflater, parent, false)
         return CreateAllViewHolder(binding)
@@ -31,7 +31,7 @@ class CreateAllAdapter internal constructor() : RecyclerView.Adapter<CreateAllAd
 
     override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun onBindViewHolder(holder: CreateAllAdapter.CreateAllViewHolder, position: Int) = holder.bind(position)
+    override fun onBindViewHolder(holder: CreateAllViewHolder, position: Int) = holder.bind(position)
 
     inner class CreateAllViewHolder(private var binding: RecyclerviewItemColorPreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =

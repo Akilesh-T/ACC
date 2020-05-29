@@ -1,4 +1,4 @@
-package app.akilesh.qacc.utils
+package app.akilesh.qacc.ui.colorpicker
 
 import android.content.Context
 import android.graphics.Color
@@ -12,10 +12,8 @@ import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
 import app.akilesh.qacc.databinding.ColorPreviewBinding
 import app.akilesh.qacc.databinding.DialogTitleBinding
 import app.akilesh.qacc.model.Colour
-import app.akilesh.qacc.ui.adapter.ColorListAdapter
 import app.akilesh.qacc.utils.AppUtils.setPreview
 import app.akilesh.qacc.utils.AppUtils.toHex
-import app.akilesh.qacc.viewmodel.ColorPickerViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import me.priyesh.chroma.ChromaDialog
 import me.priyesh.chroma.ColorMode
@@ -54,7 +52,10 @@ interface ColorPicker {
             .setView(colorPreviewBinding.root)
         val dialog = builder.create()
 
-        val colorListAdapter = ColorListAdapter(context, colorList) { selectedColour ->
+        val colorListAdapter = ColorListAdapter(
+            context,
+            colorList
+        ) { selectedColour ->
             viewModel.colour.hex = selectedColour.hex
             viewModel.colour.name = selectedColour.name
             binding.name.setText(selectedColour.name)

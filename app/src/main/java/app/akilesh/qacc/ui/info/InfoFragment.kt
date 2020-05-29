@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.fragments
+package app.akilesh.qacc.ui.info
 
 import android.content.Context
 import android.net.Uri

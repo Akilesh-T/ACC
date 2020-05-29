@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/home"
-        android:name="app.akilesh.qacc.ui.fragments.HomeFragment"
+        android:name="app.akilesh.qacc.ui.home.HomeFragment"
         tools:layout="@layout/home_fragment">
 
         <argument
@@ -59,15 +59,15 @@
 
     <fragment
         android:id="@+id/settings"
-        android:name="app.akilesh.qacc.ui.fragments.SettingsFragment" />
+        android:name="app.akilesh.qacc.ui.preferences.SettingsFragment" />
 
     <fragment
         android:id="@+id/info"
-        android:name="app.akilesh.qacc.ui.fragments.InfoFragment" />
+        android:name="app.akilesh.qacc.ui.info.InfoFragment" />
 
     <fragment
         android:id="@+id/color_picker"
-        android:name="app.akilesh.qacc.ui.fragments.ColorPickerFragment"
+        android:name="app.akilesh.qacc.ui.colorpicker.ColorPickerFragment"
         tools:layout="@layout/color_picker_fragment">
 
         <argument
@@ -114,7 +114,7 @@
 
     <fragment
         android:id="@+id/dark_accent"
-        android:name="app.akilesh.qacc.ui.fragments.DarkColorPickerFragment"
+        android:name="app.akilesh.qacc.ui.colorpicker.DarkColorPickerFragment"
         tools:layout="@layout/color_picker_fragment">
 
         <argument
@@ -158,7 +158,7 @@
 
     <fragment
         android:id="@+id/customisation"
-        android:name="app.akilesh.qacc.ui.fragments.ColorCustomisationFragment"
+        android:name="app.akilesh.qacc.ui.customisation.ColorCustomisationFragment"
         tools:layout="@layout/color_customisation_fragment">
 
         <argument
@@ -202,12 +202,12 @@
 
     <fragment
         android:id="@+id/backup_fragment"
-        android:name="app.akilesh.qacc.ui.fragments.BackupRestoreFragment"
+        android:name="app.akilesh.qacc.ui.backup.BackupRestoreFragment"
         tools:layout="@layout/backup_restore_fragment" />
         
     <fragment
     	android:id="@+id/create_all_fragment"
-    	android:name="app.akilesh.qacc.ui.fragments.CreateAllFragment"
+    	android:name="app.akilesh.qacc.ui.createmultiple.CreateAllFragment"
     	tools:layout="@layout/create_all_fragment"
      />
 

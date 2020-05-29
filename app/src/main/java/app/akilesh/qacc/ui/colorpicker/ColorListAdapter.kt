@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.adapter
+package app.akilesh.qacc.ui.colorpicker
 
 import android.content.Context
 import android.content.res.ColorStateList

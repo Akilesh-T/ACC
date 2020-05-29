@@ -21,8 +21,8 @@ import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ActivityMainBinding
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.navAnim
-import app.akilesh.qacc.utils.DownloadUtils.download
-import app.akilesh.qacc.viewmodel.InstallApkViewModel
+import app.akilesh.qacc.utils.updates.DownloadUtils.download
+import app.akilesh.qacc.utils.updates.InstallApkViewModel
 import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions

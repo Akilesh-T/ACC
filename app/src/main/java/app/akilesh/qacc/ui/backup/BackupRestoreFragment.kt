@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.fragments
+package app.akilesh.qacc.ui.backup
 
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
@@ -36,15 +36,12 @@ import app.akilesh.qacc.databinding.DialogTitleBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.BackupFile
 import app.akilesh.qacc.model.Colour
-import app.akilesh.qacc.ui.adapter.BackupListAdapter
-import app.akilesh.qacc.ui.adapter.ColorListAdapter
+import app.akilesh.qacc.ui.colorpicker.ColorListAdapter
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.utils.SwipeToDelete
-import app.akilesh.qacc.viewmodel.AccentViewModel
-import app.akilesh.qacc.viewmodel.BackupFileViewModel
-import app.akilesh.qacc.viewmodel.RestoreViewModel
+import app.akilesh.qacc.ui.home.AccentViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.io.SuFile
@@ -56,7 +53,7 @@ import java.util.*
 class BackupRestoreFragment: Fragment() {
 
     private lateinit var binding: BackupRestoreFragmentBinding
-    private lateinit var model: BackupFileViewModel
+    private lateinit var viewModel: BackupRestoreViewModel
     private lateinit var tempFolder: File
 
     override fun onCreateView(
@@ -90,8 +87,13 @@ class BackupRestoreFragment: Fragment() {
                 }
 
                 val contents = getBackupContents(file)
-                val accents: List<Colour> = contents.map { Colour("#$it", getString(R.string.hex_code)) }
-                val colorListAdapter = ColorListAdapter(requireContext(), accents) {}
+                val accents: List<Colour> =
+                    contents.map { Colour("#$it", getString(R.string.hex_code)) }
+                val colorListAdapter =
+                    ColorListAdapter(
+                        requireContext(),
+                        accents
+                    ) {}
 
                 colorPreviewBinding.recyclerViewColor.apply {
                     adapter = colorListAdapter
@@ -118,8 +120,8 @@ class BackupRestoreFragment: Fragment() {
         binding.recyclerViewBackupFiles.adapter = adapter
         binding.recyclerViewBackupFiles.layoutManager = LinearLayoutManager(context)
 
-        model = ViewModelProvider(this).get(BackupFileViewModel::class.java)
-        model.backupFiles.observe(viewLifecycleOwner, Observer { files ->
+        viewModel = ViewModelProvider(this).get(BackupRestoreViewModel::class.java)
+        viewModel.backupFiles.observe(viewLifecycleOwner, Observer { files ->
             files.let { adapter.setFiles(it) }
         })
 
@@ -210,7 +212,7 @@ class BackupRestoreFragment: Fragment() {
         if (result.isSuccess) {
             Toast.makeText(context, getString(R.string.backup_created), Toast.LENGTH_SHORT)
                 .show()
-            model.backupFiles.value = getBackupFiles()
+            viewModel.backupFiles.value = getBackupFiles()
         }
     }
 
@@ -310,11 +312,10 @@ class BackupRestoreFragment: Fragment() {
             }
             val filesList = apps.toTypedArray()
             Log.d("files-list", apps.toString())
-            val restoreViewModel = ViewModelProvider(this).get(RestoreViewModel::class.java)
             if (filesList.isNotEmpty()) {
-                restoreViewModel.restore(filesList)
-                restoreViewModel.restoreWorkerId?.let { uuid ->
-                    restoreViewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(viewLifecycleOwner, Observer { workInfo ->
+                viewModel.restore(filesList)
+                viewModel.restoreWorkerId?.let { uuid ->
+                    viewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(viewLifecycleOwner, Observer { workInfo ->
                         Log.d("id", workInfo.id.toString())
                         Log.d("state", workInfo.state.name)
                         if (workInfo != null && workInfo.state.isFinished && workInfo.state == WorkInfo.State.SUCCEEDED) {

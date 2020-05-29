@@ -1,4 +1,4 @@
-package app.akilesh.qacc.utils
+package app.akilesh.qacc.utils.updates
 
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Environment
 import app.akilesh.qacc.R
-import app.akilesh.qacc.viewmodel.InstallApkViewModel
 import java.io.File
 
 object DownloadUtils {

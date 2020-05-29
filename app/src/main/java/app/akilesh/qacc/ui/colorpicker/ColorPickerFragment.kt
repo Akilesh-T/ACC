@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.fragments
+package app.akilesh.qacc.ui.colorpicker
 
 import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
@@ -26,15 +26,13 @@ import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.getWallpaperColors
 import app.akilesh.qacc.utils.AppUtils.setPreview
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
-import app.akilesh.qacc.utils.ColorPicker
-import app.akilesh.qacc.viewmodel.AccentViewModel
-import app.akilesh.qacc.viewmodel.ColorPickerViewModel
-import app.akilesh.qacc.viewmodel.CreatorViewModel
+import app.akilesh.qacc.ui.home.AccentViewModel
 import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
 
-class ColorPickerFragment: Fragment(), ColorPicker {
+class ColorPickerFragment: Fragment(),
+    ColorPicker {
 
     override lateinit var binding: ColorPickerFragmentBinding
     override lateinit var viewModel: ColorPickerViewModel
@@ -78,7 +76,10 @@ class ColorPickerFragment: Fragment(), ColorPicker {
 
             if (separateAccents) {
                 if (viewModel.colour.hex.isNotBlank()) {
-                    val action = ColorPickerFragmentDirections.toDark(viewModel.colour.hex)
+                    val action =
+                        ColorPickerFragmentDirections.toDark(
+                            viewModel.colour.hex
+                        )
                     findNavController().navigate(action)
                 }
                 else
@@ -88,7 +89,12 @@ class ColorPickerFragment: Fragment(), ColorPicker {
             }
             else if (customise) {
                 if (viewModel.colour.hex.isNotBlank() && viewModel.colour.name.isNotBlank()) {
-                    val action = ColorPickerFragmentDirections.toCustomise(viewModel.colour.hex, viewModel.colour.name, viewModel.colour.hex)
+                    val action =
+                        ColorPickerFragmentDirections.toCustomise(
+                            viewModel.colour.hex,
+                            viewModel.colour.name,
+                            viewModel.colour.hex
+                        )
                     findNavController().navigate(action)
                 }
                 else {
@@ -110,10 +116,9 @@ class ColorPickerFragment: Fragment(), ColorPicker {
                     val pkgName = prefix + suffix
                     val accent = Accent(pkgName, viewModel.colour.name, viewModel.colour.hex, viewModel.colour.hex)
                     Log.d("accent-s", accent.toString())
-                    val creatorViewModel = ViewModelProvider(this).get(CreatorViewModel::class.java)
-                    creatorViewModel.create(accent)
-                    creatorViewModel.createWorkerId?.let { uuid ->
-                        creatorViewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(
+                    viewModel.create(accent)
+                    viewModel.createWorkerId?.let { uuid ->
+                        viewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(
                             viewLifecycleOwner, Observer { workInfo ->
                                 Log.d("id", workInfo.id.toString())
                                 Log.d("tag", workInfo.tags.toString())
@@ -123,7 +128,8 @@ class ColorPickerFragment: Fragment(), ColorPicker {
                                     Toast.makeText(requireContext(), String.format(getString(R.string.creating, viewModel.colour.name)), Toast.LENGTH_SHORT).show()
 
                                 if (workInfo.state == WorkInfo.State.SUCCEEDED && workInfo.state.isFinished) {
-                                    val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+                                    val accentViewModel = ViewModelProvider(this).get(
+                                        AccentViewModel::class.java)
                                     accentViewModel.insert(accent)
                                     showSnackbar(view, String.format(getString(R.string.accent_created), viewModel.colour.name))
                                     findNavController().navigate(R.id.action_global_home)
