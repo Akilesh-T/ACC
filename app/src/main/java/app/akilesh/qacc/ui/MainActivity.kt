@@ -167,10 +167,9 @@ class MainActivity: AppCompatActivity() {
             File(filesDir, "/src/values").mkdirs()
 
         val assetFiles = getAssetFiles()
-        assetFiles.forEach {
-            val file = it.removeSuffix("64")
+        assetFiles.forEach { file ->
             assets.open(file).use { stream ->
-                File(filesDir, file).outputStream().use { fileOutputStream ->
+                File(filesDir, file.removeSuffix("64")).outputStream().use { fileOutputStream ->
                     stream.copyTo(fileOutputStream)
                 }
             }

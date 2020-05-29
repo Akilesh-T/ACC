@@ -115,8 +115,8 @@ object Const {
     fun getAssetFiles(): MutableList<String> {
 
         val assetFiles = mutableListOf<String>()
-
-        val arch = if (listOf(Build.SUPPORTED_64_BIT_ABIS).isNotEmpty()) "arm64" else "arm"
+        assetFiles.addAll(listOf("zipsigner", "zipsigner-3.0-dexed.jar"))
+        val arch = if (Build.SUPPORTED_64_BIT_ABIS.toList().isNotEmpty()) "arm64" else "arm"
         if (arch == "arm64")
             assetFiles.addAll(listOf("aapt64", "zipalign64"))
         else

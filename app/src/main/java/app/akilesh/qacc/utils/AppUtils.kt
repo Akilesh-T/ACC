@@ -27,22 +27,11 @@ import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
-import app.akilesh.qacc.signing.ByteArrayStream
-import app.akilesh.qacc.signing.JarMap
-import app.akilesh.qacc.signing.SignAPK
 import app.akilesh.qacc.utils.XmlUtils.createColors
 import app.akilesh.qacc.utils.XmlUtils.createOverlayManifest
 import com.google.android.material.snackbar.Snackbar
 import com.topjohnwu.superuser.Shell
-import org.bouncycastle.asn1.ASN1InputStream
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
-import java.io.*
-import java.security.GeneralSecurityException
-import java.security.KeyFactory
-import java.security.PrivateKey
-import java.security.cert.CertificateFactory
-import java.security.cert.X509Certificate
-import java.security.spec.PKCS8EncodedKeySpec
+import java.io.File
 
 
 object AppUtils {
@@ -250,6 +239,8 @@ object AppUtils {
 
         val aapt = File(filesDir, "aapt")
         val zipalign = File(filesDir, "zipalign")
+        val zipSigner = File(filesDir, "zipsigner")
+        val zipSignerJar = File(filesDir, "zipsigner-3.0-dexed.jar")
         val aaptOverlay = File(filesDir, "qacc.apk")
         val signedOverlay = File(filesDir, "signed.apk")
         val alignedOverlay = File(filesDir, "aligned.apk")
@@ -272,16 +263,14 @@ object AppUtils {
             Log.d("aapt-out", aaptResult.out.toString())
 
             if (aaptResult.isSuccess  && aaptOverlay.exists()) {
-                aaptOverlay.setReadable(true)
-                val certFile = context.assets.open("testkey.x509.pem")
-                val keyFile = context.assets.open("testkey.pk8")
 
-                val cert = readCertificate(certFile)
-                val key = readPrivateKey(keyFile)
-                val jar = JarMap.open(aaptOverlay.path)
-
-                val out = FileOutputStream(signedOverlay.path)
-                SignAPK.sign(cert, key, jar, out.buffered())
+                zipSigner.setExecutable(true)
+                zipSignerJar.setReadable(true)
+                Shell.su("cd $filesDir").exec()
+                val signResult = Shell.su("./${zipSigner.name} ${aaptOverlay.name} ${signedOverlay.name}").exec()
+                Log.d("sign-code", signResult.code.toString())
+                Log.d("sign-out", signResult.out.toString())
+                Shell.su("cd").exec()
 
                 if (signedOverlay.exists()) {
                     signedOverlay.setReadable(true)
@@ -342,34 +331,6 @@ object AppUtils {
         val nokiaBlue = resources.getIdentifier(nokiaBlue, "color", packageName)
         Log.d("FIH", nokiaBlue.toString())
         return nokiaBlue != 0
-    }
-
-    @Throws(IOException::class, GeneralSecurityException::class)
-    fun readCertificate(inputStream: InputStream): X509Certificate {
-        inputStream.use { stream ->
-            val cf = CertificateFactory.getInstance("X.509")
-            return cf.generateCertificate(stream) as X509Certificate
-        }
-    }
-
-
-    @Throws(IOException::class, GeneralSecurityException::class)
-    fun readPrivateKey(inputStream: InputStream): PrivateKey {
-        inputStream.use { stream ->
-            val buf = ByteArrayStream()
-            buf.readFrom(stream)
-            val bytes = buf.toByteArray()
-            // Check to see if this is in an EncryptedPrivateKeyInfo structure.
-            val spec = PKCS8EncodedKeySpec(bytes)
-            /*
-             * Now it's in a PKCS#8 PrivateKeyInfo structure. Read its Algorithm
-             * OID and use that to construct a KeyFactory.
-             */
-            val bIn = ASN1InputStream(ByteArrayInputStream(spec.encoded))
-            val pki = PrivateKeyInfo.getInstance(bIn.readObject())
-            val algOid = pki.privateKeyAlgorithm.algorithm.id
-            return KeyFactory.getInstance(algOid).generatePrivate(spec)
-        }
     }
 
 }
