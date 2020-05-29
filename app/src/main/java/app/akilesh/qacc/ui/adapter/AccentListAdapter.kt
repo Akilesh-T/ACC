@@ -14,10 +14,9 @@ import androidx.core.widget.TextViewCompat
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
+import app.akilesh.qacc.databinding.RecyclerviewItemAccentsBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.textview.MaterialTextView
 import com.topjohnwu.superuser.Shell
 
 class AccentListAdapter internal constructor(
@@ -25,83 +24,78 @@ class AccentListAdapter internal constructor(
     val edit: (Accent) -> Unit,
     val uninstall: (Accent) -> Unit
 ): RecyclerView.Adapter<AccentListAdapter.AccentViewHolder>() {
-    private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var accents = mutableListOf<Accent>()
 
-    inner class AccentViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val name: MaterialTextView = itemView.findViewById(R.id.color_name)
-        val lightAccent: MaterialTextView = itemView.findViewById(R.id.light_accent)
-        val darkAccent: MaterialTextView = itemView.findViewById(R.id.dark_accent)
-        val card: MaterialCardView = itemView.findViewById(R.id.cardView)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccentViewHolder {
-        val itemView = inflater.inflate(R.layout.recyclerview_item_accents, parent, false)
-        return AccentViewHolder(itemView)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = RecyclerviewItemAccentsBinding.inflate(layoutInflater, parent, false)
+        return AccentViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: AccentViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AccentViewHolder, position: Int) = holder.bind(accents[position])
 
-        val current = accents[position]
-        val colorLight = Color.parseColor(current.colorLight)
-        val isInstalled = isOverlayInstalled(current.pkgName)
+    inner class AccentViewHolder(private var binding: RecyclerviewItemAccentsBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bind(accent: Accent) {
+            val colorLight = Color.parseColor(accent.colorLight)
+            val isInstalled = isOverlayInstalled(accent.pkgName)
 
-        holder.name.text = current.name
-        if (isInstalled.not()) holder.name.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_indeterminate, 0)
-        if (current.colorDark.isNotBlank() && current.colorDark != current.colorLight) {
-            holder.darkAccent.text = current.colorDark
-            val colorDark = Color.parseColor(current.colorDark)
-            TextViewCompat.setCompoundDrawableTintList(holder.darkAccent, ColorStateList.valueOf(colorDark))
-            holder.lightAccent.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_outline_wb_sunny, 0, 0, 0)
-        }
-        else {
-            holder.darkAccent.visibility = View.GONE
-        }
-        holder.lightAccent.text = current.colorLight
-        TextViewCompat.setCompoundDrawableTintList(holder.lightAccent, ColorStateList.valueOf(colorLight))
-
-
-        val popupMenu = PopupMenu(context, holder.itemView)
-        popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
-        if (SDK_INT >= Q) popupMenu.setForceShowIcon(true)
-        popupMenu.setOnMenuItemClickListener {
-            when(it.itemId){
-                R.id.edit -> edit(current)
-                R.id.uninstall -> {
-                    if (isOverlayEnabled(current.pkgName)) disableAccent(current.pkgName)
-                    uninstall(current)
-                }
+            binding.colorName.text = accent.name
+            if (isInstalled.not()) binding.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_indeterminate, 0)
+            if (accent.colorDark.isNotBlank() && accent.colorDark != accent.colorLight) {
+                binding.darkAccent.text = accent.colorDark
+                val colorDark = Color.parseColor(accent.colorDark)
+                TextViewCompat.setCompoundDrawableTintList(binding.darkAccent, ColorStateList.valueOf(colorDark))
+                binding.lightAccent.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_outline_wb_sunny, 0, 0, 0)
             }
-            true
-        }
-        holder.card.setOnLongClickListener {
-            popupMenu.show()
-            true
-        }
-
-        if (isInstalled) {
-            val isEnabled = isOverlayEnabled(current.pkgName)
-            holder.card.apply {
-                if (isEnabled) {
-                   setCardBackground(holder, context.getColorAccent())
-                }
+            else {
+                binding.darkAccent.visibility = View.GONE
             }
-            holder.card.setOnClickListener {
-                if (isEnabled) disableAccent(current.pkgName)
-                else enableAccent(current.pkgName)
+            binding.lightAccent.text = accent.colorLight
+            TextViewCompat.setCompoundDrawableTintList(binding.lightAccent, ColorStateList.valueOf(colorLight))
+
+
+            val popupMenu = PopupMenu(context, binding.root)
+            popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+            if (SDK_INT >= Q) popupMenu.setForceShowIcon(true)
+            popupMenu.setOnMenuItemClickListener {
+                when(it.itemId){
+                    R.id.edit -> edit(accent)
+                    R.id.uninstall -> {
+                        if (isOverlayEnabled(accent.pkgName)) disableAccent(accent.pkgName)
+                        uninstall(accent)
+                    }
+                }
+                true
+            }
+            binding.cardView.setOnLongClickListener {
+                popupMenu.show()
+                true
+            }
+
+            if (isInstalled) {
+                val isEnabled = isOverlayEnabled(accent.pkgName)
+                binding.cardView.apply {
+                    if (isEnabled) {
+                        setCardBackground(binding, context.getColorAccent())
+                    }
+                }
+                binding.cardView.setOnClickListener {
+                    if (isEnabled) disableAccent(accent.pkgName)
+                    else enableAccent(accent.pkgName)
+                }
             }
         }
     }
 
     private fun setCardBackground(
-        holder: AccentViewHolder,
+        binding: RecyclerviewItemAccentsBinding,
         colorAccent: Int
     ) {
         val colorStateList = ColorStateList.valueOf(colorAccent)
         val textColor = Palette.Swatch(colorAccent, 2).bodyTextColor
-        holder.apply {
-            card.backgroundTintList = colorStateList
-            name.setTextColor(textColor)
+        binding.apply {
+            cardView.backgroundTintList = colorStateList
+            colorName.setTextColor(textColor)
             lightAccent.apply {
                 setTextColor(textColor)
                 TextViewCompat.setCompoundDrawableTintList(this, ColorStateList.valueOf(textColor))

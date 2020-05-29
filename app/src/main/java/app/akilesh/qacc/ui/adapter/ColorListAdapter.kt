@@ -4,14 +4,12 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
+import app.akilesh.qacc.databinding.RecyclerviewItemColorPreviewBinding
 import app.akilesh.qacc.model.Colour
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.textview.MaterialTextView
 
 class ColorListAdapter internal constructor(
     private val context: Context,
@@ -19,28 +17,24 @@ class ColorListAdapter internal constructor(
     val adapterOnClick : (Colour) -> Unit
 ) : RecyclerView.Adapter<ColorListAdapter.ColorViewHolder>() {
 
-    private val inflater: LayoutInflater = LayoutInflater.from(context)
-
-    inner class ColorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: MaterialTextView = itemView.findViewById(R.id.color_name)
-        val cardView: MaterialCardView = itemView.findViewById(R.id.color_card)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
-        val itemView = inflater.inflate(R.layout.recyclerview_item_color_preview, parent, false)
-        return ColorViewHolder(itemView)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = RecyclerviewItemColorPreviewBinding.inflate(layoutInflater, parent, false)
+        return ColorViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ColorViewHolder, position: Int) {
-        val current = colours[position]
-        val backgroundColor = Color.parseColor(current.hex)
-        val textColor = Palette.Swatch(backgroundColor, 1).bodyTextColor
-        holder.cardView.backgroundTintList = ColorStateList.valueOf(backgroundColor)
-        holder.textView.text = String.format(context.resources.getString(R.string.colour), current.name, current.hex)
-        holder.textView.setTextColor(textColor)
-        holder.cardView.setOnClickListener {  adapterOnClick(current) }
+    override fun onBindViewHolder(holder: ColorViewHolder, position: Int) = holder.bind(colours[position])
+
+    inner class ColorViewHolder(private var binding: RecyclerviewItemColorPreviewBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(colour: Colour) {
+            val backgroundColor = Color.parseColor(colour.hex)
+            val textColor = Palette.Swatch(backgroundColor, 1).bodyTextColor
+            binding.colorCard.backgroundTintList = ColorStateList.valueOf(backgroundColor)
+            binding.colorName.text = String.format(context.resources.getString(R.string.colour), colour.name, colour.hex)
+            binding.colorName.setTextColor(textColor)
+            binding.colorCard.setOnClickListener {  adapterOnClick(colour) }
+        }
     }
 
     override fun getItemCount() = colours.size
-
 }
