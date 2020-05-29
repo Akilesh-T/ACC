@@ -87,9 +87,6 @@ dependencies {
 
     implementation(Libraries.lawnchairChroma)
 
-    api(Libraries.bcProv)
-    api(Libraries.bcPkix)
-
     implementation(Libraries.assentCore)
     implementation(Libraries.assentRationales)
 

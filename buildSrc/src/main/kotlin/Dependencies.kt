@@ -1,11 +1,11 @@
 const val kotlinVersion = "1.3.72"
-const val navigationVersion = "2.2.1"
+const val navigationVersion = "2.2.2"
 
 
 object BuildPlugins {
 
     object Versions {
-        const val gradleBuildToolsVersion = "4.0.0-rc01"
+        const val gradleBuildToolsVersion = "4.0.0"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradleBuildToolsVersion}"
@@ -30,7 +30,7 @@ object Libraries {
     private object Versions {
         const val jetpack = "1.2.0-rc01"
         const val constraintLayout = "2.0.0-beta6"
-        const val core = "1.3.0-rc01"
+        const val core = "1.3.0"
         const val preference = "1.1.1"
         const val palette = "1.0.0"
         const val room = "2.2.5"
@@ -40,7 +40,6 @@ object Libraries {
         const val material = "1.2.0-alpha06"
         const val libSu = "2.5.1"
         const val chroma = "1.2.6"
-        const val bouncycastle = "1.64"
         const val assent = "3.0.0-RC4"
         const val about = "3.1.2"
         const val appUpdater = "2.7"
@@ -77,9 +76,6 @@ object Libraries {
     const val libsuIO             = "com.github.topjohnwu.libsu:io:${Versions.libSu}"
 
     const val lawnchairChroma     = "com.github.LawnchairLauncher:chroma:${Versions.chroma}"
-
-    const val bcProv              = "org.bouncycastle:bcprov-jdk15on:${Versions.bouncycastle}"
-    const val bcPkix              = "org.bouncycastle:bcpkix-jdk15on:${Versions.bouncycastle}"
 
     const val assentCore          = "com.afollestad.assent:core:${Versions.assent}"
     const val assentRationales    = "com.afollestad.assent:rationales:${Versions.assent}"
