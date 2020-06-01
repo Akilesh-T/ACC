@@ -164,5 +164,6 @@
     <string name="view_backup_contents">View contents (%d)</string>
     <string name="uninstall">Uninstall</string>
     <string name="invert_selection">Invert selection</string>
+    <string name="reboot">Reboot</string>
 
 </resources>

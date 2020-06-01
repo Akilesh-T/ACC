@@ -95,7 +95,7 @@ object AppUtils {
             Snackbar.LENGTH_SHORT
         ).setAnchorView(R.id.x_fab)
         if (SDK_INT >= P) {
-            snackbar.setAction("Reboot") {
+            snackbar.setAction(view.context.getString(R.string.reboot)) {
                 Shell.su("/system/bin/svc power reboot || /system/bin/reboot")
                     .submit()
             }

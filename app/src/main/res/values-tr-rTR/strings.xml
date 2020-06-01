@@ -163,5 +163,6 @@
     <string name="view_backup_contents">(%d) içeriğini göster</string>
     <string name="uninstall">Kaldır</string>
     <string name="invert_selection">Invert selection</string>
+    <string name="reboot">Reboot</string>
 
 </resources>
