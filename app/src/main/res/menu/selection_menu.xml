@@ -13,7 +13,7 @@
     <item
         android:id="@+id/invert"
         android:title="@string/invert_selection"
-        android:icon="@drawable/ic_invert_selection"
+        android:icon="@drawable/ic_select_inverse"
         app:showAsAction="ifRoom"
         />
 

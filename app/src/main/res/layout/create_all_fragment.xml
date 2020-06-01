@@ -34,8 +34,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:backgroundTint="?colorSurface"
-        app:srcCompat="@drawable/ic_round_build"
-        app:tint="?colorOnSurface"
+        app:srcCompat="@drawable/ic_plus_google_colors"
+        app:tint="@null"
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
