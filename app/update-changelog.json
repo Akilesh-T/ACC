@@ -1,14 +1,16 @@
 {
-  "latestVersion": "1.70",
-  "latestVersionCode": "11",
+  "latestVersion": "1.80",
+  "latestVersionCode": "12",
   "url": "https://github.com/Akilesh-T/ACC/releases/latest",
   "releaseNotes": [
-    "- New app icon & launch screen.",
-    "- Redesigned home & colour picker layouts.",
-    "- Added brand colours.",
-    "- Rename accent after creation.",
-    "- Restore directly from listed backups.",
-    "- The app will list installed accents even if its data is cleared.",
-    "- Updated translations."
+    "- Updated home screen: Tap to enable/disable accents & long press to edit/delete",
+    "- App can now use system accent colour",
+    "- Create multiple accents at once",
+    "- Fix issues while restoring accents in Oreo",
+    "- Backups now show more info(file size & no. of apps)",
+    "- Most of the work is now done in the background",
+    "- Minor UI enhancements",
+    "- Updated dependencies",
+    "- Added Italian(by Montelion) & Turkish(by Alperen-Ozturk) translations"
   ]
 }

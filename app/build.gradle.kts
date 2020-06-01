@@ -13,8 +13,8 @@ android {
         applicationId = "app.akilesh.qacc"
         minSdkVersion(AndroidSdk.min)
         targetSdkVersion(AndroidSdk.target)
-        versionCode = 11
-        versionName = "1.70"
+        versionCode = 12
+        versionName = "1.80"
         vectorDrawables.useSupportLibrary = true
 
         javaCompileOptions {
@@ -44,7 +44,6 @@ android {
     }
     packagingOptions {
         exclude("META-INF/**")
-        exclude( "/org/bouncycastle/**")
         exclude("/kotlin/**")
         exclude("/okhttp3/**")
     }
