@@ -1,6 +1,7 @@
 package app.akilesh.qacc.ui.createmultiple
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
 import android.os.Bundle
@@ -105,11 +106,9 @@ class CreateAllFragment: Fragment() {
         ).withSelectionPredicate(
             SelectionPredicates.createSelectAnything()
         ).build()
-        binding.createMultipleBottomAppBar.menu.getItem(0).isVisible = selectionTracker.hasSelection()
-        if (selectionTracker.hasSelection().not()) binding.createMultipleFab.hide() else binding.createMultipleFab.show()
-
         createAllAdapter.tracker = selectionTracker
 
+        setupBottomAppBarIcons(selectionTracker.hasSelection())
         binding.createMultipleBottomAppBar.setOnMenuItemClickListener {
             val temp = arrayListOf<Long>()
             createAllAdapter.colours.forEachIndexed { index, _ ->
@@ -136,11 +135,7 @@ class CreateAllFragment: Fragment() {
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     super.onSelectionChanged()
-                    binding.createMultipleBottomAppBar.menu.apply {
-                        getItem(0).isVisible = selectionTracker.hasSelection()
-                        getItem(1).isVisible = selectionTracker.hasSelection()
-                    }
-                    if (selectionTracker.hasSelection().not()) binding.createMultipleFab.hide() else binding.createMultipleFab.show()
+                    setupBottomAppBarIcons(selectionTracker.hasSelection())
                     val selection = selectionTracker.selection
                     selected = selection.mapNotNull { createAllAdapter.colours[it.toInt()] }.toSet()
                 }
@@ -194,5 +189,17 @@ class CreateAllFragment: Fragment() {
                 }
             }
         }
+    }
+}
+
+private fun setupBottomAppBarIcons(flag: Boolean) {
+    binding.createMultipleBottomAppBar.menu.apply {
+        getItem(0).isVisible = flag
+        getItem(1).isVisible = flag
+    }
+    binding.createMultipleFab.apply {
+        binding.createMultipleFab.isEnabled = flag
+        imageTintList = if (binding.createMultipleFab.isEnabled) null
+        else ColorStateList.valueOf(Color.GRAY)
     }
 }
