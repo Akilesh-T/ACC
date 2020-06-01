@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EdgeEffect
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.forEach
@@ -21,6 +22,7 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StableIdKeyProvider
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
 import app.akilesh.qacc.Const.Colors.AEX
 import app.akilesh.qacc.Const.Colors.brandColors
@@ -60,6 +62,13 @@ class CreateAllFragment: Fragment() {
         val colorStateList = ColorStateList.valueOf(colour)
         binding.createMultipleBottomAppBar.menu.forEach {
             it.iconTintList = colorStateList
+        }
+        binding.accentListRv.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                return EdgeEffect(view.context).apply {
+                    color = requireContext().getColorAccent()
+                }
+            }
         }
 
         val createAllAdapter = CreateMultipleAdapter()

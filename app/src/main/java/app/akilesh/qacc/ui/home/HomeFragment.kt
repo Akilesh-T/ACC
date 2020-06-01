@@ -7,17 +7,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EdgeEffect
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.HomeFragmentBinding
 import app.akilesh.qacc.model.Accent
+import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import com.topjohnwu.superuser.Shell
@@ -39,6 +43,18 @@ class HomeFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
+        if (useSystemAccent) {
+            binding.recyclerView.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+                override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                    return EdgeEffect(view.context).apply {
+                        color = requireContext().getColorAccent()
+                    }
+                }
+            }
+        }
 
         val accentListAdapter =
             AccentListAdapter(requireContext(),
@@ -68,7 +84,7 @@ class HomeFragment: Fragment() {
                         }
                     } else {
                         Toast.makeText(
-                            requireContext(),
+                            requireContext().applicationContext,
                             requireContext().getString(R.string.uninstalling, accent.name),
                             Toast.LENGTH_LONG
                         ).show()

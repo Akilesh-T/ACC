@@ -1,5 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources>
 
     <string name="app_name">Accent Colour Creator</string>
     <string name="app_name_short">ACC</string>

@@ -1,5 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources>
 
     <string name="app_name">Accent Colour Creator</string>
     <string name="app_name_short">ACC</string>
@@ -78,7 +77,7 @@
     <string name="toast_light_theme_not_selected">Aydınlık tema için vurgu rengi seçilmedi</string>
     <string name="toast_color_not_selected">Vurgu rengi seçilmedi</string>
     <string name="toast_name_not_set">Vurgu rengine isim verilmedi</string>
-    <string name="storage_permission_rationale">Duvar kağıdı renklerine erişim için depolama izinleri gereklidir</string>
+    <string name="read_storage_permission_rationale">Duvar kağıdı renklerine erişim için depolama izinleri gereklidir</string>
 
     <string name="accent_created">%s oluşturuldu</string>
     <string name="accent_removed">%s kaldırıldı</string>
@@ -88,7 +87,7 @@
     <string name="no_root_access_message">Lütfen bunları yaptığınızdan emin olun:\n1. Cihazınıza Magisk ile kök erişimi sağlandı\n2. ACC uygulamasına kök erişimi verildi</string>
     <string name="magisk_not_detected">Magisk bulunamadı!</string>
     <string name="exit">Çıkış</string>
-    <string name="aapt_error">Katman oluşturulamadı</string>
+    <string name="error">Katman oluşturulamadı</string>
     <string name="backup_restore">Yedekle ve geri yükle</string>
     <string name="backup_restore_summary">Vurgu renklerinizi kaydedin ve gerektiğinde geri yükleyin</string>
     <string name="restore">Geri Yükle</string>
@@ -163,5 +162,6 @@
     <string name="error_restoring">Vurgu renkleri geri yüklenemedi</string>
     <string name="view_backup_contents">(%d) içeriğini göster</string>
     <string name="uninstall">Kaldır</string>
+    <string name="invert_selection">Invert selection</string>
 
 </resources>

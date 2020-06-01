@@ -20,6 +20,27 @@ import kotlinx.coroutines.coroutineScope
 
 class CreateWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
+    private val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as
+                NotificationManager
+    private val name = context.getString(R.string.app_name)
+    private val notificationId = 49
+    private val channelId = CreateWorker::class.java.simpleName
+    private val title = context.getString(R.string.creating)
+
+    private fun createNotificationChannel() {
+        if (SDK_INT >= O) {
+            var notificationChannel =
+                notificationManager.getNotificationChannel(channelId)
+            if (notificationChannel == null) {
+                notificationChannel = NotificationChannel(
+                    channelId, name, NotificationManager.IMPORTANCE_LOW
+                )
+                notificationManager.createNotificationChannel(notificationChannel)
+            }
+        }
+    }
+
     override suspend fun doWork(): Result = coroutineScope {
         try {
             val pkgName = inputData.getString("pkg")
@@ -52,27 +73,6 @@ class CreateWorker(context: Context, params: WorkerParameters) : CoroutineWorker
         catch (throwable: Throwable) {
             Log.e("Create-Worker", throwable.message, throwable)
             Result.failure()
-        }
-    }
-
-    private val notificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as
-                NotificationManager
-    private val name = CreateWorker::class.java.name
-    private val notificationId = 49
-    private val channelId = "ForegroundWorker"
-    private val title = context.getString(R.string.creating)
-
-    private fun createNotificationChannel() {
-        if (SDK_INT >= O) {
-            var notificationChannel =
-                notificationManager.getNotificationChannel(channelId)
-            if (notificationChannel == null) {
-                notificationChannel = NotificationChannel(
-                    channelId, name, NotificationManager.IMPORTANCE_LOW
-                )
-                notificationManager.createNotificationChannel(notificationChannel)
-            }
         }
     }
 }

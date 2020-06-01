@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EdgeEffect
 import android.widget.Toast
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
@@ -144,7 +145,11 @@ class BackupRestoreFragment: Fragment() {
             TextViewCompat.setCompoundDrawableTintList(newBackupText, colorStateList)
             TextViewCompat.setCompoundDrawableTintList(restoreText, colorStateList)
             localBackupTitle.setTextColor(colorAccent)
-            recyclerViewBackupFiles
+            recyclerViewBackupFiles.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+                override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                    return EdgeEffect(view.context).apply { color = colorAccent }
+                }
+            }
         }
     }
 

@@ -20,9 +20,9 @@ class RestoreWorker(context: Context, params: WorkerParameters) : CoroutineWorke
         context.getSystemService(Context.NOTIFICATION_SERVICE) as
                 NotificationManager
     private val title = context.getString(R.string.restoring_accents)
-    private val name = RestoreWorker::class.java.name
+    private val name = title
     private val notificationId = 48
-    private val channelId = "ForegroundWorker"
+    private val channelId = RestoreWorker::class.java.simpleName
 
     private fun createNotificationChannel() {
         if (SDK_INT >= O) {
@@ -66,7 +66,7 @@ class RestoreWorker(context: Context, params: WorkerParameters) : CoroutineWorke
             Result.success()
         }
         catch (throwable: Throwable) {
-            Log.e("Restore-Worker", throwable.message, throwable)
+            Log.e(RestoreWorker::class.java.simpleName, throwable.message, throwable)
             Result.failure()
         }
     }

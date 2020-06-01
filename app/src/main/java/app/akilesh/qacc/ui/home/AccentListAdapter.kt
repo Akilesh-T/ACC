@@ -32,10 +32,11 @@ class AccentListAdapter internal constructor(
         return AccentViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: AccentViewHolder, position: Int) = holder.bind(accents[position])
+    override fun onBindViewHolder(holder: AccentViewHolder, position: Int) = holder.bind(position)
 
     inner class AccentViewHolder(private var binding: RecyclerviewItemAccentsBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(accent: Accent) {
+        fun bind(position: Int) {
+            val accent = accents[position]
             val colorLight = Color.parseColor(accent.colorLight)
             val isInstalled = isOverlayInstalled(accent.pkgName)
 
@@ -61,8 +62,9 @@ class AccentListAdapter internal constructor(
                 when(it.itemId){
                     R.id.edit -> edit(accent)
                     R.id.uninstall -> {
-                        if (isOverlayEnabled(accent.pkgName)) disableAccent(accent.pkgName)
+                        if (isOverlayInstalled(accent.pkgName) && isOverlayEnabled(accent.pkgName)) disableAccent(accent.pkgName)
                         uninstall(accent)
+                        notifyItemRemoved(position)
                     }
                 }
                 true

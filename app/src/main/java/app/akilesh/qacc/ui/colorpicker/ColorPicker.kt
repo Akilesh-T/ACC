@@ -3,15 +3,19 @@ package app.akilesh.qacc.ui.colorpicker
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.widget.EdgeEffect
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
 import app.akilesh.qacc.databinding.ColorPreviewBinding
 import app.akilesh.qacc.databinding.DialogTitleBinding
 import app.akilesh.qacc.model.Colour
+import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.setPreview
 import app.akilesh.qacc.utils.AppUtils.toHex
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -67,6 +71,17 @@ interface ColorPicker {
             adapter = colorListAdapter
             layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
             setHasFixedSize(true)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+            val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
+            if (useSystemAccent) {
+            edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+                override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                    return EdgeEffect(view.context).apply {
+                        color = context.getColorAccent()
+                    }
+                }
+            }
+        }
         }
 
         dialog.show()
