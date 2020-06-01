@@ -91,7 +91,7 @@
     <string name="backup_restore">Backup e ripristino</string>
     <string name="backup_restore_summary">Salva i tuoi colori e ripristinali quando necessario</string>
     <string name="restore">Ripristina</string>
-    <string name="local_backups">Backups in archivio</string>
+    <string name="local_backups">Backup in archivio</string>
     <string name="backup_contents">Backup contenuti</string>
     <string name="hex_code">Codice esadecimale</string>
     <string name="backup_deleted">File di backup eliminato</string>
@@ -162,6 +162,6 @@
     <string name="error_restoring">Impossibile ripristinare i colori</string>
     <string name="view_backup_contents">Visualizza contenuti (%d)</string>
     <string name="uninstall">Disinstalla</string>
-    <string name="invert_selection">Invert selection</string>
+    <string name="invert_selection">Inverti selezione</string>
 
 </resources>
