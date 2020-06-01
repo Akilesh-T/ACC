@@ -163,6 +163,6 @@
     <string name="view_backup_contents">Visualizza contenuti (%d)</string>
     <string name="uninstall">Disinstalla</string>
     <string name="invert_selection">Inverti selezione</string>
-    <string name="reboot">Reboot</string>
+    <string name="reboot">Riavvia</string>
 
 </resources>
