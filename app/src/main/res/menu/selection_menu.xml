@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/deselect"
+        android:title="@string/deselect_all"
+        android:icon="@drawable/ic_round_deselect_all"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/invert"
+        android:title="@string/invert_selection"
+        android:icon="@drawable/ic_invert_selection"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/select"
+        android:title="@string/select_all"
+        android:icon="@drawable/ic_round_select_all"
+        app:showAsAction="always"
+        />
+</menu>

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -57,16 +58,8 @@ class CreateAllFragment: Fragment() {
         val colour = if (useSystemAccent) requireContext().getColorAccent()
         else ResourcesCompat.getColor(resources, R.color.colorPrimary, requireContext().theme)
         val colorStateList = ColorStateList.valueOf(colour)
-        binding.progress.indeterminateTintList = colorStateList
-        binding.sheetContent.apply {
-            selection.apply {
-                setTextColor(colour)
-                rippleColor = colorStateList
-            }
-            create.apply {
-                setTextColor(colour)
-                rippleColor = colorStateList
-            }
+        binding.createMultipleBottomAppBar.menu.forEach {
+            it.iconTintList = colorStateList
         }
 
         val createAllAdapter = CreateMultipleAdapter()
@@ -103,85 +96,93 @@ class CreateAllFragment: Fragment() {
         ).withSelectionPredicate(
             SelectionPredicates.createSelectAnything()
         ).build()
+        binding.createMultipleBottomAppBar.menu.getItem(0).isVisible = selectionTracker.hasSelection()
+        if (selectionTracker.hasSelection().not()) binding.createMultipleFab.hide() else binding.createMultipleFab.show()
 
         createAllAdapter.tracker = selectionTracker
+
+        binding.createMultipleBottomAppBar.setOnMenuItemClickListener {
+            val temp = arrayListOf<Long>()
+            createAllAdapter.colours.forEachIndexed { index, _ ->
+                temp.add(index.toLong())
+            }
+            when(it.itemId) {
+                R.id.select -> {
+                    selectionTracker.setItemsSelected(temp, true)
+                }
+                R.id.deselect -> {
+                    selectionTracker.clearSelection()
+                }
+                R.id.invert -> {
+                    temp.forEach { key ->
+                        if (selectionTracker.isSelected(key)) selectionTracker.deselect(key)
+                        else selectionTracker.select(key)
+                    }
+                }
+            }
+            true
+        }
 
         selectionTracker.addObserver(
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     super.onSelectionChanged()
-                    val atLeastOne = selectionTracker.selection.size() > 0
+                    binding.createMultipleBottomAppBar.menu.apply {
+                        getItem(0).isVisible = selectionTracker.hasSelection()
+                        getItem(1).isVisible = selectionTracker.hasSelection()
+                    }
+                    if (selectionTracker.hasSelection().not()) binding.createMultipleFab.hide() else binding.createMultipleFab.show()
                     val selection = selectionTracker.selection
                     selected = selection.mapNotNull { createAllAdapter.colours[it.toInt()] }.toSet()
-
-                    binding.sheetContent.selection.apply {
-                        text =
-                            if (atLeastOne)
-                                requireContext().getString(R.string.deselect_all)
-                            else requireContext().getString(R.string.select_all)
-
-                        setOnClickListener {
-                            val temp = arrayListOf<Long>()
-                            createAllAdapter.colours.forEachIndexed { index, _ ->
-                                temp.add(index.toLong())
-                            }
-                            selectionTracker.setItemsSelected(temp,  atLeastOne.not())
-                        }
-                    }
-                    binding.sheetContent.create.visibility =
-                        if (atLeastOne) View.VISIBLE
-                        else View.GONE
                 }
             }
         )
 
-        binding.fab.setOnClickListener {
-            binding.fab.isExpanded = true
-        }
-        binding.sheetContent.close.setOnClickListener {
-            binding.fab.isExpanded = false
-        }
-
         viewModel = ViewModelProvider(this).get(CreateMultipleViewModel::class.java)
-        binding.sheetContent.create.setOnClickListener {
-            Log.d("selection", selected.toString())
-            viewModel.createAll()
-            viewModel.createAllWorkerId?.let { uuid ->
-                viewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(viewLifecycleOwner, Observer { workInfo ->
-                    Log.d("id", workInfo.id.toString())
-                    Log.d("state", workInfo.state.name)
+        binding.createMultipleFab.setOnClickListener {
+            if (selected.isNotEmpty()) {
+                Log.d("selection", selected.toString())
+                viewModel.createAll()
+                viewModel.createAllWorkerId?.let { uuid ->
+                    viewModel.workManager.getWorkInfoByIdLiveData(uuid)
+                        .observe(viewLifecycleOwner, Observer { workInfo ->
+                            Log.d("id", workInfo.id.toString())
+                            Log.d("state", workInfo.state.name)
 
-                    when(workInfo.state) {
-                        WorkInfo.State.RUNNING -> {
-                            binding.sheetContent.root.visibility = View.GONE
-                            binding.progress.visibility = View.VISIBLE
-                        }
-
-                        WorkInfo.State.SUCCEEDED -> {
-                            val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
-                                selected.forEach { colour ->
-                                    val pkgName = prefix + "hex_" + colour.hex.removePrefix("#")
-                                    val accent = Accent(pkgName, colour.name, colour.hex, colour.hex)
-                                    accentViewModel.insert(accent)
+                            when (workInfo.state) {
+                                WorkInfo.State.RUNNING -> {
+                                    binding.createMultipleFab.hide()
+                                    binding.createMultipleBottomAppBar.performHide()
                                 }
-                            Toast.makeText(requireContext(),
-                                    String.format(getString(R.string.accents_created)),
-                                    Toast.LENGTH_SHORT
-                            ).show()
-                            binding.sheetContent.apply {
-                                    root.visibility = View.VISIBLE
-                                    selection.performClick()
-                                    close.performClick()
+
+                                WorkInfo.State.SUCCEEDED -> {
+                                    val accentViewModel =
+                                        ViewModelProvider(this).get(AccentViewModel::class.java)
+                                    selected.forEach { colour ->
+                                        val pkgName = prefix + "hex_" + colour.hex.removePrefix("#")
+                                        val accent =
+                                            Accent(pkgName, colour.name, colour.hex, colour.hex)
+                                        accentViewModel.insert(accent)
+                                    }
+                                    Toast.makeText(
+                                        requireContext(),
+                                        String.format(getString(R.string.accents_created)),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    findNavController().navigate(R.id.action_global_home)
+                                }
+                                WorkInfo.State.FAILED -> {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        getString(R.string.error),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                                else -> {
+                                }
                             }
-                            binding.progress.visibility = View.GONE
-                            findNavController().navigate(R.id.action_global_home)
-                        }
-                        WorkInfo.State.FAILED -> {
-                            Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_LONG).show()
-                        }
-                        else -> {}
-                    }
-                })
+                        })
+                }
             }
         }
     }
