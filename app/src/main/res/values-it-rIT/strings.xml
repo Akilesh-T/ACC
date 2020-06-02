@@ -22,7 +22,7 @@
     <string name="dark">Scuro</string>
     <string name="info">Informazioni</string>
     <string name="separate_accent_summary_off">Lo stesso colore verrà usato per il tema chiaro e per quello scuro</string>
-    <string name="separate_accent_summary_on">Ora è possibile utilizzare colori diversi per il tema chiaro e quello scuro</string>
+    <string name="separate_accent_summary_on">Ora è possibile utilizzare colori diversi per il tema chiaro e per quello scuro</string>
     <string name="hue">Tonalità</string>
     <string name="saturation">Saturazione</string>
     <string name="lightness">Luminosità</string>
