@@ -47,6 +47,7 @@ object Libraries {
         const val workManager = "2.3.4"
         const val recyclerView = "1.1.0"
         const val recyclerViewSelection = "1.1.0-rc01"
+        const val viewpager2 = "1.0.0"
     }
 
     const val kotlinStdLib        = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -90,4 +91,6 @@ object Libraries {
 
     const val recyclerView        = "androidx.recyclerview:recyclerview:${Versions.recyclerView}"
     const val rvSelection         = "androidx.recyclerview:recyclerview-selection:${Versions.recyclerViewSelection}"
+
+    const val viewpager2          = "androidx.viewpager2:viewpager2:${Versions.viewpager2}"
 }

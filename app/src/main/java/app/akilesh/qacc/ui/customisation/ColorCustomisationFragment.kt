@@ -134,11 +134,11 @@ class ColorCustomisationFragment: Fragment() {
             findNavController().navigate(action)
         }
 
-        binding.buttonPrevious.setOnClickListener {
+        binding.navBar.previous.setOnClickListener {
             findNavController().navigateUp()
         }
 
-        binding.buttonNext.setOnClickListener {
+        binding.navBar.next.setOnClickListener {
 
             if (accentName.isNotBlank()) {
                 var suffix = "hex_" + accentLight.removePrefix("#")
@@ -317,9 +317,9 @@ class ColorCustomisationFragment: Fragment() {
                 name.textSelectHandleLeft?.setTintList(colorStateList)
                 name.textSelectHandleRight?.setTintList(colorStateList)
             }
-            buttonPrevious.setTextColor(color)
-            buttonPrevious.rippleColor = colorStateList
-            buttonNext.backgroundTintList = colorStateList
+            navBar.previous.setTextColor(color)
+            navBar.previous.rippleColor = colorStateList
+            navBar.next.backgroundTintList = colorStateList
 
             val typedValue = TypedValue()
             requireContext().theme.resolveAttribute(R.attr.colorOnSurface, typedValue, true)

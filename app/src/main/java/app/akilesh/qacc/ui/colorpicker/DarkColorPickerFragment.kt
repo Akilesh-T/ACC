@@ -62,10 +62,10 @@ class DarkColorPickerFragment: Fragment(),
         val customise = sharedPreferences.getBoolean("customise", false)
         binding.title.text = String.format(getString(R.string.picker_title_text_dark))
 
-        if (customise) binding.buttonNext.text = requireContext().resources.getString(R.string.next)
+        if (customise) binding.navBar.next.text = requireContext().resources.getString(R.string.next)
 
 
-        binding.buttonNext.setOnClickListener {
+        binding.navBar.next.setOnClickListener {
 
             if (customise) {
                 if (viewModel.colour.name.isNotBlank() && viewModel.colour.hex.isNotBlank()) {
@@ -132,17 +132,19 @@ class DarkColorPickerFragment: Fragment(),
             }
         }
 
-        binding.buttonPrevious.setOnClickListener {
+        binding.navBar.previous.setOnClickListener {
             findNavController().navigateUp()
         }
 
-        binding.brandColors.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.brand_colors, R.drawable.ic_palette_24dp,
+        binding.brandColors.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.brand_colors, R.drawable.ic_ferrari,
             brandColors
         ) }
         binding.custom.setOnClickListener {
             customColorPicker(previewColor, parentFragmentManager)
         }
-
+        binding.mdcColors.setOnClickListener {
+            showTabDialog(requireContext(), layoutInflater, binding)
+        }
         binding.preset.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.presets, R.drawable.ic_preset,
             AEX
         ) }

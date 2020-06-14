@@ -133,7 +133,7 @@ object AppUtils {
         }
 
         binding.apply {
-            TextViewCompat.setCompoundDrawableTintList(brandColorsText, accentTintList)
+            TextViewCompat.setCompoundDrawableTintList(mdcColorsText, accentTintList)
             TextViewCompat.setCompoundDrawableTintList(customText, accentTintList)
             TextViewCompat.setCompoundDrawableTintList(presetText, accentTintList)
             TextViewCompat.setCompoundDrawableTintList(wallColorsText, accentTintList)
@@ -144,9 +144,9 @@ object AppUtils {
                 name.textSelectHandleLeft?.setTintList(accentTintList)
                 name.textSelectHandleRight?.setTintList(accentTintList)
             }
-            buttonPrevious.setTextColor(accentColor)
-            buttonPrevious.rippleColor = accentTintList
-            buttonNext.backgroundTintList = accentTintList
+            navBar.previous.setTextColor(accentColor)
+            navBar.previous.rippleColor = accentTintList
+            navBar.next.backgroundTintList = accentTintList
         }
     }
 

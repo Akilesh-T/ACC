@@ -62,7 +62,7 @@ class ColorPickerFragment: Fragment(),
 
         if (separateAccents) {
             binding.title.text = String.format(getString(R.string.picker_title_text_light))
-            binding.buttonNext.text = getString(R.string.next)
+            binding.navBar.next.text = getString(R.string.next)
             binding.nameTitle.visibility = View.GONE
             binding.textInputLayout.visibility = View.GONE
         }
@@ -70,9 +70,9 @@ class ColorPickerFragment: Fragment(),
             binding.title.text = String.format(getString(R.string.picker_title_text))
 
         if (customise)
-            binding.buttonNext.text = getString(R.string.next)
+            binding.navBar.next.text = getString(R.string.next)
 
-        binding.buttonNext.setOnClickListener {
+        binding.navBar.next.setOnClickListener {
 
             if (separateAccents) {
                 if (viewModel.colour.hex.isNotBlank()) {
@@ -154,15 +154,17 @@ class ColorPickerFragment: Fragment(),
             }
         }
 
-        binding.buttonPrevious.setOnClickListener {
+        binding.navBar.previous.setOnClickListener {
             findNavController().navigateUp()
         }
 
-        binding.brandColors.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.brand_colors, R.drawable.ic_palette_24dp, brandColors) }
+        binding.brandColors.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.brand_colors, R.drawable.ic_ferrari, brandColors) }
         binding.custom.setOnClickListener {
             customColorPicker(previewColor, parentFragmentManager)
         }
-
+        binding.mdcColors.setOnClickListener {
+            showTabDialog(requireContext(), layoutInflater, binding)
+        }
         binding.preset.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.presets, R.drawable.ic_preset, AEX) }
         if (SDK_INT > O)
             binding.wallColors.setOnClickListener {

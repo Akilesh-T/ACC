@@ -165,5 +165,8 @@
     <string name="uninstall">Uninstall</string>
     <string name="invert_selection">Invert selection</string>
     <string name="reboot">Reboot</string>
+    <string name="purple">Purple</string>
+    <string name="md_colors">Material Design colour palette</string>
+    <string name="green">Green</string>
 
 </resources>

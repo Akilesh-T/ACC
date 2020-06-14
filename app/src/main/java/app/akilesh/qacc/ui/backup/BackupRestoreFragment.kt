@@ -101,6 +101,15 @@ class BackupRestoreFragment: Fragment() {
                     colorPreviewBinding.recyclerViewColor.layoutManager =
                         GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
                     setHasFixedSize(true)
+                    if (useSystemAccent) {
+                        edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+                            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                                return EdgeEffect(view.context).apply {
+                                    color = context.getColorAccent()
+                                }
+                            }
+                        }
+                    }
                 }
 
                 MaterialAlertDialogBuilder(requireContext())

@@ -100,4 +100,5 @@ dependencies {
     implementation(Libraries.recyclerView)
     implementation(Libraries.rvSelection)
 
+    implementation(Libraries.viewpager2)
 }
