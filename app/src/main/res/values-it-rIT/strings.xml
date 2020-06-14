@@ -167,5 +167,8 @@
     <string name="purple">Purple</string>
     <string name="md_colors">Material Design colour palette</string>
     <string name="green">Green</string>
+    <string name="Files">Files</string>
+    <string name="backup_folder">Backups</string>
+    <string name="update_folder">Updates</string>
 
 </resources>

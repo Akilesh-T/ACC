@@ -9,6 +9,8 @@ import app.akilesh.qacc.Const.Links.githubRepo
 import app.akilesh.qacc.Const.Links.telegramChannel
 import app.akilesh.qacc.Const.Links.telegramGroup
 import app.akilesh.qacc.Const.Links.xdaThread
+import app.akilesh.qacc.Const.Paths.backupFolder
+import app.akilesh.qacc.Const.Paths.updatesFolder
 import app.akilesh.qacc.R
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import com.danielstone.materialaboutlibrary.ConvenienceBuilder
@@ -17,6 +19,7 @@ import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
 import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
+import java.io.File
 
 class InfoFragment: MaterialAboutFragment() {
 
@@ -32,7 +35,9 @@ class InfoFragment: MaterialAboutFragment() {
             ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_github, requireContext().theme),
             ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_outline_group, requireContext().theme),
             ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_xda, requireContext().theme),
-            ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_outline_get_app, requireContext().theme)
+            ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_outline_get_app, requireContext().theme),
+            ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_round_update, requireContext().theme),
+            ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_outline_backup, requireContext().theme)
         )
 
         val appInfoCard = MaterialAboutCard.Builder()
@@ -108,11 +113,30 @@ class InfoFragment: MaterialAboutFragment() {
             )
             .build()
 
+        val filesCard = MaterialAboutCard.Builder()
+            .title(getString(R.string.Files))
+            .titleColor(tintColor)
+            .addItem(
+                MaterialAboutActionItem.Builder()
+                    .text(getString(R.string.update_folder))
+                    .subText(updatesFolder)
+                    .icon(icons[5])
+                    .build()
+            )
+            .addItem(
+                MaterialAboutActionItem.Builder()
+                    .text(getString(R.string.backup_folder))
+                    .subText(backupFolder.removePrefix(File.separatorChar + "sdcard/"))
+                    .icon(icons[6])
+                    .build()
+            )
+            .build()
 
         return MaterialAboutList.Builder()
             .addCard(appInfoCard)
             .addCard(linksCard)
             .addCard(downloadsCard)
+            .addCard(filesCard)
             .build()
     }
 }
