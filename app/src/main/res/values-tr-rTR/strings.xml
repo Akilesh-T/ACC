@@ -171,7 +171,7 @@
     <string name="backup_folder">Backups</string>
     <string name="update_folder">Updates</string>
     <string name="auto_backup_title">Backup automatically</string>
-    <string name="backup_interval_summary">Set the interval(in days) in which auto backup should take place</string>
+    <string name="backup_interval_summary">Set the interval(in days) between automatic backups</string>
     <string name="auto_backup_summary_off">Automatic backup is disabled</string>
     <string name="delete_old_summary_on">Old backups which were created automatically will be deleted before a new one is created</string>
     <string name="delete_old_summary_off">Old backups which were created automatically will not be deleted</string>
