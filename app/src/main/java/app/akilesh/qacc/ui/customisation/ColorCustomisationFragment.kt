@@ -25,6 +25,7 @@ import androidx.work.WorkInfo
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorCustomisationFragmentBinding
+import app.akilesh.qacc.databinding.HslSlidersBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
@@ -191,26 +192,7 @@ class ColorCustomisationFragment: Fragment() {
             previewLight.colorCard.backgroundTintList = colorStateList
         }
 
-        binding.lightSliders.apply {
-            hue.apply {
-                thumbColor = colorStateList
-                haloColor = colorStateList
-                trackColorActive = colorStateList
-                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
-            }
-            saturation.apply {
-                thumbColor = colorStateList
-                haloColor = colorStateList
-                trackColorActive = colorStateList
-                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
-            }
-            lightness.apply {
-                thumbColor = colorStateList
-                haloColor = colorStateList
-                trackColorActive = colorStateList
-                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
-            }
-        }
+        themeSliders(binding.lightSliders, colorStateList)
         setPreview(color)
     }
 
@@ -223,29 +205,34 @@ class ColorCustomisationFragment: Fragment() {
             previewDark.colorName.setTextColor(textColorDark)
             previewDark.colorCard.backgroundTintList = colorStateList
         }
+        themeSliders(binding.darkSliders, colorStateList)
+        setPreview(color)
+    }
 
-        binding.darkSliders.apply {
+    private fun themeSliders(
+        sliders: HslSlidersBinding,
+        colorStateList: ColorStateList
+    ) {
+        sliders.apply {
             hue.apply {
-                thumbColor = colorStateList
-                haloColor = colorStateList
-                trackColorActive = colorStateList
-                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
+                thumbTintList = colorStateList
+                haloTintList = colorStateList
+                trackActiveTintList = colorStateList
+                trackInactiveTintList = colorStateList.withAlpha(50)
             }
             saturation.apply {
-                thumbColor = colorStateList
-                haloColor = colorStateList
-                trackColorActive = colorStateList
-                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
+                thumbTintList = colorStateList
+                haloTintList = colorStateList
+                trackActiveTintList = colorStateList
+                trackInactiveTintList = colorStateList.withAlpha(50)
             }
             lightness.apply {
-                thumbColor = colorStateList
-                haloColor = colorStateList
-                trackColorActive = colorStateList
-                trackColorInactive = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
+                thumbTintList = colorStateList
+                haloTintList = colorStateList
+                trackActiveTintList = colorStateList
+                trackInactiveTintList = colorStateList.withAlpha(50)
             }
         }
-
-        setPreview(color)
     }
 
     private fun editAccentLight() {
