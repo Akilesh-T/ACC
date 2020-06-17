@@ -29,7 +29,6 @@ import app.akilesh.qacc.Const.Paths.backupFolder
 import app.akilesh.qacc.Const.Paths.modPath
 import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.busyBox
-import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.BackupRestoreFragmentBinding
 import app.akilesh.qacc.databinding.ColorPreviewBinding
@@ -43,13 +42,13 @@ import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.utils.SwipeToDelete
 import app.akilesh.qacc.ui.home.AccentViewModel
+import app.akilesh.qacc.utils.AppUtils.createBackup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileOutputStream
 import java.io.File
 import java.io.FileInputStream
-import java.util.*
 
 class BackupRestoreFragment: Fragment() {
 
@@ -74,7 +73,13 @@ class BackupRestoreFragment: Fragment() {
         val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
         if (useSystemAccent) setColor(requireContext().getColorAccent())
 
-        binding.newBackup.setOnClickListener { createBackup() }
+        binding.newBackup.setOnClickListener {
+            if (createBackup(requireContext(), false)) {
+                Toast.makeText(requireContext(), getString(R.string.backup_created), Toast.LENGTH_SHORT)
+                    .show()
+                viewModel.backupFiles.value = getBackupFiles()
+            }
+        }
         binding.restore.setOnClickListener { selectBackupFile() }
         tempFolder = requireContext().getDir("tmp", Context.MODE_PRIVATE)
 
@@ -187,47 +192,6 @@ class BackupRestoreFragment: Fragment() {
         }
         Log.d("back", backupFiles.toString())
         return backupFiles
-    }
-
-    private fun createBackup() {
-
-        Shell.su("mkdir -p $backupFolder").exec()
-        if (SDK_INT >= P) {
-            if (Shell.su("[ \"$(ls -A $overlayPath)\" ]").exec().isSuccess)
-                compress(overlayPath)
-        }
-        else {
-            val installedAccents: MutableList<String> = Shell.su(
-                "pm list packages -f $prefix | sed s/package://"
-            ).exec().out
-
-            if (installedAccents.isNotEmpty()) {
-                requireContext().cacheDir.deleteRecursively()
-                installedAccents.forEach {
-                    val path = it.substringBeforeLast('=')
-                    val pkgName = it.substringAfterLast('=')
-                    val apkName = pkgName.substringAfter(prefix)
-                    Shell.su(
-                        "cp -f $path ${requireContext().cacheDir.absolutePath}/$apkName.apk"
-                    ).exec()
-                }
-                compress(requireContext().cacheDir.absolutePath)
-            }
-        }
-    }
-
-    private fun compress(path: String) {
-        var date = Calendar.getInstance().time.toString()
-        date = date.replace("\\s".toRegex(), "-")
-        val result = Shell.su(
-            ".$busyBox tar c -zv -f $backupFolder/$date.tar.gz -C $path ."
-        ).exec()
-        Log.d("compress", result.out.toString())
-        if (result.isSuccess) {
-            Toast.makeText(context, getString(R.string.backup_created), Toast.LENGTH_SHORT)
-                .show()
-            viewModel.backupFiles.value = getBackupFiles()
-        }
     }
 
     private fun selectBackupFile() {

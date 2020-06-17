@@ -1,5 +1,7 @@
 <androidx.preference.PreferenceScreen
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
 
     <app.akilesh.qacc.ui.preferences.StyledPreferenceCategory
         app:key="general_category"
@@ -50,16 +52,54 @@
             app:summary="@string/tweak_summary" />
 
         <Preference
+            app:key="create_all"
+            app:icon="@drawable/ic_round_select_all"
+            app:title="@string/create_all"
+            app:summary="@string/create_all_summary"
+            />
+
+    </app.akilesh.qacc.ui.preferences.StyledPreferenceCategory>
+
+    <app.akilesh.qacc.ui.preferences.StyledPreferenceCategory
+        app:key="backups_category"
+        app:title="@string/backup_folder"
+        app:allowDividerAbove="false"
+        app:initialExpandedChildrenCount="1">
+
+        <Preference
             app:key="backups"
             app:icon="@drawable/ic_round_settings_backup_restore"
             app:title="@string/backup_restore"
             app:summary="@string/backup_restore_summary"/>
 
-        <Preference
-            app:key="create_all"
-            app:icon="@drawable/ic_round_select_all"
-            app:title="@string/create_all"
-            app:summary="@string/create_all_summary"
+        <app.akilesh.qacc.ui.preferences.StyledSwitchPreferenceCompat
+            app:key="auto_backup"
+            app:title="@string/auto_backup_title"
+            app:summaryOff="@string/auto_backup_summary_off"
+            app:defaultValue="false"
+            app:icon="@drawable/ic_outline_autorenew"
+            />
+
+        <app.akilesh.qacc.ui.preferences.StyledSeekBarPreference
+            app:key="auto_backup_interval"
+            app:dependency="auto_backup"
+            app:summary="@string/backup_interval_summary"
+            app:defaultValue="15"
+            app:min="1"
+            android:max="30"
+            app:showSeekBarValue="true"
+            app:updatesContinuously="false"
+            app:selectable="false"
+            app:icon="@drawable/ic_round_time"
+            />
+
+        <app.akilesh.qacc.ui.preferences.StyledSwitchPreferenceCompat
+            app:key="delete_old"
+            app:dependency="auto_backup"
+            app:defaultValue="false"
+            app:icon="@drawable/ic_delete"
+            app:summaryOn="@string/delete_old_summary_on"
+            app:summaryOff="@string/delete_old_summary_off"
             />
 
     </app.akilesh.qacc.ui.preferences.StyledPreferenceCategory>

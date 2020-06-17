@@ -21,7 +21,9 @@ import androidx.core.widget.TextViewCompat
 import androidx.navigation.navOptions
 import androidx.palette.graphics.Palette
 import app.akilesh.qacc.Const.Colors.nokiaBlue
+import app.akilesh.qacc.Const.Paths.backupFolder
 import app.akilesh.qacc.Const.Paths.overlayPath
+import app.akilesh.qacc.Const.busyBox
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
@@ -32,6 +34,7 @@ import app.akilesh.qacc.utils.XmlUtils.createOverlayManifest
 import com.google.android.material.snackbar.Snackbar
 import com.topjohnwu.superuser.Shell
 import java.io.File
+import java.util.*
 
 
 object AppUtils {
@@ -333,4 +336,43 @@ object AppUtils {
         return nokiaBlue != 0
     }
 
+    fun createBackup(context: Context, isAuto: Boolean): Boolean {
+        var isCreated = false
+
+        Shell.su("mkdir -p $backupFolder").exec()
+        if (SDK_INT >= P) {
+            if (Shell.su("[ \"$(ls -A $overlayPath)\" ]").exec().isSuccess)
+                isCreated = compress(overlayPath, isAuto)
+        }
+        else {
+            val installedAccents: MutableList<String> = Shell.su(
+                "pm list packages -f $prefix | sed s/package://"
+            ).exec().out
+
+            if (installedAccents.isNotEmpty()) {
+                context.cacheDir.deleteRecursively()
+                installedAccents.forEach {
+                    val path = it.substringBeforeLast('=')
+                    val pkgName = it.substringAfterLast('=')
+                    val apkName = pkgName.substringAfter(prefix)
+                    Shell.su(
+                        "cp -f $path ${context.cacheDir.absolutePath}/$apkName.apk"
+                    ).exec()
+                }
+                isCreated = compress(context.cacheDir.absolutePath, isAuto)
+            }
+        }
+        return isCreated
+    }
+
+    private fun compress(path: String, isAuto: Boolean): Boolean {
+        var date = Calendar.getInstance().time.toString()
+        date = date.replace("\\s".toRegex(), "-")
+        val fileName = if (isAuto) "Auto-$date.tar.gz" else "$date.tar.gz"
+        val result = Shell.su(
+            ".$busyBox tar c -zv -f $backupFolder/$fileName -C $path ."
+        ).exec()
+        Log.d("compress", result.out.toString())
+        return result.isSuccess
+    }
 }
