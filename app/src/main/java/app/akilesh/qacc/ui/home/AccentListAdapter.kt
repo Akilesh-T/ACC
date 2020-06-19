@@ -17,7 +17,9 @@ import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.RecyclerviewItemAccentsBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
-import com.topjohnwu.superuser.Shell
+import app.akilesh.qacc.utils.OverlayUtils.disableAccent
+import app.akilesh.qacc.utils.OverlayUtils.enableAccent
+import app.akilesh.qacc.utils.OverlayUtils.isOverlayEnabled
 
 class AccentListAdapter internal constructor(
     private val context: Context,
@@ -127,34 +129,5 @@ class AccentListAdapter internal constructor(
         } catch (e: Exception) {
             false
         }
-    }
-
-    private fun isOverlayEnabled(pkgName: String): Boolean {
-        var isEnabled = false
-        if (SDK_INT == Q)
-            isEnabled = Shell.su("cmd overlay dump isenabled $pkgName").exec().out.component1() == "true"
-        else {
-            val overlays = Shell.su("cmd overlay list").exec().out
-            overlays.forEach {
-                if (it.startsWith("[x]") && it.contains(pkgName))
-                    isEnabled = true
-            }
-        }
-        return isEnabled
-    }
-
-    private fun enableAccent(packageName: String) {
-        accents.forEach{ accent ->
-            if (isOverlayInstalled(accent.pkgName) && isOverlayEnabled(accent.pkgName)) disableAccent(accent.pkgName)
-        }
-        Shell.su(
-            "cmd overlay enable $packageName",
-            "cmd overlay set-priority $packageName highest"
-        ).submit()
-        //Shell.su("cmd overlay enable-exclusive --category ${current.pkgName}").exec()
-    }
-
-    private fun disableAccent(packageName: String) {
-        Shell.su("cmd overlay disable $packageName").exec()
     }
 }

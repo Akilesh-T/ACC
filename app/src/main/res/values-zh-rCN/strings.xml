@@ -177,6 +177,8 @@
     <string name="auto_backup_summary_off">Automatic backup is disabled</string>
     <string name="delete_old_summary_on">Old backups which were created automatically will be deleted before a new one is created</string>
     <string name="delete_old_summary_off">Old backups which were created automatically will not be deleted</string>
+    <string name="daily_accent_title">Daily random accents</string>
+    <string name="daily_accent_summary">A random accent will be enabled every morning</string>
     <plurals name="auto_backup_summary_on">
         <item quantity="other">Accents will be backed up once in every %d days</item>
     </plurals>

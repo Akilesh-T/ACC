@@ -51,6 +51,14 @@
             app:defaultValue="false"
             app:summary="@string/tweak_summary" />
 
+        <app.akilesh.qacc.ui.preferences.StyledSwitchPreferenceCompat
+            app:key="daily_accent"
+            app:title="@string/daily_accent_title"
+            app:summary="@string/daily_accent_summary"
+            app:icon="@drawable/ic_twotone_today"
+            app:defaultValue="false"
+            />
+
         <Preference
             app:key="create_all"
             app:icon="@drawable/ic_round_select_all"
