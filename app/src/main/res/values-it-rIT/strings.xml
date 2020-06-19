@@ -147,7 +147,7 @@
     <string name="edit">Modifica</string>
     <string name="write_storage_permission_rationale">L\’autorizzazione Archiviazione è necessaria per salvare il nuovo aggiornamento</string>
     <string name="pref_accent">Segui colore di sistema</string>
-    <string name="pref_accent_on">È in uso il colore predefinito dell’app</string>
+    <string name="pref_accent_on">È in uso il colore predefinito dell\’app</string>
     <string name="pref_accent_off">È in uso il colore di sistema</string>
     <string name="create_all">Crea più colori per volta</string>
     <string name="create_all_summary">Crea più colori dei marchi, predefiniti e dello sfondo per volta</string>
