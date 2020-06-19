@@ -3,10 +3,8 @@ package app.akilesh.qacc.ui.preferences
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
-import android.util.TypedValue
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.ColorUtils
 import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceViewHolder
 import androidx.preference.SwitchPreferenceCompat
@@ -24,20 +22,10 @@ class StyledSwitchPreferenceCompat(context: Context, attrs: AttributeSet) :
         if (useSystemAccent) {
             val switchCompat = holder?.findViewById(R.id.switchWidget) as SwitchCompat
             switchCompat.trackDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.switch_track_material, context.theme)
+            val colorStateList =  ColorStateList.valueOf(context.getColorAccent())
             if (switchCompat.isChecked) {
-                switchCompat.thumbTintList = ColorStateList.valueOf(context.getColorAccent())
-                switchCompat.trackTintList = ColorStateList.valueOf(
-                    ColorUtils.setAlphaComponent(
-                        context.getColorAccent(),
-                        127
-                    )
-                )
-            } else {
-                val typedValue = TypedValue()
-                context.theme.resolveAttribute(R.attr.colorOnSurface, typedValue, true)
-                val disabledColor = ColorUtils.setAlphaComponent(typedValue.data, 127)
-                switchCompat.thumbTintList = ColorStateList.valueOf(typedValue.data)
-                switchCompat.trackTintList = ColorStateList.valueOf(disabledColor)
+                switchCompat.thumbTintList = colorStateList
+                switchCompat.trackTintList = colorStateList.withAlpha(127)
             }
         }
     }

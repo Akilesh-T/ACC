@@ -24,6 +24,7 @@ import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
+import app.akilesh.qacc.utils.OverlayUtils.getInstalledOverlays
 import com.topjohnwu.superuser.Shell
 
 
@@ -110,19 +111,11 @@ class HomeFragment: Fragment() {
 
     private fun insertMissing(accents: MutableList<Accent>) {
         val inDB = mutableSetOf<String>()
-        val installed = mutableSetOf<String>()
+        val installed = getInstalledOverlays()
 
         if (accents.isNotEmpty())
            inDB.addAll(accents.map { it.pkgName })
 
-        val installedAccents: MutableList<String> =  Shell.su(
-            "pm list packages -f $prefix | sed s/package://"
-        ).exec().out
-
-        if (installedAccents.isNotEmpty())
-            installed.addAll(
-                    installedAccents.map { it.substringAfterLast('=') }
-            )
         if (SDK_INT >= P) {
             val list = Shell.su("ls -1 $overlayPath").exec().out
             if (list.isNotEmpty()) {

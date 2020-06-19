@@ -29,9 +29,11 @@ class SettingsFragment: PreferenceFragmentCompat() {
         val autoBackupPref = findPreference<SwitchPreferenceCompat>("auto_backup")
         val autoBackupIntervalPref = findPreference<SeekBarPreference>("auto_backup_interval")
         val deleteOld = findPreference<SwitchPreferenceCompat>("delete_old")
+        val dailyAccentPref = findPreference<SwitchPreferenceCompat>("daily_accent")
 
         val preferences = listOf(
-            themePref, accentPref, tweakPref, separateAccentPref, backupPref, createAllPref, autoBackupPref, autoBackupIntervalPref, deleteOld
+            themePref, accentPref, tweakPref, separateAccentPref, backupPref,
+            createAllPref, autoBackupPref, autoBackupIntervalPref, deleteOld, dailyAccentPref
         )
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
@@ -82,6 +84,12 @@ class SettingsFragment: PreferenceFragmentCompat() {
             val interval = newValue as Int
             autoBackupPref?.summaryOn = resources.getQuantityString(R.plurals.auto_backup_summary_on, interval, interval)
             viewModel.enableAutoBackup(interval.toLong())
+            true
+        }
+        dailyAccentPref?.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue as Boolean)
+                viewModel.enableDailyAccentSwitcher()
+            else viewModel.disableDailyAccentSwitcher()
             true
         }
     }
