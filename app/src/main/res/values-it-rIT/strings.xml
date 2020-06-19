@@ -175,6 +175,8 @@
     <string name="auto_backup_summary_off">I backup automatici sono disattivati</string>
     <string name="delete_old_summary_on">I vecchi backup automatici verranno eliminati prima della creazione di un nuovo backup automatico</string>
     <string name="delete_old_summary_off">I vecchi backup automatici non verranno eliminati</string>
+    <string name="daily_accent_title">Colore casuale giornaliero</string>
+    <string name="daily_accent_summary">Un colore casuale verrà attivato ogni mattina</string>
     <plurals name="auto_backup_summary_on">
         <item quantity="one">Il backup dei colori verrà eseguito ogni giorno</item>
         <item quantity="other">Il backup dei colori verrà eseguito ogni %d giorni</item>
