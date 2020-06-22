@@ -3,7 +3,8 @@ package app.akilesh.qacc
 import android.app.Application
 import androidx.preference.PreferenceManager
 import app.akilesh.qacc.Const.setContext
-import app.akilesh.qacc.utils.AppUtils
+import app.akilesh.qacc.utils.AppUtils.applyTheme
+import app.akilesh.qacc.utils.AppUtils.default
 import com.topjohnwu.superuser.Shell
 
 class App: Application() {
@@ -18,8 +19,8 @@ class App: Application() {
         super.onCreate()
         setContext(this)
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val theme = sharedPreferences.getString("themePref", AppUtils.default)
-        AppUtils.applyTheme(theme)
+        val theme = sharedPreferences.getString("themePref", default)
+        applyTheme(theme)
     }
 
 }

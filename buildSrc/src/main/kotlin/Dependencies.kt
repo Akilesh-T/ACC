@@ -41,7 +41,6 @@ object Libraries {
         const val libSu = "2.5.1"
         const val chroma = "1.2.6"
         const val assent = "3.0.0-RC4"
-        const val about = "3.1.2"
         const val appUpdater = "2.7"
         const val whatTheStack = "0.0.2"
         const val workManager = "2.3.4"
@@ -80,8 +79,6 @@ object Libraries {
 
     const val assentCore          = "com.afollestad.assent:core:${Versions.assent}"
     const val assentRationales    = "com.afollestad.assent:rationales:${Versions.assent}"
-
-    const val materialAbout       = "com.github.daniel-stoneuk:material-about-library:${Versions.about}"
 
     const val appUpdater          = "com.github.javiersantos:AppUpdater:${Versions.appUpdater}"
 

@@ -7,5 +7,7 @@
     android:id="@+id/recycler_view"
     tools:listitem="@layout/recyclerview_item_accents"
     android:clipToPadding="false"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
     android:paddingBottom="72dp"
     />

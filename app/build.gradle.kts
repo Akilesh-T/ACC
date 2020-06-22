@@ -89,8 +89,6 @@ dependencies {
     implementation(Libraries.assentCore)
     implementation(Libraries.assentRationales)
 
-    implementation(Libraries.materialAbout)
-
     implementation(Libraries.appUpdater)
 
     debugImplementation(Libraries.whatTheStack)

@@ -159,11 +159,6 @@ class BackupRestoreFragment: Fragment() {
             TextViewCompat.setCompoundDrawableTintList(newBackupText, colorStateList)
             TextViewCompat.setCompoundDrawableTintList(restoreText, colorStateList)
             localBackupTitle.setTextColor(colorAccent)
-            recyclerViewBackupFiles.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
-                override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
-                    return EdgeEffect(view.context).apply { color = colorAccent }
-                }
-            }
         }
     }
 

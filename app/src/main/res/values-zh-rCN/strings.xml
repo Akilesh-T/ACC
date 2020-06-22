@@ -67,7 +67,7 @@
     <string name="wallpaer_secondary">副墙纸</string>
     <string name="wallpaper_tertiary">第三墙纸</string>
     <string name="about_title_desc">作者：Akilesh</string>
-    <string name="version">当前版本</string>
+    <string name="version">当前版本 %s</string>
     <string name="links">项目相关信息</string>
     <string name="github_repo">Github开源社区</string>
     <string name="telegram_group">Telegram公开频道</string>

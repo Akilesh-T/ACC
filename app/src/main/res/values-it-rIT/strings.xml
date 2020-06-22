@@ -66,7 +66,7 @@
     <string name="wallpaer_secondary">Colore secondario</string>
     <string name="wallpaper_tertiary">Colore terziario</string>
     <string name="about_title_desc">Di Akilesh</string>
-    <string name="version">Versione</string>
+    <string name="version">Versione %s</string>
     <string name="links">Link</string>
     <string name="github_repo">Repository Github</string>
     <string name="telegram_group">Gruppo Telegram</string>

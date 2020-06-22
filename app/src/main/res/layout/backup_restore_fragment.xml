@@ -90,6 +90,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/local_backup_title"
             android:layout_margin="8dp"
+            android:nestedScrollingEnabled="false"
             tools:listitem="@layout/recyclerview_item_backups" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

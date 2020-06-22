@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    >
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/card_title"
+        style="@style/TextAppearance.MaterialComponents.Button"
+        android:background="@drawable/rounded_corners"
+        android:backgroundTint="?colorPrimary"
+        android:textColor="?colorOnPrimary"
+        android:drawableTint="?colorOnPrimary"
+        android:drawablePadding="8dp"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_horizontal"
+        android:elevation="4dp"
+        android:padding="6dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true"
+        >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/about_item_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/subitem_about"
+            />
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

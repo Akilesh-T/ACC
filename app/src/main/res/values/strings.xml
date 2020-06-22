@@ -67,7 +67,7 @@
     <string name="wallpaer_secondary">Wallpaper secondary</string>
     <string name="wallpaper_tertiary">Wallpaper tertiary</string>
     <string name="about_title_desc">By Akilesh</string>
-    <string name="version">Version</string>
+    <string name="version">Version %s</string>
     <string name="links">Links</string>
     <string name="github_repo">Github repo</string>
     <string name="telegram_group">Telegram group</string>
