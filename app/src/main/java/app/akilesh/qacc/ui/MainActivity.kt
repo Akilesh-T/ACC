@@ -16,7 +16,6 @@ import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
-import app.akilesh.qacc.Const.getAssetFiles
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ActivityMainBinding
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
@@ -31,7 +30,6 @@ import com.github.javiersantos.appupdater.enums.AppUpdaterError
 import com.github.javiersantos.appupdater.enums.UpdateFrom.JSON
 import com.github.javiersantos.appupdater.objects.Update
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.io.File
 
 class MainActivity: AppCompatActivity() {
 
@@ -108,7 +106,6 @@ class MainActivity: AppCompatActivity() {
             navController.navigate(R.id.home, null, navAnim)
         }
 
-        copyAssets()
 
         appUpdaterUtils = AppUpdaterUtils(this)
 
@@ -160,20 +157,6 @@ class MainActivity: AppCompatActivity() {
             }
             )
             .start()
-    }
-
-    private fun copyAssets() {
-        if( !File(filesDir, "/src/values").exists() )
-            File(filesDir, "/src/values").mkdirs()
-
-        val assetFiles = getAssetFiles()
-        assetFiles.forEach { file ->
-            assets.open(file).use { stream ->
-                File(filesDir, file.removeSuffix("64")).outputStream().use { fileOutputStream ->
-                    stream.copyTo(fileOutputStream)
-                }
-            }
-        }
     }
 
     private fun setColor(

@@ -22,6 +22,7 @@ import androidx.palette.graphics.Palette
 import app.akilesh.qacc.Const.Colors.nokiaBlue
 import app.akilesh.qacc.Const.Paths.backupFolder
 import app.akilesh.qacc.Const.Paths.overlayPath
+import app.akilesh.qacc.Const.assetFiles
 import app.akilesh.qacc.Const.busyBox
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
@@ -245,8 +246,8 @@ object AppUtils {
 
         val aapt = File(filesDir, "aapt")
         val zipalign = File(filesDir, "zipalign")
-        val zipSigner = File(filesDir, "zipsigner")
-        val zipSignerJar = File(filesDir, "zipsigner-3.0-dexed.jar")
+        val zipSigner = File(filesDir, assetFiles[0])
+        val zipSignerJar = File(filesDir, assetFiles[1])
         val aaptOverlay = File(filesDir, "qacc.apk")
         val signedOverlay = File(filesDir, "signed.apk")
         val alignedOverlay = File(filesDir, "aligned.apk")
@@ -254,16 +255,18 @@ object AppUtils {
         val manifest = File(filesDir, "AndroidManifest.xml")
         val source = File(filesDir, "src")
         val colors = File(source, "/values/colors.xml")
+
+        copyAssets(context, filesDir)
+        symLinkBinaries(context.applicationInfo.nativeLibraryDir, aapt, zipalign)
         manifest.createNewFile()
         colors.createNewFile()
-
         createOverlayManifest(manifest, accent.pkgName, accent.name)
         createColors(colors, accent.colorLight, accent.colorDark, hasNokiaBlue(context))
 
         if (manifest.exists() && colors.exists()) {
             aapt.setExecutable(true)
             val aaptResult = Shell.su(
-                "./${aapt.absolutePath} p -f -M ${manifest.absolutePath} -I  /system/framework/framework-res.apk -S ${source.absolutePath} -F ${aaptOverlay.absolutePath}"
+                "${aapt.absolutePath} p -f -M ${manifest.absolutePath} -I  /system/framework/framework-res.apk -S ${source.absolutePath} -F ${aaptOverlay.absolutePath}"
             ).exec()
             Log.d("aapt-code", aaptResult.code.toString())
             Log.d("aapt-out", aaptResult.out.toString())
@@ -282,7 +285,7 @@ object AppUtils {
                     signedOverlay.setReadable(true)
                     zipalign.setExecutable(true)
                     val zipalignResult = Shell.su(
-                        "./${zipalign.absolutePath} -f -v -p 4 ${signedOverlay.absolutePath} ${alignedOverlay.absolutePath}"
+                        "${zipalign.absolutePath} -f -v -p 4 ${signedOverlay.absolutePath} ${alignedOverlay.absolutePath}"
                     ).exec()
                     Log.d("zipalign-code", zipalignResult.code.toString())
                     Log.d("zipalign-out", zipalignResult.out.toString())
@@ -378,4 +381,32 @@ object AppUtils {
         Log.d("compress", result.out.toString())
         return result.isSuccess
     }
+
+    private fun copyAssets(context: Context, filesDir: File) {
+        val valuesDir = File(filesDir, "/src/values")
+        if( valuesDir.exists().not() ) valuesDir.mkdirs()
+
+        assetFiles.forEach { file ->
+            val dstFile = File(filesDir, file)
+            if (dstFile.exists().not()) {
+                context.assets.open(file).use { stream ->
+                    dstFile.outputStream().use { fileOutputStream ->
+                        stream.copyTo(fileOutputStream)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun symLinkBinaries(nativeLibraryDir: String, aapt: File, zipalign: File) {
+        if (aapt.exists()) aapt.delete()
+        if (zipalign.exists()) zipalign.delete()
+        val aaptLib = File(nativeLibraryDir, "libaapt.so")
+        val zipalignLib = File(nativeLibraryDir, "libzipalign.so")
+        Shell.su(
+            "ln -sf ${aaptLib.absolutePath} ${aapt.absolutePath}",
+            "ln -sf ${zipalignLib.absolutePath} ${zipalign.absolutePath}"
+        ).exec()
+    }
+
 }

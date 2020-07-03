@@ -1,7 +1,6 @@
 package app.akilesh.qacc
 
 import android.content.Context
-import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.Q
 import android.os.Environment.DIRECTORY_DOCUMENTS
@@ -434,17 +433,6 @@ object Const {
 
     var selected = setOf<Colour>()
 
-    fun getAssetFiles(): MutableList<String> {
-
-        val assetFiles = mutableListOf<String>()
-        assetFiles.addAll(listOf("zipsigner", "zipsigner-3.0-dexed.jar"))
-        val arch = if (Build.SUPPORTED_64_BIT_ABIS.toList().isNotEmpty()) "arm64" else "arm"
-        if (arch == "arm64")
-            assetFiles.addAll(listOf("aapt64", "zipalign64"))
-        else
-            assetFiles.addAll(listOf("aapt", "zipalign"))
-
-        return assetFiles
-    }
+    val assetFiles = listOf("zipsigner", "zipsigner-3.0-dexed.jar")
 
 }
