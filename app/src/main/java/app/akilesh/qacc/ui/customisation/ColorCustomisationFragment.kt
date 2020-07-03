@@ -7,12 +7,11 @@ import android.os.Build.VERSION_CODES.P
 import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.graphics.ColorUtils
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -25,23 +24,26 @@ import androidx.work.WorkInfo
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorCustomisationFragmentBinding
-import app.akilesh.qacc.databinding.HslSlidersBinding
+import app.akilesh.qacc.databinding.CustomColorPickerBinding
 import app.akilesh.qacc.model.Accent
+import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
+import app.akilesh.qacc.ui.colorpicker.colorspace.ColorSpaceViewModel
+import app.akilesh.qacc.ui.colorpicker.colorspace.CustomColorPicker
+import app.akilesh.qacc.ui.home.AccentViewModel
+import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
-import app.akilesh.qacc.ui.home.AccentViewModel
-import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
-import kotlin.properties.Delegates
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class ColorCustomisationFragment: Fragment() {
+class ColorCustomisationFragment: Fragment(), CustomColorPicker {
 
     private lateinit var binding: ColorCustomisationFragmentBinding
-    private lateinit var model: CustomisationViewModel
-    private lateinit var accentViewModel: AccentViewModel
+    private lateinit var viewModel: CustomisationViewModel
+    override lateinit var dialog: AlertDialog
+    override lateinit var colorSpaceViewModel: ColorSpaceViewModel
+    override lateinit var fragment: Fragment
     private val args: ColorCustomisationFragmentArgs by navArgs()
-    private var colorLight by Delegates.notNull<Int>()
-    private var colorDark by Delegates.notNull<Int>()
-    private var separateAccents by Delegates.notNull<Boolean>()
+    private var separateAccents: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,72 +58,50 @@ class ColorCustomisationFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.textInputLayout.visibility = if (args.fromHome) View.VISIBLE else View.GONE
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         separateAccents = sharedPreferences.getBoolean("separate_accent", false)
         if (SDK_INT < Q) separateAccents = false
 
-        var accentLight = args.lightAccent
-        var accentDark = args.darkAccent
-        var accentName = args.accentName
+        val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
+        if (useSystemAccent) {
+            val systemAccent = requireContext().getColorAccent()
+            setPreview(systemAccent)
+        }
+        viewModel = ViewModelProvider(this).get(CustomisationViewModel::class.java)
+        colorSpaceViewModel = ViewModelProvider(this).get(ColorSpaceViewModel::class.java)
+        dialog = MaterialAlertDialogBuilder(requireContext()).create()
+        fragment = this
+
+        viewModel.lightAccent = args.lightAccent
+        viewModel.darkAccent = args.darkAccent
+        viewModel.accentName = args.accentName
 
         if (args.fromHome) {
-            binding.name.setText(accentName)
+            binding.name.setText(viewModel.accentName)
             binding.name.doAfterTextChanged {
-                accentName = it.toString().trim()
+                viewModel.accentName = it.toString().trim()
             }
         }
 
-        colorLight = Color.parseColor(accentLight)
-        setPreviewLight(colorLight, accentLight)
-        val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(colorLight, hsl)
-        binding.lightSliders.hue.value = hsl[0]
-        binding.lightSliders.saturation.value = hsl[1]
-        binding.lightSliders.lightness.value = hsl[2]
+        val colorLight = Color.parseColor(viewModel.lightAccent)
+        setPreviewLight(colorLight, viewModel.lightAccent)
 
-        model = ViewModelProvider(this).get(CustomisationViewModel::class.java)
-        accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
-
-        val lightAccentObserver = Observer<String> {
-            accentLight = it
-            colorLight = Color.parseColor(accentLight)
-            setPreviewLight(colorLight, accentLight)
+        binding.previewLight.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_edit, 0)
+        binding.previewLight.root.setOnClickListener {
+            if (colorSpaceViewModel.selectedColor.value == null) colorSpaceViewModel.selectColor(colorLight)
+            editAccent(false)
         }
-        model.lightAccent.observe(viewLifecycleOwner, lightAccentObserver)
-        editAccentLight()
 
-        if (!separateAccents && SDK_INT < Q) {
-            binding.toggleButton.visibility = View.GONE
+        if (separateAccents.not() && SDK_INT < Q) {
             binding.previewDark.root.visibility = View.GONE
         }
         else {
-            colorDark = if (accentDark.isNotBlank()) Color.parseColor(accentDark) else colorLight
-            setPreviewDark(colorDark, accentDark)
-            ColorUtils.colorToHSL(colorDark, hsl)
-            binding.darkSliders.hue.value = hsl[0]
-            binding.darkSliders.saturation.value = hsl[1]
-            binding.darkSliders.lightness.value = hsl[2]
-
-            val darkAccentObserver = Observer<String> {
-                accentDark = it
-                colorDark = Color.parseColor(accentDark)
-                setPreviewDark(colorDark, accentDark)
-            }
-            model.darkAccent.observe(viewLifecycleOwner, darkAccentObserver)
-        }
-
-        binding.toggleButton.addOnButtonCheckedListener { group, _, _ ->
-            when(group.checkedButtonId) {
-                binding.lightToggle.id -> {
-                    binding.lightSliders.root.visibility = View.VISIBLE
-                    binding.darkSliders.root.visibility = View.GONE
-                    editAccentLight()
-                }
-                binding.darkToggle.id -> {
-                    binding.lightSliders.root.visibility = View.GONE
-                    binding.darkSliders.root.visibility = View.VISIBLE
-                    editAccentDark()
-                }
+            val colorDark = if (viewModel.darkAccent.isNotBlank()) Color.parseColor(viewModel.darkAccent) else colorLight
+            setPreviewDark(colorDark, viewModel.darkAccent)
+            binding.previewDark.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_edit, 0)
+            binding.previewDark.root.setOnClickListener {
+                if (colorSpaceViewModel.selectedColor.value == null) colorSpaceViewModel.selectColor(colorDark)
+                editAccent(true)
             }
         }
 
@@ -141,17 +121,13 @@ class ColorCustomisationFragment: Fragment() {
 
         binding.navBar.next.setOnClickListener {
 
-            if (accentName.isNotBlank()) {
-                var suffix = "hex_" + accentLight.removePrefix("#")
-                val dark: String
-                if (SDK_INT < Q)
-                    dark = accentLight
-                else {
-                    suffix += "_" + accentDark.removePrefix("#")
-                    dark = accentDark
-                }
+            if (viewModel.accentName.isNotBlank()) {
+                var suffix = "hex_" + viewModel.lightAccent.removePrefix("#")
+                if (SDK_INT >= Q) suffix += "_" + viewModel.darkAccent.removePrefix("#")
+                else viewModel.darkAccent = viewModel.lightAccent
+
                 val pkgName = prefix + suffix
-                val accent = Accent(pkgName, accentName, accentLight, dark)
+                val accent = Accent(pkgName, viewModel.accentName, viewModel.lightAccent, viewModel.darkAccent)
                 Log.d("accent-s", accent.toString())
                 val creatorViewModel = ViewModelProvider(this).get(ColorPickerViewModel::class.java)
                 creatorViewModel.create(accent)
@@ -163,12 +139,12 @@ class ColorCustomisationFragment: Fragment() {
                             Log.d("state", workInfo.state.name)
 
                             if (workInfo.state == WorkInfo.State.RUNNING && SDK_INT < P)
-                                Toast.makeText(requireContext(), String.format(getString(R.string.creating, accentName)), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), String.format(getString(R.string.creating, viewModel.accentName)), Toast.LENGTH_SHORT).show()
 
                             if (workInfo.state == WorkInfo.State.SUCCEEDED && workInfo.state.isFinished) {
                                 val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
                                 accentViewModel.insert(accent)
-                                showSnackbar(view, String.format(getString(R.string.accent_created), accentName))
+                                showSnackbar(view, String.format(getString(R.string.accent_created), viewModel.accentName))
                                 findNavController().navigate(R.id.action_global_home)
                             }
                             if (workInfo.state == WorkInfo.State.FAILED)
@@ -182,111 +158,37 @@ class ColorCustomisationFragment: Fragment() {
     }
 
     private fun setPreviewLight(color: Int, hex: String) {
-        val colorName = if (SDK_INT < Q) args.accentName else requireContext().resources.getString(R.string.light)
-        val textColorLight = Palette.Swatch(color, 1).bodyTextColor
-        val colorStateList = ColorStateList.valueOf(color)
+        val accentName = if (SDK_INT < Q) args.accentName else requireContext().resources.getString(R.string.light)
+        val swatch = Palette.Swatch(color, 1)
 
-        binding.apply {
-            previewLight.colorName.text = String.format(requireContext().resources.getString(R.string.colour), colorName, hex)
-            previewLight.colorName.setTextColor(textColorLight)
-            previewLight.colorCard.backgroundTintList = colorStateList
+        binding.previewLight.apply {
+            colorName.apply {
+                text = String.format(
+                    requireContext().resources.getString(R.string.colour),
+                    accentName,
+                    hex
+                )
+                setTextColor(swatch.bodyTextColor)
+                compoundDrawableTintList = ColorStateList.valueOf(swatch.titleTextColor)
+            }
+            colorCard.backgroundTintList = ColorStateList.valueOf(color)
         }
-
-        themeSliders(binding.lightSliders, colorStateList)
-        setPreview(color)
+        if (SDK_INT < Q || separateAccents.not()) setPreview(color)
     }
 
     private fun setPreviewDark(color: Int, hex: String) {
-        val textColorDark = Palette.Swatch(color, 1).bodyTextColor
-        val colorStateList = ColorStateList.valueOf(color)
-
-        binding.apply {
-            previewDark.colorName.text = String.format(requireContext().resources.getString(R.string.colour), requireContext().resources.getString(R.string.dark), hex)
-            previewDark.colorName.setTextColor(textColorDark)
-            previewDark.colorCard.backgroundTintList = colorStateList
-        }
-        themeSliders(binding.darkSliders, colorStateList)
-        setPreview(color)
-    }
-
-    private fun themeSliders(
-        sliders: HslSlidersBinding,
-        colorStateList: ColorStateList
-    ) {
-        sliders.apply {
-            hue.apply {
-                thumbTintList = colorStateList
-                haloTintList = colorStateList
-                trackActiveTintList = colorStateList
-                trackInactiveTintList = colorStateList.withAlpha(50)
+        val swatch = Palette.Swatch(color, 1)
+        binding.previewDark.apply {
+            colorName.apply {
+                text = String.format(
+                    requireContext().resources.getString(R.string.colour),
+                    requireContext().resources.getString(R.string.dark),
+                    hex
+                )
+                setTextColor(swatch.bodyTextColor)
+                compoundDrawableTintList = ColorStateList.valueOf(swatch.titleTextColor)
             }
-            saturation.apply {
-                thumbTintList = colorStateList
-                haloTintList = colorStateList
-                trackActiveTintList = colorStateList
-                trackInactiveTintList = colorStateList.withAlpha(50)
-            }
-            lightness.apply {
-                thumbTintList = colorStateList
-                haloTintList = colorStateList
-                trackActiveTintList = colorStateList
-                trackInactiveTintList = colorStateList.withAlpha(50)
-            }
-        }
-    }
-
-    private fun editAccentLight() {
-
-        binding.lightSliders.root.visibility = View.VISIBLE
-        binding.darkSliders.root.visibility = View.GONE
-        setPreview(colorLight)
-
-        var newColor: Int
-        val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(colorLight, hsl)
-
-        binding.lightSliders.hue.addOnChangeListener { _, value, _ ->
-            hsl[0] = value
-            newColor = ColorUtils.HSLToColor(hsl)
-            model.lightAccent.value = toHex(newColor)
-        }
-
-        binding.lightSliders.saturation.addOnChangeListener { _, value, _ ->
-            hsl[1] = value
-            newColor = ColorUtils.HSLToColor(hsl)
-            model.lightAccent.value = toHex(newColor)
-        }
-
-        binding.lightSliders.lightness.addOnChangeListener { _, value, _ ->
-            hsl[2] = value
-            newColor = ColorUtils.HSLToColor(hsl)
-            model.lightAccent.value = toHex(newColor)
-        }
-    }
-
-    private fun editAccentDark() {
-
-        setPreview(colorDark)
-        var newColor: Int
-        val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(colorDark, hsl)
-
-        binding.darkSliders.hue.addOnChangeListener { _, value, _ ->
-            hsl[0] = value
-            newColor = ColorUtils.HSLToColor(hsl)
-            model.darkAccent.value = toHex(newColor)
-        }
-
-        binding.darkSliders.saturation.addOnChangeListener { _, value, _ ->
-            hsl[1] = value
-            newColor = ColorUtils.HSLToColor(hsl)
-            model.darkAccent.value = toHex(newColor)
-        }
-
-        binding.darkSliders.lightness.addOnChangeListener { _, value, _ ->
-            hsl[2] = value
-            newColor = ColorUtils.HSLToColor(hsl)
-            model.darkAccent.value = toHex(newColor)
+            colorCard.backgroundTintList = ColorStateList.valueOf(color)
         }
     }
 
@@ -307,45 +209,35 @@ class ColorCustomisationFragment: Fragment() {
             navBar.previous.setTextColor(color)
             navBar.previous.rippleColor = colorStateList
             navBar.next.backgroundTintList = colorStateList
+        }
+    }
 
-            val typedValue = TypedValue()
-            requireContext().theme.resolveAttribute(R.attr.colorOnSurface, typedValue, true)
-            val disabledColor = ColorUtils.setAlphaComponent(typedValue.data, 127)
-            val disabledStateList =  ColorStateList.valueOf(disabledColor)
-            when (toggleButton.checkedButtonId) {
-                lightToggle.id -> {
-                    lightToggle.apply {
-                        iconTint = colorStateList
-                        rippleColor = colorStateList
-                        strokeColor = colorStateList
-                        backgroundTintList = colorStateList.withAlpha(50)
-                        setTextColor(color)
-                    }
-                    darkToggle.apply {
-                        iconTint = disabledStateList
-                        rippleColor = disabledStateList
-                        strokeColor = disabledStateList
-                        backgroundTintList = disabledStateList.withAlpha(0)
-                        setTextColor(disabledColor)
-                    }
-                }
-                darkToggle.id -> {
-                    darkToggle.apply {
-                        iconTint = colorStateList
-                        rippleColor = colorStateList
-                        strokeColor = colorStateList
-                        backgroundTintList = colorStateList.withAlpha(50)
-                        setTextColor(color)
-                    }
-                    lightToggle.apply {
-                        iconTint = disabledStateList
-                        rippleColor = disabledStateList
-                        strokeColor = disabledStateList
-                        backgroundTintList = disabledStateList.withAlpha(0)
-                        setTextColor(disabledColor)
+    private fun editAccent(
+        isDark: Boolean
+    ) {
+        val customColorPickerBinding = CustomColorPickerBinding.inflate(layoutInflater)
+        dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(customColorPickerBinding.root)
+            .setCancelable(false)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                if (colorSpaceViewModel.selectedColor.value != null) {
+                    if (isDark) {
+                        viewModel.darkAccent = toHex(colorSpaceViewModel.selectedColor.value!!)
+                        setPreviewDark(colorSpaceViewModel.selectedColor.value!!, viewModel.darkAccent)
+                    } else {
+                        viewModel.lightAccent = toHex(colorSpaceViewModel.selectedColor.value!!)
+                        setPreviewLight(colorSpaceViewModel.selectedColor.value!!, viewModel.lightAccent)
                     }
                 }
             }
-        }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                colorSpaceViewModel.selectedColor.value = null
+            }
+            .create()
+
+        showCustomColorPicker(
+            requireContext(),
+            customColorPickerBinding
+        )
     }
 }

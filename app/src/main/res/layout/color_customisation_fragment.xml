@@ -44,120 +44,43 @@
                 app:layout_constraintTop_toBottomOf="@+id/preview_light"
                 />
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/toggleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constrainedHeight="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/preview_dark"
-                app:selectionRequired="true"
-                app:singleSelection="true"
-                app:checkedButton="@+id/light_toggle"
-                >
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                    android:id="@+id/light_toggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAllCaps="false"
-                    android:text="@string/light"
-                    app:icon="@drawable/ic_outline_wb_sunny"
-                    />
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                    android:id="@+id/dark_toggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAllCaps="false"
-                    android:text="@string/dark"
-                    app:icon="@drawable/ic_outline_nights_stay"
-                    />
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/reset_chip"
-                style="@style/Widget.MaterialComponents.Chip.Action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/reset"
-                app:chipIcon="@drawable/ic_outline_autorenew"
-                app:layout_constrainedHeight="true"
-                app:layout_constrainedWidth="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toggleButton"
-                />
-
-            <include
-                android:id="@+id/light_sliders"
-                layout="@layout/hsl_sliders"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constrainedHeight="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/reset_chip"
-                />
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="light_sliders" />
-
-            <include
-                android:id="@+id/dark_sliders"
-                layout="@layout/hsl_sliders"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constrainedHeight="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/barrier"
-                android:visibility="gone"/>
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="light_sliders, dark_sliders" />
-
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/barrier2"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:importantForAutofill="noExcludeDescendants"
                 android:hint="@string/color_rename"
-                app:endIconMode="clear_text">
+                android:importantForAutofill="noExcludeDescendants"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preview_dark"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/reset_chip"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/reset"
+                app:chipIcon="@drawable/ic_outline_autorenew"
+                app:layout_constrainedHeight="true"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textInputLayout"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

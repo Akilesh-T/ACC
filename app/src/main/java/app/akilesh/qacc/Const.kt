@@ -403,6 +403,12 @@ object Const {
             )
         )
         const val nokiaBlue = "zzz_nokia_blue"
+
+        val colorSpaces = listOf(
+            contextConst.getString(R.string.color_space_rgb),
+            contextConst.getString(R.string.color_space_hsl)
+            //contextConst.getString(R.string.color_space_lab)
+            )
     }
 
     object Links {

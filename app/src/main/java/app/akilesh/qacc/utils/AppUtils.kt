@@ -15,7 +15,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.TextViewCompat
 import androidx.navigation.navOptions
@@ -132,7 +131,7 @@ object AppUtils {
             previewRadioSelected.buttonTintList = accentTintList
             previewToggleSelected.buttonTintList = accentTintList
             previewToggleSelected.thumbTintList = accentTintList
-            previewToggleSelected.trackTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(accentColor, 127))
+            previewToggleSelected.trackTintList = accentTintList.withAlpha(127)
         }
 
         binding.apply {
@@ -140,7 +139,11 @@ object AppUtils {
             TextViewCompat.setCompoundDrawableTintList(customText, accentTintList)
             TextViewCompat.setCompoundDrawableTintList(presetText, accentTintList)
             TextViewCompat.setCompoundDrawableTintList(wallColorsText, accentTintList)
-            textInputLayout.setBoxStrokeColorStateList(accentTintList)
+            TextViewCompat.setCompoundDrawableTintList(brandColorsText, accentTintList)
+            textInputLayout.apply {
+                setBoxStrokeColorStateList(accentTintList)
+                hintTextColor = accentTintList
+            }
             if (SDK_INT >= Q) {
                 name.textCursorDrawable?.setTintList(accentTintList)
                 name.textSelectHandle?.setTintList(accentTintList)

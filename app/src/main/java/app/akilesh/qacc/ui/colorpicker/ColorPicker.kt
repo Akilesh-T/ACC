@@ -8,9 +8,7 @@ import android.os.Build.VERSION_CODES.Q
 import android.view.LayoutInflater
 import android.widget.EdgeEffect
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.FragmentManager
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,40 +21,27 @@ import app.akilesh.qacc.databinding.MdColorPaletteBinding
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.setPreview
-import app.akilesh.qacc.utils.AppUtils.toHex
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import me.priyesh.chroma.ChromaDialog
-import me.priyesh.chroma.ColorMode
-import me.priyesh.chroma.ColorSelectListener
 
 interface ColorPicker {
 
     var binding: ColorPickerFragmentBinding
     val viewModel: ColorPickerViewModel
 
-    fun customColorPicker(previewColor: Int, parentFragmentManager: FragmentManager) {
-        ChromaDialog.Builder()
-            .initialColor(previewColor)
-            .colorMode(ColorMode.RGB)
-            .onColorSelected(object : ColorSelectListener {
-                override fun onColorSelected(color: Int) {
-                    viewModel.colour.hex = toHex(color)
-                    setPreview(binding, color)
-                    binding.name.text = null
-                }
-            })
-            .create()
-            .show(parentFragmentManager, "ChromaDialog")
-    }
-
-    fun showColorPickerDialog(context: Context, layoutInflater: LayoutInflater, @StringRes title: Int, @DrawableRes icon: Int, colorList: List<Colour>) {
+    fun showColorPickerDialog(
+        context: Context,
+        layoutInflater: LayoutInflater,
+        title: String,
+        @DrawableRes icon: Int,
+        colorList: List<Colour>
+    ) {
 
         val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
         val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
         dialogTitleBinding.apply {
-            titleText.text = String.format(context.resources.getString(title))
+            titleText.text = title
             titleIcon.setImageDrawable(ResourcesCompat.getDrawable(context.resources, icon, null))
         }
         val builder = MaterialAlertDialogBuilder(context)
@@ -104,7 +89,7 @@ interface ColorPicker {
         val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
         dialogTitleBinding.apply {
             titleText.text = String.format(context.resources.getString(R.string.md_colors))
-            titleIcon.setImageDrawable(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_palette_24dp, null))
+            titleIcon.setImageDrawable(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_google, null))
         }
         val dialog = MaterialAlertDialogBuilder(context)
             .setCustomTitle(dialogTitleBinding.root)

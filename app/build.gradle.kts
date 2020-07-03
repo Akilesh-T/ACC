@@ -84,8 +84,6 @@ dependencies {
     implementation(Libraries.libSuCore)
     implementation(Libraries.libsuIO)
 
-    implementation(Libraries.lawnchairChroma)
-
     implementation(Libraries.assentCore)
     implementation(Libraries.assentRationales)
 
@@ -99,4 +97,6 @@ dependencies {
     implementation(Libraries.rvSelection)
 
     implementation(Libraries.viewpager2)
+
+    implementation(Libraries.andColorPicker)
 }

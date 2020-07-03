@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -21,21 +22,29 @@ import app.akilesh.qacc.Const.Colors.brandColors
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
+import app.akilesh.qacc.databinding.CustomColorPickerBinding
 import app.akilesh.qacc.model.Accent
+import app.akilesh.qacc.ui.colorpicker.colorspace.ColorSpaceViewModel
+import app.akilesh.qacc.ui.colorpicker.colorspace.CustomColorPicker
+import app.akilesh.qacc.ui.home.AccentViewModel
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.getWallpaperColors
 import app.akilesh.qacc.utils.AppUtils.setPreview
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
-import app.akilesh.qacc.ui.home.AccentViewModel
+import app.akilesh.qacc.utils.AppUtils.toHex
 import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ColorPickerFragment: Fragment(),
-    ColorPicker {
+    ColorPicker, CustomColorPicker {
 
     override lateinit var binding: ColorPickerFragmentBinding
     override lateinit var viewModel: ColorPickerViewModel
+    override lateinit var dialog: AlertDialog
+    override lateinit var colorSpaceViewModel: ColorSpaceViewModel
+    override lateinit var fragment: Fragment
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +59,9 @@ class ColorPickerFragment: Fragment(),
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(ColorPickerViewModel::class.java)
+        dialog = MaterialAlertDialogBuilder(requireContext()).create()
+        colorSpaceViewModel = ViewModelProvider(this).get(ColorSpaceViewModel::class.java)
+        fragment = this
 
         val previewColor = if (viewModel.colour.hex.isBlank()) requireContext().getColorAccent()
         else Color.parseColor(viewModel.colour.hex)
@@ -61,13 +73,11 @@ class ColorPickerFragment: Fragment(),
         if (SDK_INT < Q) separateAccents = false
 
         if (separateAccents) {
-            binding.title.text = String.format(getString(R.string.picker_title_text_light))
             binding.navBar.next.text = getString(R.string.next)
-            binding.nameTitle.visibility = View.GONE
             binding.textInputLayout.visibility = View.GONE
         }
         else
-            binding.title.text = String.format(getString(R.string.picker_title_text))
+            binding.theme.visibility = View.GONE
 
         if (customise)
             binding.navBar.next.text = getString(R.string.next)
@@ -158,14 +168,37 @@ class ColorPickerFragment: Fragment(),
             findNavController().navigateUp()
         }
 
-        binding.brandColors.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.brand_colors, R.drawable.ic_ferrari, brandColors) }
+        binding.brandColors.setOnClickListener {
+            showColorPickerDialog(
+                requireContext(),
+                layoutInflater,
+                binding.brandColorsText.text.toString(),
+                R.drawable.ic_palette_24dp,
+                brandColors
+            )
+        }
+
         binding.custom.setOnClickListener {
-            customColorPicker(previewColor, parentFragmentManager)
+            val customColorPickerBinding = CustomColorPickerBinding.inflate(layoutInflater)
+            dialog = createDialog(customColorPickerBinding, colorSpaceViewModel)
+            showCustomColorPicker(
+                requireContext(),
+                customColorPickerBinding
+            )
         }
         binding.mdcColors.setOnClickListener {
             showTabDialog(requireContext(), layoutInflater, binding)
         }
-        binding.preset.setOnClickListener { showColorPickerDialog(requireContext(), layoutInflater, R.string.presets, R.drawable.ic_preset, AEX) }
+        binding.preset.setOnClickListener {
+            showColorPickerDialog(
+                requireContext(),
+                layoutInflater,
+                binding.presetText.text.toString(),
+                R.drawable.ic_preset,
+                AEX
+            )
+        }
+
         if (SDK_INT > O)
             binding.wallColors.setOnClickListener {
                 val rationaleHandler = createDialogRationale(R.string.app_name) {
@@ -179,7 +212,12 @@ class ColorPickerFragment: Fragment(),
                     rationaleHandler = rationaleHandler
                 ) {
                     if (it.isAllGranted()) {
-                        showColorPickerDialog(requireContext(), layoutInflater, R.string.color_wallpaper, R.drawable.ic_wallpaper, requireContext().getWallpaperColors())
+                        showColorPickerDialog(
+                            requireContext(),
+                            layoutInflater,
+                            binding.wallColorsText.text.toString(),
+                            R.drawable.ic_wallpaper,
+                            requireContext().getWallpaperColors())
                     }
                 }
             }
@@ -189,5 +227,28 @@ class ColorPickerFragment: Fragment(),
         binding.name.doAfterTextChanged {
             viewModel.colour.name = it.toString().trim()
         }
+    }
+
+    private fun createDialog(
+        customColorPickerBinding: CustomColorPickerBinding,
+        colorSpaceViewModel: ColorSpaceViewModel
+    ): AlertDialog {
+        return MaterialAlertDialogBuilder(requireContext())
+            .setView(customColorPickerBinding.root)
+            .setCancelable(false)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                if (colorSpaceViewModel.selectedColor.value != null) {
+                    setPreview(
+                        binding,
+                        colorSpaceViewModel.selectedColor.value!!
+                    )
+                    viewModel.colour.hex = toHex(colorSpaceViewModel.selectedColor.value!!)
+                    Log.d("custom-hex", viewModel.colour.hex)
+                }
+            }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                colorSpaceViewModel.selectedColor.value = null
+            }
+            .create()
     }
 }

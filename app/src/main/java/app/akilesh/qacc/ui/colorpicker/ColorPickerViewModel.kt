@@ -12,8 +12,8 @@ import java.util.*
 
 class ColorPickerViewModel(application: Application) : AndroidViewModel(application) {
 
-    val colour = Colour("", "")
-    var accentLight = ""
+    val colour = Colour(String(), String())
+    var accentLight = String()
     val workManager = WorkManager.getInstance(application)
     var createWorkerId: UUID? = null
 

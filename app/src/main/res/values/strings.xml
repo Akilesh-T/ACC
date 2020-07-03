@@ -33,7 +33,7 @@
     <string name="settings_check_for_updates">Check for updates</string>
     <string name="dl_and_install">Download &amp; install</string>
     <string name="tweak">Tweak colours</string>
-    <string name="tweak_summary">Modify Hue, saturation and lightness of the chosen colours</string>
+    <string name="tweak_summary">Edit the selected colour(s) to your liking</string>
 
     <string name="picker_title_text">Choose your accent</string>
     <string name="picker_title_text_light">Choose your accent for light theme</string>
@@ -99,7 +99,7 @@
     <string name="backup_created">Backup created!</string>
     <string name="accents_restored">Accents restored!</string>
     <string name="color_rename">Rename accent</string>
-    <string name="brand_colors">Brand colors</string>
+    <string name="brand_colors">Brand colours</string>
     <string name="fiveHundredpx">500px</string>
     <string name="adobe">Adobe</string>
     <string name="airbnb">Airbnb</string>
@@ -178,6 +178,12 @@
     <string name="delete_old_summary_off">Old backups which were created automatically will not be deleted</string>
     <string name="daily_accent_title">Daily random accents</string>
     <string name="daily_accent_summary">A random accent will be enabled every morning</string>
+    <string name="lab_l" translatable="false">L</string>
+    <string name="lab_a" translatable="false">A</string>
+    <string name="lab_b" translatable="false">B</string>
+    <string name="color_space_rgb">RGB</string>
+    <string name="color_space_hsl">HSL</string>
+    <string name="color_space_lab">LAB</string>
     <plurals name="auto_backup_summary_on">
         <item quantity="one">Accents will be backed up daily</item>
         <item quantity="other">Accents will be backed up once in every %d days</item>

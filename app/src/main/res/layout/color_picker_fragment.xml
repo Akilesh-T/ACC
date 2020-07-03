@@ -14,203 +14,33 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingBottom="32dp"
+            android:clipToPadding="false"
             >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/theme"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="24dp"
+                app:srcCompat="@drawable/ic_outline_wb_sunny"
+                app:tint="?colorOnSurface"
+                />
 
             <include
                 android:id="@+id/include"
                 layout="@layout/preview_color_content"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                app:layout_constrainedHeight="true"
-                app:layout_constraintBottom_toTopOf="@id/title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/title"
-                style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:text="@string/picker_title_text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/include"
-                />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/brand_colors"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintEnd_toStartOf="@+id/custom"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title"
-                >
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/brand_colors_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:drawableStart="@drawable/ic_ferrari"
-                    android:drawablePadding="16dp"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:maxLines="1"
-                    android:text="@string/brand_colors"
-                    />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/custom"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@id/brand_colors"
-                app:layout_constraintTop_toBottomOf="@id/title"
-                >
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/custom_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:drawableStart="@drawable/ic_outline_edit"
-                    android:drawablePadding="16dp"
-                    android:drawableTint="?colorPrimary"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:maxLines="1"
-                    android:text="@string/color_custom"
-                    />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/preset"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintEnd_toStartOf="@+id/wall_colors"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/brand_colors"
-                app:layout_constraintBottom_toTopOf="@id/mdc_colors"
-                >
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/preset_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:drawableStart="@drawable/ic_preset"
-                    android:drawablePadding="16dp"
-                    android:drawableTint="?colorPrimary"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:maxLines="1"
-                    android:text="@string/presets"
-                    />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/wall_colors"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@id/preset"
-                app:layout_constraintTop_toBottomOf="@id/custom"
-                >
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/mdc_colors_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:drawableStart="@drawable/ic_wallpaper"
-                    android:drawablePadding="16dp"
-                    android:drawableTint="?colorPrimary"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:maxLines="1"
-                    android:text="@string/color_wallpaper"
-                    />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/mdc_colors"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/preset"
-                >
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/wall_colors_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:drawableStart="@drawable/ic_palette_24dp"
-                    android:drawablePadding="16dp"
-                    android:drawableTint="?colorPrimary"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:maxLines="1"
-                    android:text="@string/md_colors"
-                    />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/name_title"
-                style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="@string/color_name"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintBottom_toTopOf="@id/textInputLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mdc_colors"
+                app:layout_constraintTop_toBottomOf="@id/theme"
                 />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -218,12 +48,14 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="48dp"
                 android:importantForAutofill="noExcludeDescendants"
                 app:endIconMode="clear_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/name_title"
+                app:layout_constraintTop_toBottomOf="@id/include"
+                android:hint="@string/color_name"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -234,6 +66,148 @@
                     android:maxLines="1"
                     />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mdc_colors"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="8dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textInputLayout"
+                >
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/mdc_colors_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:drawableTopCompat="@drawable/ic_google"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_horizontal"
+                    android:paddingVertical="16dp"
+                    android:text="@string/md_colors"
+                    />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/brand_colors"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintEnd_toStartOf="@+id/preset"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mdc_colors"
+                >
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/brand_colors_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:drawableTopCompat="@drawable/ic_palette_24dp"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_horizontal"
+                    android:paddingVertical="16dp"
+                    android:text="@string/brand_colors"
+                    />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/preset"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@id/brand_colors"
+                app:layout_constraintTop_toTopOf="@id/brand_colors"
+                >
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/preset_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:drawableTopCompat="@drawable/ic_preset"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="?colorPrimary"
+                    android:gravity="center_horizontal"
+                    android:paddingVertical="16dp"
+                    android:text="@string/presets"
+                    />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/wall_colors"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintEnd_toStartOf="@id/custom"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/custom"
+                >
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/wall_colors_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:drawableTopCompat="@drawable/ic_wallpaper"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="?colorPrimary"
+                    android:gravity="center_horizontal"
+                    android:paddingVertical="16dp"
+                    android:text="@string/color_wallpaper"
+                    />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/custom"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@id/wall_colors"
+                app:layout_constraintTop_toBottomOf="@id/preset"
+                >
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/custom_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:drawableTopCompat="@drawable/ic_colorize"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="?colorPrimary"
+                    android:gravity="center_horizontal"
+                    android:paddingVertical="16dp"
+                    android:text="@string/color_custom"
+                    />
+            </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

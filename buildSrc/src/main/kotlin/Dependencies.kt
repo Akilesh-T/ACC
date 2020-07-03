@@ -1,5 +1,5 @@
 const val kotlinVersion = "1.3.72"
-const val navigationVersion = "2.2.2"
+const val navigationVersion = "2.3.0"
 
 
 object BuildPlugins {
@@ -29,7 +29,7 @@ object AndroidSdk {
 object Libraries {
     private object Versions {
         const val jetpack = "1.2.0-rc01"
-        const val constraintLayout = "2.0.0-beta6"
+        const val constraintLayout = "2.0.0-beta7"
         const val core = "1.3.0"
         const val preference = "1.1.1"
         const val palette = "1.0.0"
@@ -39,14 +39,14 @@ object Libraries {
         const val fragment = "1.2.5"
         const val material = "1.3.0-alpha01"
         const val libSu = "2.5.1"
-        const val chroma = "1.2.6"
         const val assent = "3.0.0-RC4"
         const val appUpdater = "2.7"
-        const val whatTheStack = "0.0.2"
+        const val whatTheStack = "0.0.4"
         const val workManager = "2.3.4"
         const val recyclerView = "1.1.0"
         const val recyclerViewSelection = "1.1.0-rc01"
         const val viewpager2 = "1.0.0"
+        const val andColorPicker = "0.4.0"
     }
 
     const val kotlinStdLib        = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -75,8 +75,6 @@ object Libraries {
     const val libSuCore           = "com.github.topjohnwu.libsu:core:${Versions.libSu}"
     const val libsuIO             = "com.github.topjohnwu.libsu:io:${Versions.libSu}"
 
-    const val lawnchairChroma     = "com.github.LawnchairLauncher:chroma:${Versions.chroma}"
-
     const val assentCore          = "com.afollestad.assent:core:${Versions.assent}"
     const val assentRationales    = "com.afollestad.assent:rationales:${Versions.assent}"
 
@@ -90,4 +88,6 @@ object Libraries {
     const val rvSelection         = "androidx.recyclerview:recyclerview-selection:${Versions.recyclerViewSelection}"
 
     const val viewpager2          = "androidx.viewpager2:viewpager2:${Versions.viewpager2}"
+
+    const val andColorPicker      = "codes.side:andcolorpicker:${Versions.andColorPicker}"
 }

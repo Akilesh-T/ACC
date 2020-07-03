@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import androidx.palette.graphics.Palette
@@ -59,7 +60,15 @@ class AccentListAdapter internal constructor(
 
             val popupMenu = PopupMenu(context, binding.root)
             popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
-            if (SDK_INT >= Q) popupMenu.setForceShowIcon(true)
+            if (SDK_INT >= Q) {
+                popupMenu.setForceShowIcon(true)
+                val typedArray = context.theme.obtainStyledAttributes(intArrayOf(android.R.attr.colorControlNormal))
+                val iconTint = ColorStateList.valueOf(typedArray.getColor(0, 0))
+                typedArray.recycle()
+                popupMenu.menu.forEach {
+                    it.iconTintList = iconTint
+                }
+            }
             popupMenu.setOnMenuItemClickListener {
                 when(it.itemId){
                     R.id.edit -> edit(accent)
