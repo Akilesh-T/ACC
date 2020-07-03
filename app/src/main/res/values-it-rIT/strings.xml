@@ -32,7 +32,7 @@
     <string name="settings_check_for_updates">Controlla aggiornamenti</string>
     <string name="dl_and_install">Scarica e installa</string>
     <string name="tweak">Modifica colori</string>
-    <string name="tweak_summary">Modifica tonalità, saturazione e luminosità dei colori scelti</string>
+    <string name="tweak_summary">Modifica i colori selezionati a tuo piacimento</string>
 
     <string name="picker_title_text">Scegli il tuo colore</string>
     <string name="picker_title_text_light">Scegli il tuo colore per il tema chiaro</string>
