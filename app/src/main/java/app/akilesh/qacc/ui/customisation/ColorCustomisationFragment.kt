@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -24,7 +23,6 @@ import androidx.work.WorkInfo
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorCustomisationFragmentBinding
-import app.akilesh.qacc.databinding.CustomColorPickerBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
 import app.akilesh.qacc.ui.colorpicker.colorspace.ColorSpaceViewModel
@@ -33,13 +31,11 @@ import app.akilesh.qacc.ui.home.AccentViewModel
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ColorCustomisationFragment: Fragment(), CustomColorPicker {
 
     private lateinit var binding: ColorCustomisationFragmentBinding
     private lateinit var viewModel: CustomisationViewModel
-    override lateinit var dialog: AlertDialog
     override lateinit var colorSpaceViewModel: ColorSpaceViewModel
     override lateinit var fragment: Fragment
     private val args: ColorCustomisationFragmentArgs by navArgs()
@@ -69,7 +65,6 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
         }
         viewModel = ViewModelProvider(this).get(CustomisationViewModel::class.java)
         colorSpaceViewModel = ViewModelProvider(this).get(ColorSpaceViewModel::class.java)
-        dialog = MaterialAlertDialogBuilder(requireContext()).create()
         fragment = this
 
         viewModel.lightAccent = args.lightAccent
@@ -88,8 +83,18 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
 
         binding.previewLight.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_edit, 0)
         binding.previewLight.root.setOnClickListener {
-            if (colorSpaceViewModel.selectedColor.value == null) colorSpaceViewModel.selectColor(colorLight)
-            editAccent(false)
+            if (colorSpaceViewModel.selectedColor.value == null)
+                colorSpaceViewModel.selectColor(colorLight)
+
+            showCustomColorPicker(requireContext()) { _, _ ->
+                if (colorSpaceViewModel.selectedColor.value != null) {
+                    viewModel.lightAccent = toHex(colorSpaceViewModel.selectedColor.value!!)
+                    setPreviewLight(
+                        colorSpaceViewModel.selectedColor.value!!,
+                        viewModel.lightAccent
+                    )
+                }
+            }
         }
 
         if (separateAccents.not() && SDK_INT < Q) {
@@ -100,8 +105,18 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
             setPreviewDark(colorDark, viewModel.darkAccent)
             binding.previewDark.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_edit, 0)
             binding.previewDark.root.setOnClickListener {
-                if (colorSpaceViewModel.selectedColor.value == null) colorSpaceViewModel.selectColor(colorDark)
-                editAccent(true)
+                if (colorSpaceViewModel.selectedColor.value == null)
+                    colorSpaceViewModel.selectColor(colorDark)
+
+                showCustomColorPicker(requireContext()) { _, _ ->
+                    if (colorSpaceViewModel.selectedColor.value != null) {
+                        viewModel.darkAccent = toHex(colorSpaceViewModel.selectedColor.value!!)
+                        setPreviewDark(
+                            colorSpaceViewModel.selectedColor.value!!,
+                            viewModel.darkAccent
+                        )
+                    }
+                }
             }
         }
 
@@ -173,7 +188,7 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
             }
             colorCard.backgroundTintList = ColorStateList.valueOf(color)
         }
-        if (SDK_INT < Q || separateAccents.not()) setPreview(color)
+        if (SDK_INT < Q) setPreview(color)
     }
 
     private fun setPreviewDark(color: Int, hex: String) {
@@ -212,32 +227,4 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
         }
     }
 
-    private fun editAccent(
-        isDark: Boolean
-    ) {
-        val customColorPickerBinding = CustomColorPickerBinding.inflate(layoutInflater)
-        dialog = MaterialAlertDialogBuilder(requireContext())
-            .setView(customColorPickerBinding.root)
-            .setCancelable(false)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                if (colorSpaceViewModel.selectedColor.value != null) {
-                    if (isDark) {
-                        viewModel.darkAccent = toHex(colorSpaceViewModel.selectedColor.value!!)
-                        setPreviewDark(colorSpaceViewModel.selectedColor.value!!, viewModel.darkAccent)
-                    } else {
-                        viewModel.lightAccent = toHex(colorSpaceViewModel.selectedColor.value!!)
-                        setPreviewLight(colorSpaceViewModel.selectedColor.value!!, viewModel.lightAccent)
-                    }
-                }
-            }
-            .setNegativeButton(android.R.string.cancel) { _, _ ->
-                colorSpaceViewModel.selectedColor.value = null
-            }
-            .create()
-
-        showCustomColorPicker(
-            requireContext(),
-            customColorPickerBinding
-        )
-    }
 }

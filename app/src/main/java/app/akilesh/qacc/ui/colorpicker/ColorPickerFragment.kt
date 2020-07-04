@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -22,7 +21,6 @@ import app.akilesh.qacc.Const.Colors.brandColors
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
-import app.akilesh.qacc.databinding.CustomColorPickerBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.ui.colorpicker.colorspace.ColorSpaceViewModel
 import app.akilesh.qacc.ui.colorpicker.colorspace.CustomColorPicker
@@ -35,14 +33,12 @@ import app.akilesh.qacc.utils.AppUtils.toHex
 import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ColorPickerFragment: Fragment(),
     ColorPicker, CustomColorPicker {
 
     override lateinit var binding: ColorPickerFragmentBinding
     override lateinit var viewModel: ColorPickerViewModel
-    override lateinit var dialog: AlertDialog
     override lateinit var colorSpaceViewModel: ColorSpaceViewModel
     override lateinit var fragment: Fragment
 
@@ -59,7 +55,6 @@ class ColorPickerFragment: Fragment(),
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(ColorPickerViewModel::class.java)
-        dialog = MaterialAlertDialogBuilder(requireContext()).create()
         colorSpaceViewModel = ViewModelProvider(this).get(ColorSpaceViewModel::class.java)
         fragment = this
 
@@ -179,12 +174,18 @@ class ColorPickerFragment: Fragment(),
         }
 
         binding.custom.setOnClickListener {
-            val customColorPickerBinding = CustomColorPickerBinding.inflate(layoutInflater)
-            dialog = createDialog(customColorPickerBinding, colorSpaceViewModel)
             showCustomColorPicker(
-                requireContext(),
-                customColorPickerBinding
-            )
+                requireContext()
+            ) { _, _ ->
+                if (colorSpaceViewModel.selectedColor.value != null) {
+                    setPreview(
+                        binding,
+                        colorSpaceViewModel.selectedColor.value!!
+                    )
+                    viewModel.colour.hex = toHex(colorSpaceViewModel.selectedColor.value!!)
+                    Log.d("custom-hex", viewModel.colour.hex)
+                }
+            }
         }
         binding.mdcColors.setOnClickListener {
             showTabDialog(requireContext(), layoutInflater, binding)
@@ -227,28 +228,5 @@ class ColorPickerFragment: Fragment(),
         binding.name.doAfterTextChanged {
             viewModel.colour.name = it.toString().trim()
         }
-    }
-
-    private fun createDialog(
-        customColorPickerBinding: CustomColorPickerBinding,
-        colorSpaceViewModel: ColorSpaceViewModel
-    ): AlertDialog {
-        return MaterialAlertDialogBuilder(requireContext())
-            .setView(customColorPickerBinding.root)
-            .setCancelable(false)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                if (colorSpaceViewModel.selectedColor.value != null) {
-                    setPreview(
-                        binding,
-                        colorSpaceViewModel.selectedColor.value!!
-                    )
-                    viewModel.colour.hex = toHex(colorSpaceViewModel.selectedColor.value!!)
-                    Log.d("custom-hex", viewModel.colour.hex)
-                }
-            }
-            .setNegativeButton(android.R.string.cancel) { _, _ ->
-                colorSpaceViewModel.selectedColor.value = null
-            }
-            .create()
     }
 }

@@ -1,6 +1,7 @@
 package app.akilesh.qacc.ui.colorpicker.colorspace
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build.VERSION.SDK_INT
@@ -18,19 +19,30 @@ import app.akilesh.qacc.databinding.CustomColorPickerBinding
 import app.akilesh.qacc.ui.colorpicker.ZoomOutPageTransformer
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.toHex
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.textfield.TextInputEditText
 
 interface CustomColorPicker {
 
-    var dialog: AlertDialog
     val colorSpaceViewModel: ColorSpaceViewModel
     val fragment: Fragment
 
     fun showCustomColorPicker(
         context: Context,
-        customColorPickerBinding: CustomColorPickerBinding
+        listener: ((DialogInterface, Int) -> Unit)
     ) {
+        val customColorPickerBinding = CustomColorPickerBinding.inflate(fragment.layoutInflater)
+
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setView(customColorPickerBinding.root)
+            .setCancelable(false)
+            .setPositiveButton(android.R.string.ok, listener)
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                colorSpaceViewModel.selectedColor.value = null
+            }
+            .create()
+
         customColorPickerBinding.pager.apply {
             setPageTransformer(ZoomOutPageTransformer())
             isUserInputEnabled = false
