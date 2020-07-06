@@ -28,7 +28,12 @@ class AccentListAdapter internal constructor(
     val uninstall: (Accent) -> Unit
 ): RecyclerView.Adapter<AccentListAdapter.AccentViewHolder>() {
     private var accents = mutableListOf<Accent>()
+    private var selection: Int
 
+    init {
+        setHasStableIds(true)
+        selection = -1
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccentViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = RecyclerviewItemAccentsBinding.inflate(layoutInflater, parent, false)
@@ -87,15 +92,13 @@ class AccentListAdapter internal constructor(
 
             if (isInstalled) {
                 val isEnabled = isOverlayEnabled(accent.pkgName)
-                binding.cardView.apply {
-                    if (isEnabled) {
-                        setCardBackground(binding, context.getColorAccent())
-                    }
-                }
                 binding.cardView.setOnClickListener {
                     if (isEnabled) disableAccent(accent.pkgName)
                     else enableAccent(accent.pkgName)
                 }
+
+                selection = if (isEnabled) position else -1
+                if (selection == position) setCardBackground(binding, context.getColorAccent())
             }
         }
     }
