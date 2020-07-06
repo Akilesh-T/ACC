@@ -180,9 +180,9 @@ class ColorPickerFragment: Fragment(),
                 if (colorSpaceViewModel.selectedColor.value != null) {
                     setPreview(
                         binding,
-                        colorSpaceViewModel.selectedColor.value!!
+                        colorSpaceViewModel.selectedColor.value!!.first
                     )
-                    viewModel.colour.hex = toHex(colorSpaceViewModel.selectedColor.value!!)
+                    viewModel.colour.hex = toHex(colorSpaceViewModel.selectedColor.value!!.first)
                     Log.d("custom-hex", viewModel.colour.hex)
                 }
             }

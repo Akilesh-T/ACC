@@ -16,6 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/hue"
         />
 
     <codes.side.andcolorpicker.hsl.HSLColorPickerSeekBar
@@ -29,6 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hue_title"
+        app:layout_constraintBottom_toTopOf="@id/saturation_title"
         />
 
     <com.google.android.material.textview.MaterialTextView
@@ -42,6 +44,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hue"
+        app:layout_constraintBottom_toTopOf="@id/saturation"
         />
 
     <codes.side.andcolorpicker.hsl.HSLColorPickerSeekBar
@@ -55,6 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/saturation_title"
+        app:layout_constraintBottom_toTopOf="@id/lightness_title"
         />
 
     <com.google.android.material.textview.MaterialTextView
@@ -68,6 +72,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saturation"
+        app:layout_constraintBottom_toTopOf="@id/lightness"
         />
 
     <codes.side.andcolorpicker.hsl.HSLColorPickerSeekBar

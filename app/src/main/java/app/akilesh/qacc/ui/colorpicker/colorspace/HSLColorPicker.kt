@@ -19,6 +19,7 @@ import codes.side.andcolorpicker.view.picker.ColorSeekBar
 class HSLColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
 
     private lateinit var binding: ColorPickerHslBinding
+    private lateinit var pickerGroup: PickerGroup<IntegerHSLColor>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,15 +32,15 @@ class HSLColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val pickerGroup = PickerGroup<IntegerHSLColor>().also {
+        pickerGroup = PickerGroup<IntegerHSLColor>().also {
             it.registerPickers(
                 binding.hue, binding.saturation, binding.lightness
             )
         }
 
-        val selectionObserver = Observer<Int> { colorInt ->
-            colorInt?.let {
-                setPickerColor(pickerGroup, it)
+        val selectionObserver = Observer<Pair<Int, Boolean>> { pair ->
+            pair?.let {
+                if (it.second) setPickerColor(it.first)
             }
         }
         viewModel.selectedColor.observe(viewLifecycleOwner, selectionObserver)
@@ -67,19 +68,18 @@ class HSLColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
                     value: Int,
                     fromUser: Boolean
                 ) {
-                    if (fromUser) viewModel.selectColor(color.toOpaqueColorInt())
+                    if (fromUser) viewModel.selectColor(color.toOpaqueColorInt(), false)
                 }
             }
         )
 
         if (viewModel.selectedColor.value == null) {
             val systemAccent = requireContext().getColorAccent()
-            setPickerColor(pickerGroup, systemAccent)
+            setPickerColor(systemAccent)
         }
     }
 
     private fun setPickerColor(
-        pickerGroup: PickerGroup<IntegerHSLColor>,
         color: Int
     ) {
         pickerGroup.setColor(

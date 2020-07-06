@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/l"
         />
 
     <codes.side.andcolorpicker.lab.LABColorPickerSeekBar
@@ -28,6 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/l_title"
+        app:layout_constraintBottom_toTopOf="@id/a_title"
         />
 
     <com.google.android.material.textview.MaterialTextView
@@ -41,6 +43,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/l"
+        app:layout_constraintBottom_toTopOf="@id/a"
         />
 
     <codes.side.andcolorpicker.lab.LABColorPickerSeekBar
@@ -52,6 +55,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/a_title"
+        app:layout_constraintBottom_toTopOf="@id/b_title"
         />
 
     <com.google.android.material.textview.MaterialTextView
@@ -65,6 +69,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/a"
+        app:layout_constraintBottom_toTopOf="@id/b"
         />
 
     <codes.side.andcolorpicker.lab.LABColorPickerSeekBar

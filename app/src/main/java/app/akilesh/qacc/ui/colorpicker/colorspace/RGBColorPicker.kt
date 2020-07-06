@@ -12,7 +12,6 @@ import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import codes.side.andcolorpicker.converter.getBInt
 import codes.side.andcolorpicker.converter.getGInt
 import codes.side.andcolorpicker.converter.getRInt
-import codes.side.andcolorpicker.group.PickerGroup
 import codes.side.andcolorpicker.model.IntegerRGBColor
 import codes.side.andcolorpicker.view.picker.ColorSeekBar
 
@@ -33,9 +32,9 @@ class RGBColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val pickerGroup = binding.rgbSet.pickerGroup
 
-        val selectionObserver = Observer<Int> { colorInt ->
-            colorInt?.let {
-                setPickerColor(pickerGroup, it)
+        val selectionObserver = Observer<Pair<Int, Boolean>> { pair ->
+            pair?.let {
+                setPickerColor(it.first)
             }
         }
         viewModel.selectedColor.observe(viewLifecycleOwner, selectionObserver)
@@ -78,15 +77,15 @@ class RGBColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
 
         if (viewModel.selectedColor.value == null) {
             val systemAccent = requireContext().getColorAccent()
-            setPickerColor(pickerGroup, systemAccent)
+            setPickerColor(systemAccent)
         }
     }
 
+
     private fun setPickerColor(
-        pickerGroup: PickerGroup<IntegerRGBColor>,
         color: Int
     ) {
-        pickerGroup.setColor(
+        binding.rgbSet.pickerGroup.setColor(
             IntegerRGBColor().also {
                 it.intR = Color.red(color)
                 it.intG = Color.green(color)

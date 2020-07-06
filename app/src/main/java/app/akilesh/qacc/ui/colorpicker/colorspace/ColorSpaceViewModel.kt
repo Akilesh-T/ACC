@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 
 class ColorSpaceViewModel : ViewModel() {
 
-    val selectedColor = MutableLiveData<Int>()
-    fun selectColor(color: Int) {
-        selectedColor.value = color
+    val selectedColor = MutableLiveData<Pair<Int, Boolean>>()
+    fun selectColor(color: Int, observe: Boolean = true) {
+        selectedColor.value = Pair(color, observe)
     }
 
 }

@@ -36,8 +36,8 @@ class LABColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
             )
         }
 
-        val selectionObserver = Observer<Int> { colorInt ->
-            colorInt?.let {
+        val selectionObserver = Observer<Pair<Int, Boolean>> { pair ->
+            pair?.let {
                 //setPickerColor(pickerGroup, it)
             }
         }

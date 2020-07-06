@@ -62,7 +62,7 @@ interface CustomColorPicker {
 
         setupTextInputLayout(
             customColorPickerBinding,
-            if (colorSpaceViewModel.selectedColor.value != null) colorSpaceViewModel.selectedColor.value!!
+            if (colorSpaceViewModel.selectedColor.value != null) colorSpaceViewModel.selectedColor.value!!.first
             else systemAccent,
             fragment.viewLifecycleOwner
         )
@@ -102,11 +102,11 @@ interface CustomColorPicker {
             setPreviewColor(customColorPickerBinding, color)
         }
 
-        val selectionObserver = Observer<Int> { colorInt ->
-            colorInt?.let {
+        val selectionObserver = Observer<Pair<Int, Boolean>> { pair ->
+            pair?.let {
                 customColorPickerBinding.hex.apply {
-                    updateText(toHex(it).removePrefix(hexPrefix), textWatcher)
-                    setPreviewColor(customColorPickerBinding, it)
+                    updateText(toHex(it.first).removePrefix(hexPrefix), textWatcher)
+                    setPreviewColor(customColorPickerBinding, it.first)
                 }
             }
         }

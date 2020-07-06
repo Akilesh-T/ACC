@@ -88,9 +88,9 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
 
             showCustomColorPicker(requireContext()) { _, _ ->
                 if (colorSpaceViewModel.selectedColor.value != null) {
-                    viewModel.lightAccent = toHex(colorSpaceViewModel.selectedColor.value!!)
+                    viewModel.lightAccent = toHex(colorSpaceViewModel.selectedColor.value!!.first)
                     setPreviewLight(
-                        colorSpaceViewModel.selectedColor.value!!,
+                        colorSpaceViewModel.selectedColor.value!!.first,
                         viewModel.lightAccent
                     )
                 }
@@ -110,9 +110,9 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
 
                 showCustomColorPicker(requireContext()) { _, _ ->
                     if (colorSpaceViewModel.selectedColor.value != null) {
-                        viewModel.darkAccent = toHex(colorSpaceViewModel.selectedColor.value!!)
+                        viewModel.darkAccent = toHex(colorSpaceViewModel.selectedColor.value!!.first)
                         setPreviewDark(
-                            colorSpaceViewModel.selectedColor.value!!,
+                            colorSpaceViewModel.selectedColor.value!!.first,
                             viewModel.darkAccent
                         )
                     }
