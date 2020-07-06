@@ -3,6 +3,7 @@ package app.akilesh.qacc.ui.home
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.akilesh.qacc.db.AccentDatabase
 import app.akilesh.qacc.db.AccentRepository
@@ -16,7 +17,7 @@ class AccentViewModel(application: Application): AndroidViewModel(application) {
     init {
         val accentDao = AccentDatabase.getDatabase(application).accentDao()
         repository = AccentRepository(accentDao)
-        allAccents = repository.allAccents
+        allAccents = repository.allAccents.asLiveData(viewModelScope.coroutineContext)
     }
 
     fun insert(accent: Accent) = viewModelScope.launch {
