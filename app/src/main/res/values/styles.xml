@@ -20,18 +20,4 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="PreviewCards" parent="Widget.MaterialComponents.CardView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="cardCornerRadius">8dp</item>
-        <item name="cardUseCompatPadding">true</item>
-    </style>
-
-    <style name="PreviewText" parent="Widget.MaterialComponents.TextView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingTop">24dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingHorizontal">8dp</item>
-    </style>
 </resources>
