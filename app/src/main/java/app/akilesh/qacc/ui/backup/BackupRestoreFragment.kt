@@ -84,7 +84,7 @@ class BackupRestoreFragment: Fragment() {
         tempFolder = requireContext().getDir("tmp", Context.MODE_PRIVATE)
 
         val adapter = BackupListAdapter(
-            requireContext(), getBackupFiles(), { file ->
+            requireContext(), getBackupFiles(), { accents ->
                 val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
                 val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
                 dialogTitleBinding.apply {
@@ -92,9 +92,6 @@ class BackupRestoreFragment: Fragment() {
                     titleIcon.setImageResource(R.drawable.ic_backup_contents)
                 }
 
-                val contents = getBackupContents(file)
-                val accents: List<Colour> =
-                    contents.map { Colour("#$it", getString(R.string.hex_code)) }
                 val colorListAdapter =
                     ColorListAdapter(
                         requireContext(),
@@ -168,7 +165,7 @@ class BackupRestoreFragment: Fragment() {
         ).exec().out
         contents.removeIf { it == "./" }
         contents.replaceAll { s -> s.removePrefix("./hex").removePrefix("_").removeSuffix(".apk").substringBefore('_') }
-        Log.d("contents", contents.toString())
+        Log.d(file, contents.toString())
         return contents
     }
 
@@ -176,16 +173,17 @@ class BackupRestoreFragment: Fragment() {
         val backupFiles = mutableListOf<BackupFile>()
         SuFile(backupFolder).walk().forEach { file ->
             if (file.isFile) {
+                val contents = getBackupContents(file.name)
                 backupFiles.add(
                     BackupFile(
                         file.name,
                         Formatter.formatShortFileSize(requireContext(), file.length()),
-                        getBackupContents(file.name).size
+                        contents.size,
+                        contents.map { Colour("#$it", getString(R.string.hex_code)) }
                     )
                 )
             }
         }
-        Log.d("back", backupFiles.toString())
         return backupFiles
     }
 
@@ -232,26 +230,13 @@ class BackupRestoreFragment: Fragment() {
         }
     }
 
-    private fun getAppList(path: String): Array<File>? {
+    private fun getAppList(path: String): Array<SuFile>? {
         Shell.su(
             ".$busyBox tar x -zv -f $path -C ${tempFolder.absolutePath}"
         ).exec()
-        return tempFolder.listFiles { file ->
+        val folder = SuFile(tempFolder.absolutePath)
+        return folder.listFiles { file ->
             file.length() > 0 && file.extension == "apk" && file.name.startsWith("hex")
-        }
-    }
-
-    private fun getBackupAppsList(path: String): List<String> {
-        Shell.su(
-            ".$busyBox tar x -zv -f $path -C ${tempFolder.absolutePath}"
-        ).exec().apply {
-            Log.d("temp-files", code.toString() + "\n" + out +  "\n" + err)
-        }
-        val list = Shell.su("ls -d -1 -a ${tempFolder.absolutePath}/*").exec().out.apply {
-            Log.d("ls", this.toString())
-        }
-        return list.filter {
-            it.endsWith("apk")
         }
     }
 
@@ -270,7 +255,7 @@ class BackupRestoreFragment: Fragment() {
             ).exec()
             Log.d("restore", restoreResult.out.toString())
             if (restoreResult.isSuccess) {
-                insertToDB(getAppList(backupFile.absolutePath))
+                insertToDB(getAppList(backupFile.absolutePath)?.map { it.absolutePath })
                 backupFile.delete()
                 Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
                 showSnackbar(requireView(), getString(R.string.accents_restored))
@@ -279,13 +264,13 @@ class BackupRestoreFragment: Fragment() {
         else {
             Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
             tempFolder = requireContext().getDir("tmp", Context.MODE_PRIVATE)
-            val apps = getBackupAppsList(backupFile.absolutePath)
-            apps.forEach {
-                File(it).setReadable(true, false)
+            val apps = getAppList(backupFile.absolutePath)
+            apps?.forEach {
+                it.setReadable(true, false)
             }
-            val filesList = apps.toTypedArray()
-            Log.d("files-list", apps.toString())
-            if (filesList.isNotEmpty()) {
+            val filesList = apps?.map { it.absolutePath }?.toTypedArray()
+            Log.d("files-list", apps?.contentToString().toString())
+            if (filesList != null && filesList.isNotEmpty()) {
                 viewModel.restore(filesList)
                 viewModel.restoreWorkerId?.let { uuid ->
                     viewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(viewLifecycleOwner, Observer { workInfo ->
@@ -305,13 +290,13 @@ class BackupRestoreFragment: Fragment() {
         }
     }
 
-    private fun insertToDB(appList: Array<File>?) {
+    private fun insertToDB(appList: List<String>?) {
         val packageManager = requireContext().packageManager
         appList?.forEach {
-            val packageInfo = packageManager.getPackageArchiveInfo(it.absolutePath, 0)!!
+            val packageInfo = packageManager.getPackageArchiveInfo(it, 0)!!
             val applicationInfo = packageInfo.applicationInfo
-            applicationInfo.sourceDir = it.absolutePath
-            applicationInfo.publicSourceDir = it.absolutePath
+            applicationInfo.sourceDir = it
+            applicationInfo.publicSourceDir = it
             val accentName = packageManager.getApplicationLabel(applicationInfo).toString()
             val pkgName = packageInfo.packageName.toString()
             val resources = packageManager.getResourcesForApplication(applicationInfo)

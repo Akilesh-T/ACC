@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.RecyclerviewItemBackupsBinding
 import app.akilesh.qacc.model.BackupFile
+import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 
 class BackupListAdapter internal constructor(
     val context: Context,
     private var filesList: MutableList<BackupFile>,
-    val preview: (String) -> Unit,
+    val preview: (List<Colour>) -> Unit,
     val restore: (String) -> Unit
 ) : RecyclerView.Adapter<BackupListAdapter.BackupsViewHolder>() {
 
@@ -32,7 +33,7 @@ class BackupListAdapter internal constructor(
             binding.fileSize.text = backupFile.fileSize
             binding.viewContent.text =
                 context.getString(R.string.view_backup_contents, backupFile.noOfApps)
-            binding.viewContent.setOnClickListener { preview(backupFile.fileName) }
+            binding.viewContent.setOnClickListener { preview(backupFile.colors) }
             binding.restore.setOnClickListener { restore(backupFile.fileName) }
 
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
