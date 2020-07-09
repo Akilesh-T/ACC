@@ -36,7 +36,7 @@
     <string name="picker_title_text_dark">Wähle deinen Akzent für das dunkele Design</string>
 
     <string name="amber">Bernstein</string>
-    <string name="blue">Blau</string>
+    <string name="title_blue">Blau</string>
     <string name="blue_grey">Blaugrau</string>
     <string name="brown">Braun</string>
     <!--
@@ -64,7 +64,7 @@
         unused translation cause its the same word
         <string name="pink">Pink</string>
     -->
-    <string name="red">Rot</string>
+    <string name="title_red">Rot</string>
     <string name="teal">Blaugrün</string>
     <string name="yellove">Gelb</string>
     <string name="wallpaper_primary">Hintergrundbild primär</string>
@@ -175,7 +175,7 @@
     <string name="reboot">Reboot</string>
     <string name="purple">Purple</string>
     <string name="md_colors">Material Design colour palette</string>
-    <string name="green">Green</string>
+    <string name="title_green">Green</string>
     <string name="Files">Files</string>
     <string name="backup_folder">Backups</string>
     <string name="update_folder">Updates</string>

@@ -39,7 +39,7 @@
     <string name="picker_title_text_dark">Karanlık tema için vurgu renginizi seçin</string>
 
     <string name="amber">Amber</string>
-    <string name="blue">Mavi</string>
+    <string name="title_blue">Mavi</string>
     <string name="blue_grey">Mavi Gri</string>
     <string name="brown">Kahverengi</string>
     <string name="candy_red">Şeker Elme Kırmızısı</string>
@@ -58,7 +58,7 @@
     <string name="pale_blue">Soluk Mavi</string>
     <string name="pale_red">Soluk Kırmızı</string>
     <string name="pink">Pembe</string>
-    <string name="red">Kırmızı</string>
+    <string name="title_red">Kırmızı</string>
     <string name="teal">Çamurcun</string>
     <!--Not a typo, Google it :D--> <string name="yellove">Sarı</string>
 
@@ -166,7 +166,7 @@
     <string name="reboot">Reboot</string>
     <string name="purple">Purple</string>
     <string name="md_colors">Material Design colour palette</string>
-    <string name="green">Green</string>
+    <string name="title_green">Green</string>
     <string name="Files">Files</string>
     <string name="backup_folder">Backups</string>
     <string name="update_folder">Updates</string>

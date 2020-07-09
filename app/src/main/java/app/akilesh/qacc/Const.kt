@@ -19,7 +19,7 @@ object Const {
 
         val AEX = listOf(
             Colour("#FFC107", contextConst.getString(R.string.amber)),
-            Colour("#448AFF", contextConst.getString(R.string.blue)),
+            Colour("#448AFF", contextConst.getString(R.string.title_blue)),
             Colour("#607D8B", contextConst.getString(R.string.blue_grey)),
             Colour("#795548", contextConst.getString(R.string.brown)),
             Colour("#FF1744", contextConst.getString(R.string.candy_red)),
@@ -38,7 +38,7 @@ object Const {
             Colour("#A1B6ED", contextConst.getString(R.string.pale_blue)),
             Colour("#F05361", contextConst.getString(R.string.pale_red)),
             Colour("#FF4081", contextConst.getString(R.string.pink)),
-            Colour("#FF5252", contextConst.getString(R.string.red)),
+            Colour("#FF5252", contextConst.getString(R.string.title_red)),
             Colour("#009688", contextConst.getString(R.string.teal)),
             Colour("#FFEB3B", contextConst.getString(R.string.yellove))
         )
@@ -87,16 +87,16 @@ object Const {
             )
 
         private val mdColors = mapOf(
-            0 to contextConst.getString(R.string.red),
+            0 to contextConst.getString(R.string.title_red),
             1 to contextConst.getString(R.string.pink),
             2 to contextConst.getString(R.string.purple),
             3 to contextConst.getString(R.string.deep_purple),
             4 to contextConst.getString(R.string.indigo),
-            5 to contextConst.getString(R.string.blue),
+            5 to contextConst.getString(R.string.title_blue),
             6 to contextConst.getString(R.string.light_blue),
             7 to contextConst.getString(R.string.cyan),
             8 to contextConst.getString(R.string.teal),
-            9 to contextConst.getString(R.string.green),
+            9 to contextConst.getString(R.string.title_green),
             10 to contextConst.getString(R.string.light_green),
             11 to contextConst.getString(R.string.lime),
             12 to contextConst.getString(R.string.yellove),

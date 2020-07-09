@@ -39,7 +39,7 @@
     <string name="picker_title_text_dark">Scegli il tuo colore per il tema scuro</string>
 
     <string name="amber">Ambra</string>
-    <string name="blue">Blu</string>
+    <string name="title_blue">Blu</string>
     <string name="blue_grey">Grigio Blu</string>
     <string name="brown">Marrone</string>
     <string name="candy_red">Rosso Caramella</string>
@@ -58,7 +58,7 @@
     <string name="pale_blue">Blu Pallido</string>
     <string name="pale_red">Rosso Pallido</string>
     <string name="pink">Rosa</string>
-    <string name="red">Rosso</string>
+    <string name="title_red">Rosso</string>
     <string name="teal">Verde Acqua</string>
     <!--Not a typo, Google it :D--> <string name="yellove">Giallo</string>
 
@@ -166,7 +166,7 @@
     <string name="reboot">Riavvia</string>
     <string name="purple">Viola</string>
     <string name="md_colors">Palette di colori Material Design</string>
-    <string name="green">Verde</string>
+    <string name="title_green">Verde</string>
     <string name="Files">File</string>
     <string name="backup_folder">Backup</string>
     <string name="update_folder">Aggiornamenti</string>

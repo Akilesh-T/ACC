@@ -40,7 +40,7 @@
     <string name="picker_title_text_dark">Choose your accent for dark theme</string>
 
     <string name="amber">Amber</string>
-    <string name="blue">Blue</string>
+    <string name="title_blue">Blue</string>
     <string name="blue_grey">Blue Grey</string>
     <string name="brown">Brown</string>
     <string name="candy_red">Candy Red</string>
@@ -59,7 +59,7 @@
     <string name="pale_blue">Pale Blue</string>
     <string name="pale_red">Pale Red</string>
     <string name="pink">Pink</string>
-    <string name="red">Red</string>
+    <string name="title_red">Red</string>
     <string name="teal">Teal</string>
     <!--Not a typo, Google it :D--> <string name="yellove">Yellow</string>
 
@@ -167,7 +167,7 @@
     <string name="reboot">Reboot</string>
     <string name="purple">Purple</string>
     <string name="md_colors">Material Design colour palette</string>
-    <string name="green">Green</string>
+    <string name="title_green">Green</string>
     <string name="Files">Files</string>
     <string name="backup_folder">Backups</string>
     <string name="update_folder">Updates</string>

@@ -41,7 +41,7 @@
     <string name="picker_title_text_dark">选择暗黑主题下的强调色</string>
 
     <string name="amber">赤地黄</string>
-    <string name="blue">深蓝色</string>
+    <string name="title_blue">深蓝色</string>
     <string name="blue_grey">深灰色</string>
     <string name="brown">棕褐色</string>
     <string name="candy_red">糖果红</string>
@@ -60,7 +60,7 @@
     <string name="pale_blue">淡紫色</string>
     <string name="pale_red">淡红色</string>
     <string name="pink">少女粉</string>
-    <string name="red">亮红色</string>
+    <string name="title_red">亮红色</string>
     <string name="teal">蓝绿色</string>
     <string name="yellove">深黄色</string>
     <string name="wallpaper_primary">主墙纸</string>
@@ -168,7 +168,7 @@
     <string name="reboot">Reboot</string>
     <string name="purple">Purple</string>
     <string name="md_colors">Material Design colour palette</string>
-    <string name="green">Green</string>
+    <string name="title_green">Green</string>
     <string name="Files">Files</string>
     <string name="backup_folder">Backups</string>
     <string name="update_folder">Updates</string>
