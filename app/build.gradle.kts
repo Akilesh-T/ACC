@@ -46,6 +46,7 @@ android {
         exclude("META-INF/**")
         exclude("/kotlin/**")
         exclude("/okhttp3/**")
+        exclude("/org/bouncycastle/**")
     }
 }
 
@@ -99,4 +100,7 @@ dependencies {
     implementation(Libraries.viewpager2)
 
     implementation(Libraries.andColorPicker)
+
+    api(Libraries.bcProvider)
+    api(Libraries.bcPKIX)
 }

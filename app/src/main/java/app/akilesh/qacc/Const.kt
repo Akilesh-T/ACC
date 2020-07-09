@@ -433,6 +433,4 @@ object Const {
 
     var selected = setOf<Colour>()
 
-    val assetFiles = listOf("zipsigner", "zipsigner-3.0-dexed.jar")
-
 }

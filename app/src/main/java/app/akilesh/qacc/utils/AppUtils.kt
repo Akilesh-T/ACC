@@ -22,7 +22,6 @@ import androidx.palette.graphics.Palette
 import app.akilesh.qacc.Const.Colors.nokiaBlue
 import app.akilesh.qacc.Const.Paths.backupFolder
 import app.akilesh.qacc.Const.Paths.overlayPath
-import app.akilesh.qacc.Const.assetFiles
 import app.akilesh.qacc.Const.busyBox
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
@@ -31,9 +30,15 @@ import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.utils.XmlUtils.createColors
 import app.akilesh.qacc.utils.XmlUtils.createOverlayManifest
+import app.akilesh.qacc.utils.signing.CryptoUtils.readCertificate
+import app.akilesh.qacc.utils.signing.CryptoUtils.readPrivateKey
+import app.akilesh.qacc.utils.signing.JarMap
+import app.akilesh.qacc.utils.signing.SignAPK
 import com.google.android.material.snackbar.Snackbar
 import com.topjohnwu.superuser.Shell
+import com.topjohnwu.superuser.io.SuFileInputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 
@@ -243,20 +248,21 @@ object AppUtils {
         var created = false
         val appName = accent.pkgName.substringAfter(prefix)
         val filesDir = context.filesDir
-
+        filesDir.listFiles { file ->
+            file.delete()
+        }
         val aapt = File(filesDir, "aapt")
         val zipalign = File(filesDir, "zipalign")
-        val zipSigner = File(filesDir, assetFiles[0])
-        val zipSignerJar = File(filesDir, assetFiles[1])
         val aaptOverlay = File(filesDir, "qacc.apk")
         val signedOverlay = File(filesDir, "signed.apk")
         val alignedOverlay = File(filesDir, "aligned.apk")
 
         val manifest = File(filesDir, "AndroidManifest.xml")
         val source = File(filesDir, "src")
-        val colors = File(source, "/values/colors.xml")
+        val valuesDir = File(source, "values")
+        if(valuesDir.exists().not()) valuesDir.mkdirs()
+        val colors = File(valuesDir, "colors.xml")
 
-        copyAssets(context, filesDir)
         symLinkBinaries(context.applicationInfo.nativeLibraryDir, aapt, zipalign)
         manifest.createNewFile()
         colors.createNewFile()
@@ -273,13 +279,13 @@ object AppUtils {
 
             if (aaptResult.isSuccess  && aaptOverlay.exists()) {
 
-                zipSigner.setExecutable(true)
-                zipSignerJar.setReadable(true)
-                Shell.su("cd $filesDir").exec()
-                val signResult = Shell.su("./${zipSigner.name} ${aaptOverlay.name} ${signedOverlay.name}").exec()
-                Log.d("sign-code", signResult.code.toString())
-                Log.d("sign-out", signResult.out.toString())
-                Shell.su("cd").exec()
+                val certFile = context.assets.open("testkey.x509.pem")
+                val keyFile = context.assets.open("testkey.pk8")
+                val cert = readCertificate(certFile)
+                val key = readPrivateKey(keyFile)
+                val jar = JarMap.open(SuFileInputStream(aaptOverlay), true)
+                val out = FileOutputStream(signedOverlay.path)
+                SignAPK.sign(cert, key, jar, out.buffered())
 
                 if (signedOverlay.exists()) {
                     signedOverlay.setReadable(true)
@@ -380,22 +386,6 @@ object AppUtils {
         ).exec()
         Log.d("compress", result.out.toString())
         return result.isSuccess
-    }
-
-    private fun copyAssets(context: Context, filesDir: File) {
-        val valuesDir = File(filesDir, "/src/values")
-        if( valuesDir.exists().not() ) valuesDir.mkdirs()
-
-        assetFiles.forEach { file ->
-            val dstFile = File(filesDir, file)
-            if (dstFile.exists().not()) {
-                context.assets.open(file).use { stream ->
-                    dstFile.outputStream().use { fileOutputStream ->
-                        stream.copyTo(fileOutputStream)
-                    }
-                }
-            }
-        }
     }
 
     private fun symLinkBinaries(nativeLibraryDir: String, aapt: File, zipalign: File) {

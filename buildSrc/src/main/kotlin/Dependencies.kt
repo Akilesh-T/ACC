@@ -47,6 +47,8 @@ object Libraries {
         const val recyclerViewSelection = "1.1.0-rc01"
         const val viewpager2 = "1.0.0"
         const val andColorPicker = "0.4.0"
+        const val bouncyCastleProvider = "1.65.01"
+        const val bouncyCastlePKIX = "1.65"
     }
 
     const val kotlinStdLib        = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -90,4 +92,7 @@ object Libraries {
     const val viewpager2          = "androidx.viewpager2:viewpager2:${Versions.viewpager2}"
 
     const val andColorPicker      = "codes.side:andcolorpicker:${Versions.andColorPicker}"
+
+    const val bcProvider          = "org.bouncycastle:bcprov-jdk15on:${Versions.bouncyCastleProvider}"
+    const val bcPKIX              = "org.bouncycastle:bcpkix-jdk15on:${Versions.bouncyCastlePKIX}"
 }
