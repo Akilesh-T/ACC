@@ -1,6 +1,5 @@
 package app.akilesh.qacc.ui.colorpicker
 
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -16,7 +15,6 @@ import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.setPreview
 
 class MDColorsViewPagerAdapter internal constructor(
-    private val context: Context,
     private val viewModel: ColorPickerViewModel,
     private val colorPickerFragmentBinding: ColorPickerFragmentBinding,
     private val dialog: AlertDialog
@@ -38,7 +36,6 @@ class MDColorsViewPagerAdapter internal constructor(
     inner class MDColorViewHolder(private var binding: ColorPreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int) {
             val colorListAdapter = ColorListAdapter(
-                context,
                 mdColorPalette.getValue(position)
             ) { selectedColour ->
                 viewModel.colour.hex = selectedColour.hex

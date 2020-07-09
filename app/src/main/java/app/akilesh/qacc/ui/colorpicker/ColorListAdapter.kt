@@ -1,6 +1,5 @@
 package app.akilesh.qacc.ui.colorpicker
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -12,7 +11,6 @@ import app.akilesh.qacc.databinding.RecyclerviewItemColorPreviewBinding
 import app.akilesh.qacc.model.Colour
 
 class ColorListAdapter internal constructor(
-    private val context: Context,
     private val colours: List<Colour>,
     val adapterOnClick : (Colour) -> Unit
 ) : RecyclerView.Adapter<ColorListAdapter.ColorViewHolder>() {
@@ -26,13 +24,15 @@ class ColorListAdapter internal constructor(
     override fun onBindViewHolder(holder: ColorViewHolder, position: Int) = holder.bind(colours[position])
 
     inner class ColorViewHolder(private var binding: RecyclerviewItemColorPreviewBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.colorCard.setOnClickListener {  adapterOnClick(colours[adapterPosition]) }
+        }
         fun bind(colour: Colour) {
             val backgroundColor = Color.parseColor(colour.hex)
             val textColor = Palette.Swatch(backgroundColor, 1).bodyTextColor
             binding.colorCard.backgroundTintList = ColorStateList.valueOf(backgroundColor)
-            binding.colorName.text = String.format(context.resources.getString(R.string.colour), colour.name, colour.hex)
+            binding.colorName.text = binding.colorName.context.resources.getString(R.string.colour, colour.name, colour.hex)
             binding.colorName.setTextColor(textColor)
-            binding.colorCard.setOnClickListener {  adapterOnClick(colour) }
         }
     }
 

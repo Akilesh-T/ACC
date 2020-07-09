@@ -76,6 +76,8 @@ class CreateAllFragment: Fragment() {
         createAllAdapter.colours.addAll(AEX)
         createAllAdapter.colours.addAll(brandColors)
         binding.accentListRv.apply {
+            setHasFixedSize(true)
+            setItemViewCacheSize(15)
             adapter = createAllAdapter
             layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }

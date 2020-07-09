@@ -92,11 +92,7 @@ class BackupRestoreFragment: Fragment() {
                     titleIcon.setImageResource(R.drawable.ic_backup_contents)
                 }
 
-                val colorListAdapter =
-                    ColorListAdapter(
-                        requireContext(),
-                        accents
-                    ) {}
+                val colorListAdapter = ColorListAdapter(accents) {}
 
                 colorPreviewBinding.recyclerViewColor.apply {
                     adapter = colorListAdapter

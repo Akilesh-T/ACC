@@ -50,7 +50,6 @@ interface ColorPicker {
         val dialog = builder.create()
 
         val colorListAdapter = ColorListAdapter(
-            context,
             colorList
         ) { selectedColour ->
             viewModel.colour.hex = selectedColour.hex
@@ -98,10 +97,11 @@ interface ColorPicker {
 
         mdColorPaletteBinding.pager.apply {
             setPageTransformer(ZoomOutPageTransformer())
-            adapter = MDColorsViewPagerAdapter(context, viewModel, binding, dialog)
+            adapter = MDColorsViewPagerAdapter(viewModel, binding, dialog)
         }
         setTabIndicatorColor(mdColorPaletteBinding.tabLayout, 0)
-        TabLayoutMediator(mdColorPaletteBinding.tabLayout, mdColorPaletteBinding.pager) { _, _ ->
+        TabLayoutMediator(mdColorPaletteBinding.tabLayout, mdColorPaletteBinding.pager) { tab, _ ->
+            tab.view.isClickable = false
         }.attach()
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
