@@ -135,6 +135,10 @@ class AccentListAdapter internal constructor(
 
     override fun getItemCount() = accents.size
 
+    override fun getItemId(position: Int): Long = position.toLong()
+
+    override fun getItemViewType(position: Int): Int = position
+
     private fun isOverlayInstalled(pkgName: String): Boolean {
         return try {
             context.packageManager.getApplicationInfo(pkgName, 0).enabled
