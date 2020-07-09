@@ -1,15 +1,8 @@
 {
-  "latestVersion": "1.90",
-  "latestVersionCode": "13",
+  "latestVersion": "1.91",
+  "latestVersionCode": "14",
   "url": "https://github.com/Akilesh-T/ACC/releases/latest",
   "releaseNotes": [
-    "- New custom colour picker with synced HSL, RGB and hex inputs",
-    "- Updated tweak/edit page with the new colour picker",
-    "- Added Material design colour palette",
-    "- Automated backups with custom intervals",
-    "- Daily random accents",
-    "- Updated about page",
-    "- UI enhancements",
-    "- Updated dependencies and translations"
+    "- Hotfix for duplication in home screen"
   ]
 }
