@@ -10,10 +10,10 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.forEach
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import app.akilesh.qacc.R
@@ -65,21 +65,21 @@ class MainActivity: AppCompatActivity() {
         // Hide bottom app bar & ext. fab while creating an accent
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id) {
-                R.id.color_picker, R.id.dark_accent, R.id.customisation, R.id.create_all_fragment -> {
-                    binding.bottomAppBar.visibility = View.GONE
-                    binding.xFab.visibility = View.GONE
-                    when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                        Configuration.UI_MODE_NIGHT_YES -> {
-                            window.navigationBarColor = Color.TRANSPARENT
-                        }
-                    }
-                }
-                else -> {
+                R.id.home, R.id.info, R.id.settings -> {
                     binding.bottomAppBar.visibility = View.VISIBLE
                     binding.xFab.visibility = View.VISIBLE
                     when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                         Configuration.UI_MODE_NIGHT_YES -> {
                             window.navigationBarColor = Color.parseColor("#1E1E1E")
+                        }
+                    }
+                }
+                else -> {
+                    binding.bottomAppBar.visibility = View.GONE
+                    binding.xFab.visibility = View.GONE
+                    when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                        Configuration.UI_MODE_NIGHT_YES -> {
+                            window.navigationBarColor = Color.TRANSPARENT
                         }
                     }
                 }
@@ -123,8 +123,7 @@ class MainActivity: AppCompatActivity() {
                                 .setTitle("What's new in v${update.latestVersion}:")
                                 .setMessage(update.releaseNotes)
                                 .setPositiveButton(getString(R.string.dl_and_install)) { _, _ ->
-                                    val model = ViewModelProvider(this@MainActivity).get(
-                                        InstallApkViewModel::class.java)
+                                    val model: InstallApkViewModel by viewModels()
                                     if (SDK_INT < Q) {
                                         val rationaleHandler = createDialogRationale(R.string.app_name) {
                                             onPermission(

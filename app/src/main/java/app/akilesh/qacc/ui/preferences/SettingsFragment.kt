@@ -5,7 +5,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.*
 import app.akilesh.qacc.R
@@ -71,7 +71,7 @@ class SettingsFragment: PreferenceFragmentCompat() {
             true
         }
 
-        val viewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
+        val viewModel: SettingsViewModel by viewModels()
         val backupInterval = sharedPreferences.getInt("auto_backup_interval", 15)
         autoBackupPref?.summaryOn = resources.getQuantityString(R.plurals.auto_backup_summary_on, backupInterval, backupInterval)
         autoBackupPref?.setOnPreferenceChangeListener { _, newValue ->

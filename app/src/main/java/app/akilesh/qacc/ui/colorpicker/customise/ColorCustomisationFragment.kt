@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.customisation
+package app.akilesh.qacc.ui.colorpicker.customise
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -11,12 +11,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.navGraphViewModels
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
 import androidx.work.WorkInfo
@@ -25,21 +28,15 @@ import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorCustomisationFragmentBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
-import app.akilesh.qacc.ui.colorpicker.colorspace.ColorSpaceViewModel
-import app.akilesh.qacc.ui.colorpicker.colorspace.CustomColorPicker
 import app.akilesh.qacc.ui.home.AccentViewModel
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
-import app.akilesh.qacc.utils.AppUtils.toHex
 
-class ColorCustomisationFragment: Fragment(), CustomColorPicker {
+class ColorCustomisationFragment: Fragment() {
 
     private lateinit var binding: ColorCustomisationFragmentBinding
-    private lateinit var viewModel: CustomisationViewModel
-    override lateinit var colorSpaceViewModel: ColorSpaceViewModel
-    override lateinit var fragment: Fragment
     private val args: ColorCustomisationFragmentArgs by navArgs()
-    private var separateAccents: Boolean = false
+    private val viewModel: ColorPickerViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +52,7 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
 
         binding.textInputLayout.visibility = if (args.fromHome) View.VISIBLE else View.GONE
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        separateAccents = sharedPreferences.getBoolean("separate_accent", false)
+        var separateAccents = sharedPreferences.getBoolean("separate_accent", false)
         if (SDK_INT < Q) separateAccents = false
 
         val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
@@ -63,89 +60,64 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
             val systemAccent = requireContext().getColorAccent()
             setPreview(systemAccent)
         }
-        viewModel = ViewModelProvider(this).get(CustomisationViewModel::class.java)
-        colorSpaceViewModel = ViewModelProvider(this).get(ColorSpaceViewModel::class.java)
-        fragment = this
+        viewModel.accent.observe(viewLifecycleOwner, Observer { accent ->
+            accent?.let {
+                setPreviewLight(Color.parseColor(it.colorLight), it.colorLight)
+                if (separateAccents) setPreviewDark(Color.parseColor(it.colorDark), it.colorDark)
+            }
+        })
 
-        viewModel.lightAccent = args.lightAccent
-        viewModel.darkAccent = args.darkAccent
-        viewModel.accentName = args.accentName
-
+        init()
         if (args.fromHome) {
-            binding.name.setText(viewModel.accentName)
+            binding.name.setText(args.accentName)
             binding.name.doAfterTextChanged {
-                viewModel.accentName = it.toString().trim()
+                viewModel.accent.value!!.name = it.toString().trim()
             }
         }
 
-        val colorLight = Color.parseColor(viewModel.lightAccent)
-        setPreviewLight(colorLight, viewModel.lightAccent)
-
+        val bundle = Bundle()
+        bundle.putBoolean("fromCustomise", true)
         binding.previewLight.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_edit, 0)
         binding.previewLight.root.setOnClickListener {
-            if (colorSpaceViewModel.selectedColor.value == null)
-                colorSpaceViewModel.selectColor(colorLight)
-
-            showCustomColorPicker(requireContext()) { _, _ ->
-                if (colorSpaceViewModel.selectedColor.value != null) {
-                    viewModel.lightAccent = toHex(colorSpaceViewModel.selectedColor.value!!.first)
-                    setPreviewLight(
-                        colorSpaceViewModel.selectedColor.value!!.first,
-                        viewModel.lightAccent
-                    )
-                }
-            }
+            bundle.putBoolean("isDark", false)
+            bundle.putString("light", viewModel.accent.value!!.colorLight)
+            findNavController().navigate(R.id.custom_color_picker, bundle)
         }
 
-        if (separateAccents.not() && SDK_INT < Q) {
+        if (separateAccents.not()) {
             binding.previewDark.root.visibility = View.GONE
         }
         else {
-            val colorDark = if (viewModel.darkAccent.isNotBlank()) Color.parseColor(viewModel.darkAccent) else colorLight
-            setPreviewDark(colorDark, viewModel.darkAccent)
             binding.previewDark.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_edit, 0)
             binding.previewDark.root.setOnClickListener {
-                if (colorSpaceViewModel.selectedColor.value == null)
-                    colorSpaceViewModel.selectColor(colorDark)
-
-                showCustomColorPicker(requireContext()) { _, _ ->
-                    if (colorSpaceViewModel.selectedColor.value != null) {
-                        viewModel.darkAccent = toHex(colorSpaceViewModel.selectedColor.value!!.first)
-                        setPreviewDark(
-                            colorSpaceViewModel.selectedColor.value!!.first,
-                            viewModel.darkAccent
-                        )
-                    }
-                }
+                bundle.putBoolean("isDark", true)
+                bundle.putString("dark", viewModel.accent.value!!.colorDark)
+                findNavController().navigate(R.id.custom_color_picker, bundle)
             }
         }
 
         binding.resetChip.setOnClickListener {
-            val action =
-                ColorCustomisationFragmentDirections.reset(
-                    args.lightAccent,
-                    args.darkAccent,
-                    args.accentName
-                )
-            findNavController().navigate(action)
+            init()
         }
 
+        requireActivity().onBackPressedDispatcher.addCallback(this, true) {
+            navigateBack()
+        }
         binding.navBar.previous.setOnClickListener {
-            findNavController().navigateUp()
+            navigateBack()
         }
 
         binding.navBar.next.setOnClickListener {
 
-            if (viewModel.accentName.isNotBlank()) {
-                var suffix = "hex_" + viewModel.lightAccent.removePrefix("#")
-                if (SDK_INT >= Q) suffix += "_" + viewModel.darkAccent.removePrefix("#")
-                else viewModel.darkAccent = viewModel.lightAccent
+            if (viewModel.accent.value!!.name.isNotBlank()) {
+                var suffix = "hex_" + viewModel.accent.value!!.colorLight.removePrefix("#")
+                if (SDK_INT >= Q) suffix += "_" + viewModel.accent.value!!.colorDark.removePrefix("#")
+                else viewModel.accent.value!!.colorDark = viewModel.accent.value!!.colorLight
 
-                val pkgName = prefix + suffix
-                val accent = Accent(pkgName, viewModel.accentName, viewModel.lightAccent, viewModel.darkAccent)
-                Log.d("accent-s", accent.toString())
+                viewModel.accent.value!!.pkgName = prefix + suffix
+                Log.d("accent-s", viewModel.accent.value!!.toString())
                 val creatorViewModel = ViewModelProvider(this).get(ColorPickerViewModel::class.java)
-                creatorViewModel.create(accent)
+                creatorViewModel.create(viewModel.accent.value!!)
                 creatorViewModel.createWorkerId?.let { uuid ->
                     creatorViewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(
                         viewLifecycleOwner, Observer { workInfo ->
@@ -154,12 +126,17 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
                             Log.d("state", workInfo.state.name)
 
                             if (workInfo.state == WorkInfo.State.RUNNING && SDK_INT < P)
-                                Toast.makeText(requireContext(), String.format(getString(R.string.creating, viewModel.accentName)), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    String.format(getString(R.string.creating, viewModel.accent.value!!.name)),
+                                    Toast.LENGTH_SHORT
+                                ).show()
 
                             if (workInfo.state == WorkInfo.State.SUCCEEDED && workInfo.state.isFinished) {
-                                val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
-                                accentViewModel.insert(accent)
-                                showSnackbar(view, String.format(getString(R.string.accent_created), viewModel.accentName))
+                                val accentViewModel: AccentViewModel by viewModels()
+                                accentViewModel.insert(viewModel.accent.value!!)
+                                showSnackbar(view, String.format(getString(R.string.accent_created), viewModel.accent.value!!.name))
+                                viewModel.accent.value = null
                                 findNavController().navigate(R.id.action_global_home)
                             }
                             if (workInfo.state == WorkInfo.State.FAILED)
@@ -170,6 +147,16 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
             else Toast.makeText(context, getString(R.string.toast_name_not_set), Toast.LENGTH_SHORT).show()
         }
 
+    }
+
+    private fun init() {
+        viewModel.accent.value = Accent(
+            String(),
+            args.accentName,
+            args.lightAccent,
+            args.darkAccent
+        )
+        if (args.fromHome) binding.name.setText(args.accentName)
     }
 
     private fun setPreviewLight(color: Int, hex: String) {
@@ -227,4 +214,9 @@ class ColorCustomisationFragment: Fragment(), CustomColorPicker {
         }
     }
 
+    private fun navigateBack() {
+        if (args.fromHome) viewModel.accent.value = null
+        else init()
+        findNavController().navigateUp()
+    }
 }

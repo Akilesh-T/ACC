@@ -4,6 +4,7 @@ import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.P
@@ -16,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import androidx.navigation.navOptions
 import androidx.palette.graphics.Palette
@@ -77,15 +79,13 @@ object AppUtils {
         return toHex(Color.HSVToColor(hsv))
     }*/
 
-    fun toHex(color: Int): String {
-        return String.format("#%06X", (0xFFFFFF and color))
-    }
+    fun toHex(@ColorInt color: Int) = String.format("#%06X", (0xFFFFFF and color))
 
     @ColorInt
     fun Context.getColorAccent(): Int {
         @AttrRes val attr = android.R.attr.colorAccent
 
-        val ta = if (SDK_INT == Q) {
+        val ta = if (SDK_INT >= Q) {
             obtainStyledAttributes(android.R.style.ThemeOverlay_DeviceDefault_Accent_DayNight, intArrayOf(attr))
         } else {
             obtainStyledAttributes(android.R.style.Theme_DeviceDefault, intArrayOf(attr))
@@ -120,45 +120,63 @@ object AppUtils {
         }
     }
 
-    fun setPreview(binding: ColorPickerFragmentBinding, accentColor: Int) {
+    fun setPreview(
+        binding: ColorPickerFragmentBinding,
+        colour: Colour?,
+        isSystem: Boolean = false
+    ) {
 
-        val accentTintList = ColorStateList.valueOf(accentColor)
+        if (colour != null) {
+            val previewColor = Color.parseColor(colour.hex)
+            val colorStateList = ColorStateList.valueOf(previewColor)
 
-        binding.include.apply {
-            previewColorQs0Bg.backgroundTintList = accentTintList
-            previewColorQs1Bg.backgroundTintList = accentTintList
-            previewColorQs2Bg.backgroundTintList = accentTintList
+            binding.include.apply {
+                previewColorQs0Bg.backgroundTintList = colorStateList
+                previewColorQs1Bg.backgroundTintList = colorStateList
+                previewColorQs2Bg.backgroundTintList = colorStateList
 
-            previewSeekbar.thumbTintList = accentTintList
-            previewSeekbar.progressTintList = accentTintList
-            previewSeekbar.progressBackgroundTintList = accentTintList
+                previewSeekbar.thumbTintList = colorStateList
+                previewSeekbar.progressTintList = colorStateList
+                previewSeekbar.progressBackgroundTintList = colorStateList
 
-            previewCheckSelected.buttonTintList = accentTintList
-            previewRadioSelected.buttonTintList = accentTintList
-            previewToggleSelected.buttonTintList = accentTintList
-            previewToggleSelected.thumbTintList = accentTintList
-            previewToggleSelected.trackTintList = accentTintList.withAlpha(127)
-        }
-
-        binding.apply {
-            TextViewCompat.setCompoundDrawableTintList(mdcColorsText, accentTintList)
-            TextViewCompat.setCompoundDrawableTintList(customText, accentTintList)
-            TextViewCompat.setCompoundDrawableTintList(presetText, accentTintList)
-            TextViewCompat.setCompoundDrawableTintList(wallColorsText, accentTintList)
-            TextViewCompat.setCompoundDrawableTintList(brandColorsText, accentTintList)
-            textInputLayout.apply {
-                setBoxStrokeColorStateList(accentTintList)
-                hintTextColor = accentTintList
+                previewCheckSelected.buttonTintList = colorStateList
+                previewRadioSelected.buttonTintList = colorStateList
+                previewToggleSelected.buttonTintList = colorStateList
+                previewToggleSelected.thumbTintList = colorStateList
+                previewToggleSelected.trackTintList = colorStateList.withAlpha(127)
             }
-            if (SDK_INT >= Q) {
-                name.textCursorDrawable?.setTintList(accentTintList)
-                name.textSelectHandle?.setTintList(accentTintList)
-                name.textSelectHandleLeft?.setTintList(accentTintList)
-                name.textSelectHandleRight?.setTintList(accentTintList)
+
+            binding.apply {
+                TextViewCompat.setCompoundDrawableTintList(mdcColorsText, colorStateList)
+                TextViewCompat.setCompoundDrawableTintList(customText, colorStateList)
+                TextViewCompat.setCompoundDrawableTintList(presetText, colorStateList)
+                TextViewCompat.setCompoundDrawableTintList(wallColorsText, colorStateList)
+                TextViewCompat.setCompoundDrawableTintList(brandColorsText, colorStateList)
+                textInputLayout.apply {
+                    setBoxStrokeColorStateList(colorStateList)
+                    hintTextColor = colorStateList
+                }
+                if (SDK_INT >= Q) {
+                    name.apply {
+                        textCursorDrawable?.setTintList(colorStateList)
+                        textSelectHandle?.setTintList(colorStateList)
+                        textSelectHandleLeft?.setTintList(colorStateList)
+                        textSelectHandleRight?.setTintList(colorStateList)
+                    }
+                }
+                if (textInputLayout.isVisible) name.setText(colour.name)
+                navBar.apply {
+                    previous.apply {
+                        setTextColor(previewColor)
+                        rippleColor = colorStateList
+                    }
+                    next.apply {
+                        visibility = if (colour.hex.isBlank() || isSystem)
+                            View.INVISIBLE else View.VISIBLE
+                        backgroundTintList = colorStateList
+                    }
+                }
             }
-            navBar.previous.setTextColor(accentColor)
-            navBar.previous.rippleColor = accentTintList
-            navBar.next.backgroundTintList = accentTintList
         }
     }
 

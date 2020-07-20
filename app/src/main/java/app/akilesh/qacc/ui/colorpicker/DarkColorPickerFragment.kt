@@ -1,33 +1,33 @@
 package app.akilesh.qacc.ui.colorpicker
 
-import android.graphics.Color
-import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.O
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+import androidx.navigation.navGraphViewModels
 import androidx.preference.PreferenceManager
 import androidx.work.WorkInfo
-import app.akilesh.qacc.Const.Colors.AEX
-import app.akilesh.qacc.Const.Colors.brandColors
+import app.akilesh.qacc.Const.Colors.brandColorsArg
+import app.akilesh.qacc.Const.Colors.listArg
+import app.akilesh.qacc.Const.Colors.presetsArg
+import app.akilesh.qacc.Const.Colors.wallpaperColorsArg
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
-import app.akilesh.qacc.model.Accent
-import app.akilesh.qacc.ui.colorpicker.colorspace.ColorSpaceViewModel
-import app.akilesh.qacc.ui.colorpicker.colorspace.CustomColorPicker
+import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.home.AccentViewModel
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
-import app.akilesh.qacc.utils.AppUtils.getWallpaperColors
 import app.akilesh.qacc.utils.AppUtils.setPreview
 import app.akilesh.qacc.utils.AppUtils.showSnackbar
 import app.akilesh.qacc.utils.AppUtils.toHex
@@ -35,14 +35,10 @@ import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
 
-class DarkColorPickerFragment: Fragment(),
-    ColorPicker, CustomColorPicker {
+class DarkColorPickerFragment: Fragment() {
 
-    override lateinit var binding: ColorPickerFragmentBinding
-    override lateinit var viewModel: ColorPickerViewModel
-    private val args: DarkColorPickerFragmentArgs by navArgs()
-    override lateinit var colorSpaceViewModel: ColorSpaceViewModel
-    override lateinit var fragment: Fragment
+    private lateinit var binding: ColorPickerFragmentBinding
+    private val viewModel: ColorPickerViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,132 +52,125 @@ class DarkColorPickerFragment: Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(ColorPickerViewModel::class.java)
-        colorSpaceViewModel = ViewModelProvider(this).get(ColorSpaceViewModel::class.java)
-        fragment = this
+        setPreview(binding, Colour(toHex(requireContext().getColorAccent()), ""), true)
+        viewModel.accent.observe(viewLifecycleOwner, Observer { accent ->
+            accent?.let {
+                if (it.colorDark.isNotBlank()) setPreview(binding, Colour(it.colorDark, it.name))
+            }
+        })
 
-        val previewColor = if (viewModel.colour.hex.isBlank()) requireContext().getColorAccent()
-        else Color.parseColor(viewModel.colour.hex)
-        setPreview(binding, previewColor)
-
-        viewModel.accentLight = args.lightAccent
-
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val customise = sharedPreferences.getBoolean("customise", false)
         binding.theme.setImageDrawable(ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_outline_nights_stay, requireContext().theme))
 
         if (customise) binding.navBar.next.text = requireContext().resources.getString(R.string.next)
 
-
         binding.navBar.next.setOnClickListener {
 
-            if (customise) {
-                if (viewModel.colour.name.isNotBlank() && viewModel.colour.hex.isNotBlank()) {
-                    val action =
-                        DarkColorPickerFragmentDirections.toCustomise(
-                            viewModel.accentLight,
-                            viewModel.colour.hex,
-                            viewModel.colour.name
-                        )
-                    findNavController().navigate(action)
-                } else {
-                    if (viewModel.colour.hex.isBlank()) Toast.makeText(
-                        context,
-                        getString(R.string.toast_color_not_selected),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    if (viewModel.colour.name.isBlank()) Toast.makeText(
-                        context,
-                        getString(R.string.toast_name_not_set),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } else {
-
-                if (viewModel.colour.hex.isNotBlank() && viewModel.colour.name.isNotBlank()) {
-                    var suffix = "hex_" + viewModel.accentLight.removePrefix("#")
-                    if (viewModel.accentLight != viewModel.colour.hex) {
-                        suffix += "_" + viewModel.colour.hex.removePrefix("#")
-                    }
-                    val pkgName = prefix + suffix
-                    val accent = Accent(pkgName, viewModel.colour.name, viewModel.accentLight, viewModel.colour.hex)
-                    Log.d("accent-s", accent.toString())
-                    viewModel.create(accent)
-                    viewModel.createWorkerId?.let { uuid ->
-                        viewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(
-                            viewLifecycleOwner, Observer { workInfo ->
-                                Log.d("id", workInfo.id.toString())
-                                Log.d("tag", workInfo.tags.toString())
-                                Log.d("state", workInfo.state.name)
-
-                                if (workInfo.state == WorkInfo.State.SUCCEEDED && workInfo.state.isFinished) {
-                                    val accentViewModel = ViewModelProvider(this).get(
-                                        AccentViewModel::class.java)
-                                    accentViewModel.insert(accent)
-                                    showSnackbar(view, String.format(getString(R.string.accent_created), viewModel.colour.name))
-                                    findNavController().navigate(R.id.action_global_home)
-                                }
-                                if (workInfo.state == WorkInfo.State.FAILED)
-                                    Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_LONG).show()
-                            })
+            if (viewModel.accent.value != null) {
+                if (customise) {
+                    if (viewModel.accent.value!!.name.isNotBlank()
+                        && viewModel.accent.value!!.colorDark.isNotBlank()) {
+                        val action =
+                            DarkColorPickerFragmentDirections.toCustomise(
+                                viewModel.accent.value!!.colorLight,
+                                viewModel.accent.value!!.colorDark,
+                                viewModel.accent.value!!.name
+                            )
+                        findNavController().navigate(action)
+                    } else {
+                        if (viewModel.accent.value!!.colorDark.isBlank()) Toast.makeText(
+                            requireContext(),
+                            getString(R.string.toast_color_not_selected),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        if (viewModel.accent.value!!.name.isBlank()) Toast.makeText(
+                            requireContext(),
+                            getString(R.string.toast_name_not_set),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 } else {
-                    if (viewModel.colour.hex.isBlank()) Toast.makeText(
-                        context,
-                        getString(R.string.toast_color_not_selected),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    if (viewModel.colour.name.isBlank()) Toast.makeText(
-                        context,
-                        getString(R.string.toast_name_not_set),
-                        Toast.LENGTH_SHORT
-                    ).show()
+
+                    if (viewModel.accent.value!!.colorDark.isNotBlank() && viewModel.accent.value!!.name.isNotBlank()) {
+                        var suffix = "hex_" + viewModel.accent.value!!.colorLight.removePrefix("#")
+                        if (viewModel.accent.value!!.colorLight != viewModel.accent.value!!.colorDark) {
+                            suffix += "_" + viewModel.accent.value!!.colorDark.removePrefix("#")
+                        }
+                        viewModel.accent.value!!.pkgName = prefix + suffix
+                        Log.d("accent-s", viewModel.accent.value.toString())
+                        viewModel.create(viewModel.accent.value!!)
+                        viewModel.createWorkerId?.let { uuid ->
+                            viewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(
+                                viewLifecycleOwner, Observer { workInfo ->
+                                    Log.d("id", workInfo.id.toString())
+                                    Log.d("tag", workInfo.tags.toString())
+                                    Log.d("state", workInfo.state.name)
+
+                                    if (workInfo.state == WorkInfo.State.SUCCEEDED && workInfo.state.isFinished) {
+                                        val accentViewModel: AccentViewModel by viewModels()
+                                        accentViewModel.insert(viewModel.accent.value!!)
+                                        showSnackbar(
+                                            view,
+                                            String.format(
+                                                getString(R.string.accent_created),
+                                                viewModel.accent.value!!.name
+                                            )
+                                        )
+                                        viewModel.accent.value = null
+                                        findNavController().navigate(R.id.action_global_home)
+                                    }
+                                    if (workInfo.state == WorkInfo.State.FAILED)
+                                        Toast.makeText(
+                                            requireContext(),
+                                            getString(R.string.error),
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                })
+                        }
+                    } else {
+                        if (viewModel.accent.value!!.colorDark.isBlank()) Toast.makeText(
+                            context,
+                            getString(R.string.toast_color_not_selected),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        if (viewModel.accent.value!!.name.isBlank()) Toast.makeText(
+                            context,
+                            getString(R.string.toast_name_not_set),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
 
+        requireActivity().onBackPressedDispatcher.addCallback(this, true) {
+            navigateBack()
+        }
         binding.navBar.previous.setOnClickListener {
-            findNavController().navigateUp()
+            navigateBack()
         }
 
+        val bundle = Bundle()
+        bundle.putBoolean("isDark", true)
+
         binding.brandColors.setOnClickListener {
-            showColorPickerDialog(
-                requireContext(),
-                layoutInflater,
-                binding.brandColorsText.text.toString(),
-                R.drawable.ic_palette_24dp,
-                brandColors
-            )
+            bundle.putString(listArg, brandColorsArg)
+            findNavController().navigate(R.id.color_picker_dialog, bundle)
         }
 
         binding.custom.setOnClickListener {
-            showCustomColorPicker(
-                requireContext()
-            ) { _, _ ->
-                if (colorSpaceViewModel.selectedColor.value != null) {
-                    setPreview(
-                        binding,
-                        colorSpaceViewModel.selectedColor.value!!.first
-                    )
-                    viewModel.colour.hex = toHex(colorSpaceViewModel.selectedColor.value!!.first)
-                    Log.d("custom-hex", viewModel.colour.hex)
-                }
-            }
+            findNavController().navigate(R.id.custom_color_picker, bundle)
         }
 
         binding.mdcColors.setOnClickListener {
-            showTabDialog(requireContext(), layoutInflater, binding)
+            findNavController().navigate(R.id.color_palette_dialog, bundle)
         }
         binding.preset.setOnClickListener {
-            showColorPickerDialog(
-                requireContext(),
-                layoutInflater,
-                binding.presetText.text.toString(),
-                R.drawable.ic_preset,
-                AEX
-            )
+            bundle.putString(listArg, presetsArg)
+            findNavController().navigate(R.id.color_picker_dialog, bundle)
         }
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
+        if (SDK_INT > O)
             binding.wallColors.setOnClickListener {
                 val rationaleHandler = createDialogRationale(R.string.app_name) {
                     onPermission(
@@ -194,12 +183,8 @@ class DarkColorPickerFragment: Fragment(),
                     rationaleHandler = rationaleHandler
                 ) {
                     if (it.isAllGranted()) {
-                        showColorPickerDialog(
-                            requireContext(),
-                            layoutInflater,
-                            binding.wallColorsText.text.toString(),
-                            R.drawable.ic_wallpaper,
-                            requireContext().getWallpaperColors())
+                        bundle.putString(listArg, wallpaperColorsArg)
+                        findNavController().navigate(R.id.color_picker_dialog, bundle)
                     }
                 }
             }
@@ -207,7 +192,17 @@ class DarkColorPickerFragment: Fragment(),
             binding.wallColors.visibility = View.GONE
 
         binding.name.doAfterTextChanged {
-            viewModel.colour.name = it.toString().trim()
+            viewModel.accent.value?.let { color ->
+                color.name = it.toString().trim()
+            }
         }
+    }
+
+    private fun navigateBack() {
+        viewModel.accent.value!!.apply {
+            colorDark = String()
+            name = String()
+        }
+        findNavController().navigateUp()
     }
 }

@@ -2,20 +2,21 @@ package app.akilesh.qacc.ui.colorpicker
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import app.akilesh.qacc.model.Accent
-import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.utils.workers.CreateWorker
 import java.util.*
 
 class ColorPickerViewModel(application: Application) : AndroidViewModel(application) {
 
-    val colour = Colour(String(), String())
-    var accentLight = String()
     val workManager = WorkManager.getInstance(application)
     var createWorkerId: UUID? = null
+    val accent by lazy {
+        MutableLiveData<Accent>()
+    }
 
     internal fun create(accent: Accent) {
         val data = workDataOf(

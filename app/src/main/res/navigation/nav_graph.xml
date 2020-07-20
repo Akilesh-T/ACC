@@ -84,13 +84,8 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right">
-
-            <argument
-                android:name="lightAccent"
-                app:argType="string"
-                android:defaultValue="#FF5722"/>
-        </action>
+            app:popExitAnim="@anim/slide_out_right"
+        />
 
         <action
             android:id="@+id/to_customise"
@@ -119,7 +114,8 @@
 
         <argument
             android:name="lightAccent"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="#FF5722"/>
 
         <argument
             android:name="darkAccent"
@@ -158,7 +154,7 @@
 
     <fragment
         android:id="@+id/customisation"
-        android:name="app.akilesh.qacc.ui.customisation.ColorCustomisationFragment"
+        android:name="app.akilesh.qacc.ui.colorpicker.customise.ColorCustomisationFragment"
         tools:layout="@layout/color_customisation_fragment">
 
         <argument
@@ -178,26 +174,6 @@
             app:argType="boolean"
             android:defaultValue="false"/>
 
-        <action
-            android:id="@+id/reset"
-            app:destination="@id/customisation"
-            app:enterAnim="@anim/fragment_enter"
-            app:popEnterAnim="@anim/fragment_enter_pop"
-            app:exitAnim="@anim/fragment_exit"
-            app:popExitAnim="@anim/fragment_exit_pop">
-
-            <argument
-                android:name="lightAccent"
-                app:argType="string" />
-
-            <argument
-                android:name="darkAccent"
-                app:argType="string" />
-
-            <argument
-                android:name="accentName"
-                app:argType="string" />
-        </action>
     </fragment>
 
     <fragment
@@ -213,10 +189,29 @@
 
     <action android:id="@+id/action_global_home"
         app:popUpTo="@id/home"
+        app:popUpToInclusive="true"
         app:destination="@id/home"
         app:enterAnim="@anim/fragment_enter"
         app:exitAnim="@anim/fragment_exit"
         app:popEnterAnim="@anim/fragment_enter_pop"
         app:popExitAnim="@anim/fragment_exit_pop"/>
+
+    <dialog
+        android:id="@+id/color_picker_dialog"
+        android:name="app.akilesh.qacc.ui.colorpicker.sheets.ColorPickerSheet"
+        tools:layout="@layout/color_preview"
+        />
+
+    <dialog
+        android:id="@+id/color_palette_dialog"
+        android:name="app.akilesh.qacc.ui.colorpicker.sheets.ColorPaletteSheet"
+        tools:layout="@layout/md_color_palette"
+        />
+
+    <dialog
+        android:id="@+id/custom_color_picker"
+        android:name="app.akilesh.qacc.ui.colorpicker.sheets.CustomColorPicker"
+        tools:layout="@layout/custom_color_picker"
+        />
 
 </navigation>

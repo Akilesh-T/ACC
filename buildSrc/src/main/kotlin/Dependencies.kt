@@ -5,7 +5,7 @@ const val navigationVersion = "2.3.0"
 object BuildPlugins {
 
     object Versions {
-        const val gradleBuildToolsVersion = "4.0.0"
+        const val gradleBuildToolsVersion = "4.0.1"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradleBuildToolsVersion}"
@@ -29,13 +29,13 @@ object AndroidSdk {
 object Libraries {
     private object Versions {
         const val jetpack = "1.2.0-rc01"
-        const val constraintLayout = "2.0.0-beta7"
+        const val constraintLayout = "2.0.0-beta8"
         const val core = "1.3.0"
         const val preference = "1.1.1"
         const val palette = "1.0.0"
         const val room = "2.2.5"
         const val lifecycle = "2.2.0"
-        const val coroutines = "1.3.7"
+        const val coroutines = "1.3.8"
         const val fragment = "1.2.5"
         const val material = "1.3.0-alpha01"
         const val libSu = "2.5.1"

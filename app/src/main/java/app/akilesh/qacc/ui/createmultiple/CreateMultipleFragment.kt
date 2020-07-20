@@ -14,8 +14,8 @@ import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.selection.SelectionPredicates
@@ -39,10 +39,10 @@ import com.afollestad.assent.Permission
 import com.afollestad.assent.rationale.createDialogRationale
 import com.afollestad.assent.runWithPermissions
 
-private lateinit var binding: CreateAllFragmentBinding
-private lateinit var viewModel: CreateMultipleViewModel
-
 class CreateAllFragment: Fragment() {
+
+    private lateinit var binding: CreateAllFragmentBinding
+    private val viewModel: CreateMultipleViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -144,7 +144,6 @@ class CreateAllFragment: Fragment() {
             }
         )
 
-        viewModel = ViewModelProvider(this).get(CreateMultipleViewModel::class.java)
         binding.createMultipleFab.setOnClickListener {
             if (selected.isNotEmpty()) {
                 Log.d("selection", selected.toString())
@@ -162,8 +161,7 @@ class CreateAllFragment: Fragment() {
                                 }
 
                                 WorkInfo.State.SUCCEEDED -> {
-                                    val accentViewModel =
-                                        ViewModelProvider(this).get(AccentViewModel::class.java)
+                                    val accentViewModel by viewModels<AccentViewModel>()
                                     selected.forEach { colour ->
                                         val pkgName = prefix + "hex_" + colour.hex.removePrefix("#")
                                         val accent =
@@ -192,16 +190,16 @@ class CreateAllFragment: Fragment() {
             }
         }
     }
-}
 
-private fun setupBottomAppBarIcons(flag: Boolean) {
-    binding.createMultipleBottomAppBar.menu.apply {
-        getItem(0).isVisible = flag
-        getItem(1).isVisible = flag
-    }
-    binding.createMultipleFab.apply {
-        binding.createMultipleFab.isEnabled = flag
-        imageTintList = if (binding.createMultipleFab.isEnabled) null
-        else ColorStateList.valueOf(Color.GRAY)
+    private fun setupBottomAppBarIcons(flag: Boolean) {
+        binding.createMultipleBottomAppBar.menu.apply {
+            getItem(0).isVisible = flag
+            getItem(1).isVisible = flag
+        }
+        binding.createMultipleFab.apply {
+            binding.createMultipleFab.isEnabled = flag
+            imageTintList = if (binding.createMultipleFab.isEnabled) null
+            else ColorStateList.valueOf(Color.GRAY)
+        }
     }
 }

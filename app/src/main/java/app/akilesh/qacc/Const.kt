@@ -17,6 +17,11 @@ object Const {
     //Credits to AEX
     object Colors {
 
+        const val listArg = "LIST"
+        const val presetsArg = "PRESET"
+        const val brandColorsArg = "BRAND"
+        const val wallpaperColorsArg = "WALL"
+
         val AEX = listOf(
             Colour("#FFC107", contextConst.getString(R.string.amber)),
             Colour("#448AFF", contextConst.getString(R.string.title_blue)),

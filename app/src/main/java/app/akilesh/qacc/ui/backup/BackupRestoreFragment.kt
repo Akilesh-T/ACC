@@ -17,8 +17,8 @@ import android.widget.EdgeEffect
 import android.widget.Toast
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -53,7 +53,7 @@ import java.io.FileInputStream
 class BackupRestoreFragment: Fragment() {
 
     private lateinit var binding: BackupRestoreFragmentBinding
-    private lateinit var viewModel: BackupRestoreViewModel
+    private val viewModel: BackupRestoreViewModel by viewModels()
     private lateinit var tempFolder: File
 
     override fun onCreateView(
@@ -128,7 +128,6 @@ class BackupRestoreFragment: Fragment() {
         binding.recyclerViewBackupFiles.adapter = adapter
         binding.recyclerViewBackupFiles.layoutManager = LinearLayoutManager(context)
 
-        viewModel = ViewModelProvider(this).get(BackupRestoreViewModel::class.java)
         viewModel.backupFiles.observe(viewLifecycleOwner, Observer { files ->
             files.let { adapter.setFiles(it) }
         })
@@ -302,7 +301,7 @@ class BackupRestoreFragment: Fragment() {
                 val colorLight = resources.getColor(accentLightId, null)
                 val colorDark = resources.getColor(accentDarkId, null)
                 val accent = Accent(pkgName, accentName, toHex(colorLight), toHex(colorDark))
-                val accentViewModel = ViewModelProvider(this).get(AccentViewModel::class.java)
+                val accentViewModel: AccentViewModel by viewModels()
                 accentViewModel.insert(accent)
             }
         }
