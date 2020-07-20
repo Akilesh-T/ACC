@@ -33,8 +33,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:cardElevation="2dp"
-        app:cardUseCompatPadding="true"
+        style="@style/Widget.App.MaterialCardView.Elevated"
         >
 
         <androidx.recyclerview.widget.RecyclerView

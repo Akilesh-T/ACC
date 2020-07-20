@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "accent_colors")
 data class Accent(
-    @PrimaryKey @ColumnInfo(name = "package_name") val pkgName: String,
-    @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "color") val colorLight: String,
-    @ColumnInfo(name = "color_dark") val colorDark: String
+    @PrimaryKey @ColumnInfo(name = "package_name") var pkgName: String,
+    @ColumnInfo(name = "name") var name: String,
+    @ColumnInfo(name = "color") var colorLight: String,
+    @ColumnInfo(name = "color_dark") var colorDark: String
 )

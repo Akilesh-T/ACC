@@ -2,13 +2,13 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
-        <item name="android:colorBackground">@color/colorCustom</item>
-        <item name="colorSurface">@color/colorCustom</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="colorSurface">@color/colorBackground</item>
         <item name="android:statusBarColor">?colorSurface</item>
         <item name="dialogCornerRadius">8dp</item>
-        <item name="materialCardViewStyle">@style/Widget.MyApp.MaterialCardView</item>
+        <item name="materialCardViewStyle">@style/Widget.App.MaterialCardView</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -28,8 +28,51 @@
         <item name="cornerSize">0dp</item>
     </style>
 
-    <style name="Widget.MyApp.MaterialCardView" parent="Widget.MaterialComponents.CardView">
+    <style name="Widget.App.MaterialCardView" parent="Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.MaterialCardView</item>
+        <item name="cardBackgroundColor">@color/colorBackgroundVariant</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <style name="Widget.App.MaterialCardView.Elevated">
+        <item name="cardElevation">2dp</item>
+    </style>
+
+    <style name="Widget.App.MaterialCardView.Variant">
+        <item name="cardBackgroundColor">@color/colorBackground</item>
+        <item name="strokeColor">@color/colorSurfaceVariant</item>
+        <item name="strokeWidth">1.5dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.BottomSheetDialog" parent="">
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+    </style>
+
+    <style name="Widget.App.BottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.BottomSheetDialog</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomSheetDialog"
+        parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.App.BottomSheet</item>
+    </style>
+    
+    <style name="Widget.App.Button.IconOnly" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="TextAppearance.Card.Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/textOnCard</item>
     </style>
 
 </resources>

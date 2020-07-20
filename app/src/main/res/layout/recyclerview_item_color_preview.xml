@@ -5,8 +5,7 @@
     android:id="@+id/color_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardUseCompatPadding="true"
-    app:cardElevation="2dp"
+    style="@style/Widget.App.MaterialCardView.Elevated"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
