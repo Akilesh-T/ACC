@@ -15,7 +15,7 @@ import codes.side.andcolorpicker.lab.LABColorPickerSeekBar
 import codes.side.andcolorpicker.model.IntegerLABColor
 import codes.side.andcolorpicker.view.picker.ColorSeekBar
 
-class LABColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
+class LABColorPicker : Fragment() {
 
     private lateinit var binding: ColorPickerLabBinding
 
@@ -96,4 +96,11 @@ class LABColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
         )
     }
 */
+
+    companion object {
+        private lateinit var viewModel: ColorSpaceViewModel
+        fun initViewModel(colorSpaceViewModel: ColorSpaceViewModel) {
+            viewModel = colorSpaceViewModel
+        }
+    }
 }

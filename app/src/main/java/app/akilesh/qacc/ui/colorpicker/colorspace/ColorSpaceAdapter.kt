@@ -13,9 +13,18 @@ class ColorSpaceAdapter(
     private lateinit var colorPicker: Fragment
     override fun createFragment(position: Int): Fragment {
         when(position) {
-            0 -> colorPicker = RGBColorPicker(viewModel)
-            1 -> colorPicker = HSLColorPicker(viewModel)
-            //2 -> colorPicker = LABColorPicker(viewModel)
+            0 -> {
+                RGBColorPicker.initViewModel(viewModel)
+                colorPicker = RGBColorPicker()
+            }
+            1 -> {
+                HSLColorPicker.initViewModel(viewModel)
+                colorPicker = HSLColorPicker()
+            }
+            /*2 -> {
+                LABColorPicker.initViewModel(viewModel)
+                colorPicker = LABColorPicker()
+            }*/
         }
         return colorPicker
     }

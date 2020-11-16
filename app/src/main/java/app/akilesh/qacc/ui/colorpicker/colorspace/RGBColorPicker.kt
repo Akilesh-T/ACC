@@ -15,7 +15,7 @@ import codes.side.andcolorpicker.converter.getRInt
 import codes.side.andcolorpicker.model.IntegerRGBColor
 import codes.side.andcolorpicker.view.picker.ColorSeekBar
 
-class RGBColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
+class RGBColorPicker : Fragment() {
 
     private lateinit var binding: ColorPickerRgbBinding
 
@@ -93,5 +93,12 @@ class RGBColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
                 it.intA = 255
             }
         )
+    }
+
+    companion object {
+        private lateinit var viewModel: ColorSpaceViewModel
+        fun initViewModel(colorSpaceViewModel: ColorSpaceViewModel) {
+            viewModel = colorSpaceViewModel
+        }
     }
 }

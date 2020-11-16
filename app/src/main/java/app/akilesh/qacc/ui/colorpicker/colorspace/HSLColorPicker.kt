@@ -16,7 +16,7 @@ import codes.side.andcolorpicker.hsl.HSLColorPickerSeekBar
 import codes.side.andcolorpicker.model.IntegerHSLColor
 import codes.side.andcolorpicker.view.picker.ColorSeekBar
 
-class HSLColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
+class HSLColorPicker : Fragment() {
 
     private lateinit var binding: ColorPickerHslBinding
     private lateinit var pickerGroup: PickerGroup<IntegerHSLColor>
@@ -87,5 +87,12 @@ class HSLColorPicker(val viewModel: ColorSpaceViewModel) : Fragment() {
                 it.setFromColorInt(color)
             }
         )
+    }
+
+    companion object {
+        private lateinit var viewModel: ColorSpaceViewModel
+        fun initViewModel(colorSpaceViewModel: ColorSpaceViewModel) {
+            viewModel = colorSpaceViewModel
+        }
     }
 }
