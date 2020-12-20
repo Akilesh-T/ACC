@@ -23,9 +23,9 @@ class ColorListAdapter internal constructor(
 
     override fun onBindViewHolder(holder: ColorViewHolder, position: Int) = holder.bind(colours[position])
 
-    inner class ColorViewHolder(private var binding: RecyclerviewItemColorPreviewBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ColorViewHolder(val binding: RecyclerviewItemColorPreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.colorCard.setOnClickListener {  adapterOnClick(colours[adapterPosition]) }
+            binding.colorCard.setOnClickListener {  adapterOnClick(colours[bindingAdapterPosition]) }
         }
         fun bind(colour: Colour) {
             val backgroundColor = Color.parseColor(colour.hex)

@@ -1,29 +1,20 @@
 package app.akilesh.qacc.ui.colorpicker.sheets
 
-import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.O_MR1
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EdgeEffect
-import androidx.navigation.navGraphViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import app.akilesh.qacc.Const.Colors.AEX
-import app.akilesh.qacc.Const.Colors.brandColors
-import app.akilesh.qacc.Const.Colors.brandColorsArg
-import app.akilesh.qacc.Const.Colors.listArg
-import app.akilesh.qacc.Const.Colors.presetsArg
-import app.akilesh.qacc.Const.Colors.wallpaperColorsArg
-import app.akilesh.qacc.R
+import app.akilesh.qacc.Const.Colors.colorList
+import app.akilesh.qacc.Const.Colors.selectedColor
 import app.akilesh.qacc.databinding.ColorPreviewBinding
-import app.akilesh.qacc.model.Accent
+import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.colorpicker.ColorListAdapter
-import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
-import app.akilesh.qacc.utils.AppUtils.getWallpaperColors
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ColorPickerSheet: BottomSheetDialogFragment() {
@@ -34,53 +25,51 @@ class ColorPickerSheet: BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = ColorPreviewBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val list = when(requireArguments().getString(listArg)) {
-            presetsArg -> AEX
-            brandColorsArg -> brandColors
-            wallpaperColorsArg -> if (SDK_INT >= O_MR1) {
-                requireContext().getWallpaperColors()
-            } else listOf()
-            else -> listOf()
+
+        val navController = findNavController()
+        val previousSavedStateHandle = navController.previousBackStackEntry?.savedStateHandle
+        val list = previousSavedStateHandle?.get<List<Colour>>(colorList)
+
+        val colorListAdapter = list?.let {
+            ColorListAdapter(
+                it
+            ) { colour ->
+                previousSavedStateHandle.set(selectedColor, colour)
+                dismiss()
+            }
         }
-        val isDark = requireArguments().getBoolean("isDark")
-        val viewModel: ColorPickerViewModel by navGraphViewModels(R.id.nav_graph)
-        val colorListAdapter = ColorListAdapter(
-            list
-        ) { selectedColour ->
-            if (isDark)
-                viewModel.accent.value = Accent(
-                    String(),
-                    selectedColour.name,
-                    viewModel.accent.value!!.colorLight,
-                    selectedColour.hex
-                )
-            else
-                viewModel.accent.value = Accent(
-                    String(),
-                    selectedColour.name,
-                    selectedColour.hex,
-                    String()
-                )
-            dismiss()
-        }
+
+        val sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(requireContext())
+
+        val useSystemAccent = sharedPreferences
+            .getBoolean("system_accent", false)
+
         binding.recyclerViewColor.apply {
-            adapter = colorListAdapter
-            layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
+
+            layoutManager = GridLayoutManager(
+                requireContext(),
+                2,
+                GridLayoutManager.VERTICAL,
+                false
+            )
+
             setHasFixedSize(true)
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-            val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
+
+            adapter = colorListAdapter
+
             if (useSystemAccent) {
                 edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
                     override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
                         return EdgeEffect(view.context).apply {
-                            color = context.getColorAccent()
+                            color = requireContext().getColorAccent()
                         }
                     }
                 }

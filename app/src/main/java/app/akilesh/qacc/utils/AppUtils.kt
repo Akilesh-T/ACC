@@ -1,5 +1,6 @@
 package app.akilesh.qacc.utils
 
+import android.app.Activity
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.content.Context
@@ -16,6 +17,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.res.use
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
@@ -23,8 +25,8 @@ import androidx.navigation.navOptions
 import androidx.palette.graphics.Palette
 import app.akilesh.qacc.Const.Colors.nokiaBlue
 import app.akilesh.qacc.Const.Paths.backupFolder
+import app.akilesh.qacc.Const.Paths.busyBox
 import app.akilesh.qacc.Const.Paths.overlayPath
-import app.akilesh.qacc.Const.busyBox
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
@@ -85,30 +87,36 @@ object AppUtils {
     fun Context.getColorAccent(): Int {
         @AttrRes val attr = android.R.attr.colorAccent
 
-        val ta = if (SDK_INT >= Q) {
+        val typedArray = if (SDK_INT >= Q)
             obtainStyledAttributes(android.R.style.ThemeOverlay_DeviceDefault_Accent_DayNight, intArrayOf(attr))
-        } else {
-            obtainStyledAttributes(android.R.style.Theme_DeviceDefault, intArrayOf(attr))
+        else obtainStyledAttributes(android.R.style.Theme_DeviceDefault, intArrayOf(attr))
+
+        return typedArray.use {
+            it.getColor(0, 0)
         }
-        @ColorInt val colorAccent = ta.getColor(0, 0)
-        ta.recycle()
-        return colorAccent
     }
 
-    fun showSnackbar(view: View, text: String) {
+    @ColorInt
+    fun Context.getThemeColor(@AttrRes themeAttrRes: Int) =
+        obtainStyledAttributes(R.style.Theme_Acc_DayNight, intArrayOf(themeAttrRes)).use {
+            it.getColor(0, 0)
+        }
 
-        val snackbar = Snackbar.make(
-            view,
+    fun Activity.showSnackBar(text: String) {
+        val snackBar = Snackbar.make(
+            findViewById(R.id.root),
             text,
             Snackbar.LENGTH_SHORT
-        ).setAnchorView(R.id.x_fab)
+        )
+        snackBar.isAnchorViewLayoutListenerEnabled = true
+        snackBar.anchorView = findViewById(R.id.fab)
         if (SDK_INT >= P) {
-            snackbar.setAction(view.context.getString(R.string.reboot)) {
+            snackBar.setAction(getString(R.string.reboot)) {
                 Shell.su("/system/bin/svc power reboot || /system/bin/reboot")
                     .submit()
             }
         }
-        snackbar.show()
+        snackBar.show()
     }
 
     val navAnim = navOptions {

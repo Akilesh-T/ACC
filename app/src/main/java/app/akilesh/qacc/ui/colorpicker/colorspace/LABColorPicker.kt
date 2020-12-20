@@ -23,7 +23,7 @@ class LABColorPicker : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = ColorPickerLabBinding.inflate(inflater, container, false)
         return binding.root
     }

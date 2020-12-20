@@ -25,7 +25,7 @@ class HSLColorPicker : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = ColorPickerHslBinding.inflate(inflater, container, false)
         return binding.root
     }

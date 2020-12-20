@@ -44,12 +44,6 @@
             app:summaryOff="@string/separate_accent_summary_off"
             app:summaryOn="@string/separate_accent_summary_on"/>
 
-        <app.akilesh.qacc.ui.preferences.StyledSwitchPreferenceCompat
-            app:key="customise"
-            app:title="@string/tweak"
-            app:icon="@drawable/ic_colorize"
-            app:defaultValue="false"
-            app:summary="@string/tweak_summary" />
 
         <app.akilesh.qacc.ui.preferences.StyledSwitchPreferenceCompat
             app:key="daily_accent"

@@ -4,26 +4,23 @@ import android.content.res.ColorStateList
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
-import androidx.core.content.res.ResourcesCompat
+import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.*
 import app.akilesh.qacc.R
-import app.akilesh.qacc.utils.AppUtils
+import app.akilesh.qacc.utils.AppUtils.applyTheme
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
+import app.akilesh.qacc.utils.AppUtils.getThemeColor
 import app.akilesh.qacc.utils.AppUtils.navAnim
 
 class SettingsFragment: PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        val accentColor = requireContext().getColorAccent()
-        val colorStateList = ColorStateList.valueOf(accentColor)
-
         val themePref= findPreference<ListPreference>("themePref")
         val accentPref = findPreference<SwitchPreferenceCompat>("system_accent")
         val separateAccentPref = findPreference<SwitchPreferenceCompat>("separate_accent")
-        val tweakPref = findPreference<SwitchPreferenceCompat>("customise")
         val backupPref = findPreference<Preference>("backups")
         val createAllPref = findPreference<Preference>("create_all")
         val autoBackupPref = findPreference<SwitchPreferenceCompat>("auto_backup")
@@ -32,24 +29,21 @@ class SettingsFragment: PreferenceFragmentCompat() {
         val dailyAccentPref = findPreference<SwitchPreferenceCompat>("daily_accent")
 
         val preferences = listOf(
-            themePref, accentPref, tweakPref, separateAccentPref, backupPref,
+            themePref, accentPref, separateAccentPref, backupPref,
             createAllPref, autoBackupPref, autoBackupIntervalPref, deleteOld, dailyAccentPref
         )
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
+
+        val iconTint = if (useSystemAccent) ColorStateList.valueOf(requireContext().getColorAccent())
+        else ColorStateList.valueOf(requireContext().getThemeColor(R.attr.colorPrimary))
         preferences.forEach { preference ->
-            if (useSystemAccent) {
-                preference?.icon?.setTintList(colorStateList)
-            } else {
-                preference?.icon?.setTintList(ColorStateList.valueOf(
-                    ResourcesCompat.getColor(resources, R.color.colorPrimary, requireContext().theme)
-                ))
-            }
+            preference?.icon?.setTintList(iconTint)
         }
 
         themePref?.setOnPreferenceChangeListener { _, newValue ->
             val theme = newValue as String
-            AppUtils.applyTheme(theme)
+            applyTheme(theme)
             true
         }
 
@@ -92,6 +86,21 @@ class SettingsFragment: PreferenceFragmentCompat() {
             else viewModel.disableDailyAccentSwitcher()
             true
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+       /*
+        Sometimes bottom app bar hides the lower portion of the screen.
+        Add some padding to the bottom and don't clip to padding.
+        */
+        listView.setPaddingRelative(
+            listView.paddingStart,
+            listView.paddingTop,
+            listView.paddingEnd,
+            listView.paddingBottom + 120
+        )
+        listView.clipToPadding = false
     }
 }
 

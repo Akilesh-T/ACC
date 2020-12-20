@@ -10,51 +10,10 @@
         android:name="app.akilesh.qacc.ui.home.HomeFragment"
         tools:layout="@layout/home_fragment">
 
-        <argument
-            android:name="lightAccent"
-            app:argType="string" />
-
-        <argument
-            android:name="darkAccent"
-            app:argType="string" />
-
-        <argument
-            android:name="accentName"
-            app:argType="string" />
-
-        <argument
-            android:name="from_home"
-            app:argType="boolean" />
-
         <action
-            android:id="@+id/edit"
-            app:destination="@id/customisation"
-            app:enterAnim="@anim/fragment_enter"
-            app:popEnterAnim="@anim/fragment_enter_pop"
-            app:exitAnim="@anim/fragment_exit"
-            app:popExitAnim="@anim/fragment_exit_pop">
-
-            <argument
-                android:name="lightAccent"
-                app:argType="string"
-                android:defaultValue="#FF5722" />
-
-            <argument
-                android:name="darkAccent"
-                app:argType="string"
-                android:defaultValue="#FF5722" />
-
-            <argument
-                android:name="accentName"
-                app:argType="string"
-                android:defaultValue="Custom" />
-
-            <argument
-                android:name="from_home"
-                app:argType="boolean"
-                android:defaultValue="true"/>
-        </action>
-
+            android:id="@+id/action_home_to_accent_info"
+            app:destination="@id/accent_info"
+            />
     </fragment>
 
     <fragment
@@ -70,14 +29,6 @@
         android:name="app.akilesh.qacc.ui.colorpicker.ColorPickerFragment"
         tools:layout="@layout/color_picker_fragment">
 
-        <argument
-            android:name="lightAccent"
-            app:argType="string" />
-
-        <argument
-            android:name="accentName"
-            app:argType="string" />
-
         <action
             android:id="@+id/to_dark"
             app:destination="@+id/dark_accent"
@@ -87,24 +38,6 @@
             app:popExitAnim="@anim/slide_out_right"
         />
 
-        <action
-            android:id="@+id/to_customise"
-            app:destination="@+id/customisation"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right">
-
-            <argument
-                android:name="lightAccent"
-                app:argType="string"
-                android:defaultValue="#FF5722"/>
-
-            <argument
-                android:name="accentName"
-                app:argType="string"
-                android:defaultValue="Custom" />
-        </action>
     </fragment>
 
     <fragment
@@ -113,43 +46,9 @@
         tools:layout="@layout/color_picker_fragment">
 
         <argument
-            android:name="lightAccent"
-            app:argType="string"
-            android:defaultValue="#FF5722"/>
-
-        <argument
-            android:name="darkAccent"
-            app:argType="string"
-            android:defaultValue="#FF5722"/>
-
-        <argument
-            android:name="accentName"
-            app:argType="string"
-            android:defaultValue="Custom" />
-
-        <action
-            android:id="@+id/to_customise"
-            app:destination="@+id/customisation"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right">
-
-            <argument
-                android:name="lightAccent"
-                app:argType="string"
-                android:defaultValue="#FF5722" />
-
-            <argument
-                android:name="darkAccent"
-                app:argType="string"
-                android:defaultValue="#FF5722" />
-
-            <argument
-                android:name="accentName"
-                app:argType="string"
-                android:defaultValue="Custom" />
-        </action>
+            android:name="colorLight"
+            app:argType="app.akilesh.qacc.model.Colour"
+            />
     </fragment>
 
     <fragment
@@ -168,11 +67,6 @@
         <argument
             android:name="accentName"
             app:argType="string" />
-
-        <argument
-            android:name="from_home"
-            app:argType="boolean"
-            android:defaultValue="false"/>
 
     </fragment>
 
@@ -213,5 +107,36 @@
         android:name="app.akilesh.qacc.ui.colorpicker.sheets.CustomColorPicker"
         tools:layout="@layout/custom_color_picker"
         />
+
+    <dialog
+        android:id="@+id/accent_info"
+        android:name="app.akilesh.qacc.ui.home.accent.info.AccentInfoSheet"
+        tools:layout="@layout/accent_info_fragment"
+        >
+        <argument
+            android:name="lightAccent"
+            app:argType="string" />
+
+        <argument
+            android:name="darkAccent"
+            app:argType="string" />
+
+        <argument
+            android:name="accentName"
+            app:argType="string" />
+
+        <argument
+            android:name="pkgName"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/edit"
+            app:destination="@id/customisation"
+            app:enterAnim="@anim/fragment_enter"
+            app:popEnterAnim="@anim/fragment_enter_pop"
+            app:exitAnim="@anim/fragment_exit"
+            app:popExitAnim="@anim/fragment_exit_pop"
+            />
+    </dialog>
 
 </navigation>

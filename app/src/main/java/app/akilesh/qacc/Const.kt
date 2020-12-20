@@ -10,107 +10,110 @@ import java.io.File
 
 object Const {
 
-    lateinit var contextConst : Context
-    fun setContext(appContext: Context) {
-        contextConst = appContext
+    private lateinit var appContext : Context
+    fun setContext(context: Context) {
+        appContext = context
     }
-    //Credits to AEX
+
     object Colors {
 
-        const val listArg = "LIST"
-        const val presetsArg = "PRESET"
-        const val brandColorsArg = "BRAND"
-        const val wallpaperColorsArg = "WALL"
+        const val colorList = "LIST"
+        const val selectedColor = "COLOUR"
+        const val editLight = "LIGHT"
+        const val editDark = "DARK"
+        const val editType = "TYPE"
+        const val customHex = "HEX"
 
+        // Credits to AEX
         val AEX = listOf(
-            Colour("#FFC107", contextConst.getString(R.string.amber)),
-            Colour("#448AFF", contextConst.getString(R.string.title_blue)),
-            Colour("#607D8B", contextConst.getString(R.string.blue_grey)),
-            Colour("#795548", contextConst.getString(R.string.brown)),
-            Colour("#FF1744", contextConst.getString(R.string.candy_red)),
-            Colour("#00BCD4", contextConst.getString(R.string.cyan)),
-            Colour("#FF5722", contextConst.getString(R.string.deep_orange)),
-            Colour("#7C4DFF", contextConst.getString(R.string.deep_purple)),
-            Colour("#47AE84", contextConst.getString(R.string.elegant_green)),
-            Colour("#21EF8B", contextConst.getString(R.string.extended_green)),
-            Colour("#9E9E9E", contextConst.getString(R.string.grey)),
-            Colour("#536DFE", contextConst.getString(R.string.indigo)),
-            Colour("#9ABC98", contextConst.getString(R.string.jade_green)),
-            Colour("#03A9F4", contextConst.getString(R.string.light_blue)),
-            Colour("#8BC34A", contextConst.getString(R.string.light_green)),
-            Colour("#CDDC39", contextConst.getString(R.string.lime)),
-            Colour("#FF9800", contextConst.getString(R.string.orange)),
-            Colour("#A1B6ED", contextConst.getString(R.string.pale_blue)),
-            Colour("#F05361", contextConst.getString(R.string.pale_red)),
-            Colour("#FF4081", contextConst.getString(R.string.pink)),
-            Colour("#FF5252", contextConst.getString(R.string.title_red)),
-            Colour("#009688", contextConst.getString(R.string.teal)),
-            Colour("#FFEB3B", contextConst.getString(R.string.yellove))
+            Colour("#FFC107", appContext.getString(R.string.amber)),
+            Colour("#448AFF", appContext.getString(R.string.title_blue)),
+            Colour("#607D8B", appContext.getString(R.string.blue_grey)),
+            Colour("#795548", appContext.getString(R.string.brown)),
+            Colour("#FF1744", appContext.getString(R.string.candy_red)),
+            Colour("#00BCD4", appContext.getString(R.string.cyan)),
+            Colour("#FF5722", appContext.getString(R.string.deep_orange)),
+            Colour("#7C4DFF", appContext.getString(R.string.deep_purple)),
+            Colour("#47AE84", appContext.getString(R.string.elegant_green)),
+            Colour("#21EF8B", appContext.getString(R.string.extended_green)),
+            Colour("#9E9E9E", appContext.getString(R.string.grey)),
+            Colour("#536DFE", appContext.getString(R.string.indigo)),
+            Colour("#9ABC98", appContext.getString(R.string.jade_green)),
+            Colour("#03A9F4", appContext.getString(R.string.light_blue)),
+            Colour("#8BC34A", appContext.getString(R.string.light_green)),
+            Colour("#CDDC39", appContext.getString(R.string.lime)),
+            Colour("#FF9800", appContext.getString(R.string.orange)),
+            Colour("#A1B6ED", appContext.getString(R.string.pale_blue)),
+            Colour("#F05361", appContext.getString(R.string.pale_red)),
+            Colour("#FF4081", appContext.getString(R.string.pink)),
+            Colour("#FF5252", appContext.getString(R.string.title_red)),
+            Colour("#009688", appContext.getString(R.string.teal)),
+            Colour("#FFEB3B", appContext.getString(R.string.yellove))
         )
 
         val brandColors = listOf(
-            Colour("#0099E5", contextConst.getString(R.string.fiveHundredpx)),
-            Colour("#FF0000", contextConst.getString(R.string.adobe)),
-            Colour("#FD5C63", contextConst.getString(R.string.airbnb)),
-            Colour("#FF6A00", contextConst.getString(R.string.alibaba)),
-            Colour("#0C3866", contextConst.getString(R.string.alienware)),
-            Colour("#ED1C24", contextConst.getString(R.string.alphabet)),
-            Colour("#FF9900", contextConst.getString(R.string.amazon)),
-            Colour("#3DDC84", contextConst.getString(R.string.android)),
-            Colour("#1793D1", contextConst.getString(R.string.archLinux)),
-            Colour("#00A8E0", contextConst.getString(R.string.att)),
-            Colour("#472F92", contextConst.getString(R.string.cadbury)),
-            Colour("#ED1C16", contextConst.getString(R.string.cocacola)),
-            Colour("#A80030", contextConst.getString(R.string.debian)),
-            Colour("#0085C3", contextConst.getString(R.string.dell)),
-            Colour("#7289DA", contextConst.getString(R.string.discord)),
-            Colour("#3B5998", contextConst.getString(R.string.fb)),
-            Colour("#2BB24C", contextConst.getString(R.string.feedly)),
-            Colour("#E32119", contextConst.getString(R.string.ferrari)),
-            Colour("#E66000", contextConst.getString(R.string.firefox)),
-            Colour("#4078C0", contextConst.getString(R.string.github)),
-            Colour("#4285F4", contextConst.getString(R.string.google_blue)),
-            Colour("#34A853", contextConst.getString(R.string.google_green)),
-            Colour("#FBBC05", contextConst.getString(R.string.google_yellow)),
-            Colour("#EA4335", contextConst.getString(R.string.google_red)),
-            Colour("#E1306C", contextConst.getString(R.string.instagram)),
-            Colour("#DDB321", contextConst.getString(R.string.lamborghini)),
-            Colour("#124191", contextConst.getString(R.string.nokia)),
-            Colour("#EB0029", contextConst.getString(R.string.oneplus)),
-            Colour("#003087", contextConst.getString(R.string.playStation)),
-            Colour("#00FF00", contextConst.getString(R.string.razer)),
-            Colour("#1428A0", contextConst.getString(R.string.samsung)),
-            Colour("#1DB954", contextConst.getString(R.string.spotify)),
-            Colour("#E20074", contextConst.getString(R.string.t_mobile)),
-            Colour("#0088CC", contextConst.getString(R.string.telegram)),
-            Colour("#CC0000", contextConst.getString(R.string.tesla)),
-            Colour("#1DA1F2", contextConst.getString(R.string.twitter)),
-            Colour("#DD4814", contextConst.getString(R.string.ubuntu)),
-            Colour("#128C7E", contextConst.getString(R.string.whatsapp)),
-            Colour("#0078D7", contextConst.getString(R.string.windows)),
-            Colour("#F59714", contextConst.getString(R.string.xda))
+            Colour("#0099E5", appContext.getString(R.string.fiveHundredpx)),
+            Colour("#FF0000", appContext.getString(R.string.adobe)),
+            Colour("#FD5C63", appContext.getString(R.string.airbnb)),
+            Colour("#FF6A00", appContext.getString(R.string.alibaba)),
+            Colour("#0C3866", appContext.getString(R.string.alienware)),
+            Colour("#ED1C24", appContext.getString(R.string.alphabet)),
+            Colour("#FF9900", appContext.getString(R.string.amazon)),
+            Colour("#3DDC84", appContext.getString(R.string.android)),
+            Colour("#1793D1", appContext.getString(R.string.archLinux)),
+            Colour("#00A8E0", appContext.getString(R.string.att)),
+            Colour("#472F92", appContext.getString(R.string.cadbury)),
+            Colour("#ED1C16", appContext.getString(R.string.cocacola)),
+            Colour("#A80030", appContext.getString(R.string.debian)),
+            Colour("#0085C3", appContext.getString(R.string.dell)),
+            Colour("#7289DA", appContext.getString(R.string.discord)),
+            Colour("#3B5998", appContext.getString(R.string.fb)),
+            Colour("#2BB24C", appContext.getString(R.string.feedly)),
+            Colour("#E32119", appContext.getString(R.string.ferrari)),
+            Colour("#E66000", appContext.getString(R.string.firefox)),
+            Colour("#4078C0", appContext.getString(R.string.github)),
+            Colour("#4285F4", appContext.getString(R.string.google_blue)),
+            Colour("#34A853", appContext.getString(R.string.google_green)),
+            Colour("#FBBC05", appContext.getString(R.string.google_yellow)),
+            Colour("#EA4335", appContext.getString(R.string.google_red)),
+            Colour("#E1306C", appContext.getString(R.string.instagram)),
+            Colour("#DDB321", appContext.getString(R.string.lamborghini)),
+            Colour("#124191", appContext.getString(R.string.nokia)),
+            Colour("#EB0029", appContext.getString(R.string.oneplus)),
+            Colour("#003087", appContext.getString(R.string.playStation)),
+            Colour("#00FF00", appContext.getString(R.string.razer)),
+            Colour("#1428A0", appContext.getString(R.string.samsung)),
+            Colour("#1DB954", appContext.getString(R.string.spotify)),
+            Colour("#E20074", appContext.getString(R.string.t_mobile)),
+            Colour("#0088CC", appContext.getString(R.string.telegram)),
+            Colour("#CC0000", appContext.getString(R.string.tesla)),
+            Colour("#1DA1F2", appContext.getString(R.string.twitter)),
+            Colour("#DD4814", appContext.getString(R.string.ubuntu)),
+            Colour("#128C7E", appContext.getString(R.string.whatsapp)),
+            Colour("#0078D7", appContext.getString(R.string.windows)),
+            Colour("#F59714", appContext.getString(R.string.xda))
             )
 
         private val mdColors = mapOf(
-            0 to contextConst.getString(R.string.title_red),
-            1 to contextConst.getString(R.string.pink),
-            2 to contextConst.getString(R.string.purple),
-            3 to contextConst.getString(R.string.deep_purple),
-            4 to contextConst.getString(R.string.indigo),
-            5 to contextConst.getString(R.string.title_blue),
-            6 to contextConst.getString(R.string.light_blue),
-            7 to contextConst.getString(R.string.cyan),
-            8 to contextConst.getString(R.string.teal),
-            9 to contextConst.getString(R.string.title_green),
-            10 to contextConst.getString(R.string.light_green),
-            11 to contextConst.getString(R.string.lime),
-            12 to contextConst.getString(R.string.yellove),
-            13 to contextConst.getString(R.string.amber),
-            14 to contextConst.getString(R.string.orange),
-            15 to contextConst.getString(R.string.deep_orange),
-            16 to contextConst.getString(R.string.brown),
-            17 to contextConst.getString(R.string.grey),
-            18 to contextConst.getString(R.string.blue_grey)
+            0 to appContext.getString(R.string.title_red),
+            1 to appContext.getString(R.string.pink),
+            2 to appContext.getString(R.string.purple),
+            3 to appContext.getString(R.string.deep_purple),
+            4 to appContext.getString(R.string.indigo),
+            5 to appContext.getString(R.string.title_blue),
+            6 to appContext.getString(R.string.light_blue),
+            7 to appContext.getString(R.string.cyan),
+            8 to appContext.getString(R.string.teal),
+            9 to appContext.getString(R.string.title_green),
+            10 to appContext.getString(R.string.light_green),
+            11 to appContext.getString(R.string.lime),
+            12 to appContext.getString(R.string.yellove),
+            13 to appContext.getString(R.string.amber),
+            14 to appContext.getString(R.string.orange),
+            15 to appContext.getString(R.string.deep_orange),
+            16 to appContext.getString(R.string.brown),
+            17 to appContext.getString(R.string.grey),
+            18 to appContext.getString(R.string.blue_grey)
         )
         val mdColorPalette = mapOf(
             0 to listOf(
@@ -409,8 +412,8 @@ object Const {
         const val nokiaBlue = "zzz_nokia_blue"
 
         val colorSpaces = listOf(
-            contextConst.getString(R.string.color_space_rgb),
-            contextConst.getString(R.string.color_space_hsl)
+            appContext.getString(R.string.color_space_rgb),
+            appContext.getString(R.string.color_space_hsl)
             //contextConst.getString(R.string.color_space_lab)
             )
     }
@@ -426,15 +429,16 @@ object Const {
 
     object Paths {
         const val modPath = "/data/adb/modules/qacc-mobile"
-        val overlayPath = if (SDK_INT == Q) "$modPath/system/product/overlay"
+        val overlayPath = if (SDK_INT >= Q) "$modPath/system/product/overlay"
         else "$modPath/system/vendor/overlay"
-        val backupFolder = File.separatorChar + "sdcard/${DIRECTORY_DOCUMENTS}/${contextConst.getString(R.string.app_name_short)}/backups"
-        val updatesFolder = DIRECTORY_DOWNLOADS + File.separatorChar + "${contextConst.getString(R.string.app_name)} updates"
+
+        val backupFolder = File.separatorChar + "sdcard/${DIRECTORY_DOCUMENTS}/${appContext.getString(R.string.app_name_short)}/backups"
+        val updatesFolder = DIRECTORY_DOWNLOADS + File.separatorChar + "${appContext.getString(R.string.app_name)} updates"
+
+        const val busyBox = "/data/adb/magisk/busybox"
     }
 
     const val prefix = "com.android.theme.color.custom."
-
-    const val busyBox = "/data/adb/magisk/busybox"
 
     var selected = setOf<Colour>()
 

@@ -23,7 +23,7 @@ class RGBColorPicker : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = ColorPickerRgbBinding.inflate(inflater, container, false)
         return binding.root
     }

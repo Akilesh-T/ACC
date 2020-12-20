@@ -8,13 +8,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.navGraphViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import app.akilesh.qacc.Const.Colors.mdColorPalette
-import app.akilesh.qacc.R
+import app.akilesh.qacc.Const.Colors.selectedColor
 import app.akilesh.qacc.databinding.MdColorPaletteBinding
-import app.akilesh.qacc.model.Accent
-import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
 import app.akilesh.qacc.ui.colorpicker.MDColorsViewPagerAdapter
 import app.akilesh.qacc.ui.colorpicker.ZoomOutPageTransformer
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
@@ -30,7 +28,7 @@ class ColorPaletteSheet: BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = MdColorPaletteBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -38,26 +36,13 @@ class ColorPaletteSheet: BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val isDark = requireArguments().getBoolean("isDark")
-        val viewModel: ColorPickerViewModel by navGraphViewModels(R.id.nav_graph)
         binding.pager.apply {
             setPageTransformer(ZoomOutPageTransformer())
             adapter =
-                MDColorsViewPagerAdapter { selectedColour ->
-                    if (isDark)
-                        viewModel.accent.value = Accent(
-                            String(),
-                            selectedColour.name,
-                            viewModel.accent.value!!.colorLight,
-                            selectedColour.hex
-                        )
-                    else
-                        viewModel.accent.value = Accent(
-                            String(),
-                            selectedColour.name,
-                            selectedColour.hex,
-                            String()
-                        )
+                MDColorsViewPagerAdapter {
+                    findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                        selectedColor, it
+                    )
                     dismiss()
                 }
         }

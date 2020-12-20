@@ -11,38 +11,44 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.addCallback
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat.Type.ime
+import androidx.core.view.WindowInsetsCompat.Type.systemBars
+import androidx.core.view.updatePadding
+import androidx.core.widget.TextViewCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.navGraphViewModels
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
 import androidx.work.WorkInfo
+import app.akilesh.qacc.Const.Colors.customHex
+import app.akilesh.qacc.Const.Colors.editDark
+import app.akilesh.qacc.Const.Colors.editLight
+import app.akilesh.qacc.Const.Colors.editType
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.ColorCustomisationFragmentBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
-import app.akilesh.qacc.ui.home.AccentViewModel
+import app.akilesh.qacc.ui.home.accent.AccentViewModel
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
-import app.akilesh.qacc.utils.AppUtils.showSnackbar
+import app.akilesh.qacc.utils.AppUtils.showSnackBar
 
 class ColorCustomisationFragment: Fragment() {
 
     private lateinit var binding: ColorCustomisationFragmentBinding
     private val args: ColorCustomisationFragmentArgs by navArgs()
-    private val viewModel: ColorPickerViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = ColorCustomisationFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -50,7 +56,6 @@ class ColorCustomisationFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.textInputLayout.visibility = if (args.fromHome) View.VISIBLE else View.GONE
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         var separateAccents = sharedPreferences.getBoolean("separate_accent", false)
         if (SDK_INT < Q) separateAccents = false
@@ -60,67 +65,111 @@ class ColorCustomisationFragment: Fragment() {
             val systemAccent = requireContext().getColorAccent()
             setPreview(systemAccent)
         }
-        viewModel.accent.observe(viewLifecycleOwner, Observer { accent ->
-            accent?.let {
-                setPreviewLight(Color.parseColor(it.colorLight), it.colorLight)
-                if (separateAccents) setPreviewDark(Color.parseColor(it.colorDark), it.colorDark)
-            }
-        })
 
-        init()
-        if (args.fromHome) {
-            binding.name.setText(args.accentName)
-            binding.name.doAfterTextChanged {
-                viewModel.accent.value!!.name = it.toString().trim()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.navBar.root) { v, insets ->
+            v.updatePadding(bottom = insets.getInsets(systemBars() or ime()).bottom)
+            insets
+        }
+
+        val navController = findNavController()
+        var colorLight = args.lightAccent
+        var colorDark = args.darkAccent
+
+        setPreviewLight(colorLight)
+        if (separateAccents) setPreviewDark(colorDark)
+
+        val navBackStackEntry = navController.getBackStackEntry(R.id.customisation)
+
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                if (navBackStackEntry.savedStateHandle.contains(editLight)) {
+                    navBackStackEntry.savedStateHandle.getLiveData<String>(editLight)
+                        .observe(viewLifecycleOwner) {
+                            colorLight = it
+                            setPreviewLight(it)
+                    }
+                }
+                if (navBackStackEntry.savedStateHandle.contains(editDark)) {
+                    navBackStackEntry.savedStateHandle.getLiveData<String>(editDark)
+                        .observe(viewLifecycleOwner) {
+                            colorDark = it
+                            setPreviewDark(it)
+                    }
+                }
             }
         }
 
-        val bundle = Bundle()
-        bundle.putBoolean("fromCustomise", true)
-        binding.previewLight.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_edit, 0)
+        navBackStackEntry.lifecycle.addObserver(observer)
+        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                navBackStackEntry.lifecycle.removeObserver(observer)
+            }
+        })
+
+        var accentName = args.accentName
+
+        binding.name.apply {
+            setText(args.accentName)
+            doAfterTextChanged {
+                accentName = it.toString().trim()
+            }
+        }
+
+
+        binding.previewLight.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            0,
+            0,
+            R.drawable.ic_outline_edit,
+            0
+        )
         binding.previewLight.root.setOnClickListener {
-            bundle.putBoolean("isDark", false)
-            bundle.putString("light", viewModel.accent.value!!.colorLight)
-            findNavController().navigate(R.id.custom_color_picker, bundle)
+            navBackStackEntry.savedStateHandle.set<String>(editType, editLight)
+            navBackStackEntry.savedStateHandle.set<String>(customHex, colorLight)
+            navController.navigate(R.id.custom_color_picker)
         }
 
         if (separateAccents.not()) {
             binding.previewDark.root.visibility = View.GONE
         }
         else {
-            binding.previewDark.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_outline_edit, 0)
+            binding.previewDark.colorName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                0,
+                0,
+                R.drawable.ic_outline_edit,
+                0
+            )
             binding.previewDark.root.setOnClickListener {
-                bundle.putBoolean("isDark", true)
-                bundle.putString("dark", viewModel.accent.value!!.colorDark)
-                findNavController().navigate(R.id.custom_color_picker, bundle)
+                navBackStackEntry.savedStateHandle.set<String>(editType, editDark)
+                navBackStackEntry.savedStateHandle.set<String>(customHex, colorDark)
+                navController.navigate(R.id.custom_color_picker)
             }
         }
 
         binding.resetChip.setOnClickListener {
-            init()
+            binding.name.setText(args.accentName)
+            navBackStackEntry.savedStateHandle.set<String>(editLight, args.lightAccent)
+            navBackStackEntry.savedStateHandle.set<String>(editDark, args.darkAccent)
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(this, true) {
-            navigateBack()
-        }
         binding.navBar.previous.setOnClickListener {
-            navigateBack()
+            navController.navigateUp()
         }
 
         binding.navBar.next.setOnClickListener {
 
-            if (viewModel.accent.value!!.name.isNotBlank()) {
-                var suffix = "hex_" + viewModel.accent.value!!.colorLight.removePrefix("#")
-                if (SDK_INT >= Q) suffix += "_" + viewModel.accent.value!!.colorDark.removePrefix("#")
-                else viewModel.accent.value!!.colorDark = viewModel.accent.value!!.colorLight
+            if (accentName.isNotBlank()) {
+                var suffix = "hex_" + colorLight.removePrefix("#")
+                if (SDK_INT >= Q) suffix += "_" + colorDark.removePrefix("#")
+                else colorDark = colorLight
+                val pkgName = prefix + suffix
 
-                viewModel.accent.value!!.pkgName = prefix + suffix
-                Log.d("accent-s", viewModel.accent.value!!.toString())
-                val creatorViewModel = ViewModelProvider(this).get(ColorPickerViewModel::class.java)
-                creatorViewModel.create(viewModel.accent.value!!)
+                val accent = Accent(pkgName, accentName, colorLight, colorDark)
+                Log.d("accent-s", accent.toString())
+                val creatorViewModel by viewModels<ColorPickerViewModel>()
+                creatorViewModel.create(accent)
                 creatorViewModel.createWorkerId?.let { uuid ->
                     creatorViewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(
-                        viewLifecycleOwner, Observer { workInfo ->
+                        viewLifecycleOwner, { workInfo ->
                             Log.d("id", workInfo.id.toString())
                             Log.d("tag", workInfo.tags.toString())
                             Log.d("state", workInfo.state.name)
@@ -128,16 +177,17 @@ class ColorCustomisationFragment: Fragment() {
                             if (workInfo.state == WorkInfo.State.RUNNING && SDK_INT < P)
                                 Toast.makeText(
                                     requireContext(),
-                                    String.format(getString(R.string.creating, viewModel.accent.value!!.name)),
+                                    String.format(getString(R.string.creating, accentName)),
                                     Toast.LENGTH_SHORT
                                 ).show()
 
                             if (workInfo.state == WorkInfo.State.SUCCEEDED && workInfo.state.isFinished) {
+                                requireActivity().showSnackBar(
+                                    getString(R.string.accent_created, accentName)
+                                )
                                 val accentViewModel: AccentViewModel by viewModels()
-                                accentViewModel.insert(viewModel.accent.value!!)
-                                showSnackbar(view, String.format(getString(R.string.accent_created), viewModel.accent.value!!.name))
-                                viewModel.accent.value = null
-                                findNavController().navigate(R.id.action_global_home)
+                                accentViewModel.insert(accent)
+                                navController.navigate(R.id.action_global_home)
                             }
                             if (workInfo.state == WorkInfo.State.FAILED)
                                 Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_LONG).show()
@@ -149,17 +199,8 @@ class ColorCustomisationFragment: Fragment() {
 
     }
 
-    private fun init() {
-        viewModel.accent.value = Accent(
-            String(),
-            args.accentName,
-            args.lightAccent,
-            args.darkAccent
-        )
-        if (args.fromHome) binding.name.setText(args.accentName)
-    }
-
-    private fun setPreviewLight(color: Int, hex: String) {
+    private fun setPreviewLight(hex: String) {
+        val color = Color.parseColor(hex)
         val accentName = if (SDK_INT < Q) args.accentName else requireContext().resources.getString(R.string.light)
         val swatch = Palette.Swatch(color, 1)
 
@@ -171,14 +212,18 @@ class ColorCustomisationFragment: Fragment() {
                     hex
                 )
                 setTextColor(swatch.bodyTextColor)
-                compoundDrawableTintList = ColorStateList.valueOf(swatch.titleTextColor)
+                TextViewCompat.setCompoundDrawableTintList(
+                    this,
+                    ColorStateList.valueOf(swatch.titleTextColor)
+                )
             }
             colorCard.backgroundTintList = ColorStateList.valueOf(color)
         }
         if (SDK_INT < Q) setPreview(color)
     }
 
-    private fun setPreviewDark(color: Int, hex: String) {
+    private fun setPreviewDark(hex: String) {
+        val color = Color.parseColor(hex)
         val swatch = Palette.Swatch(color, 1)
         binding.previewDark.apply {
             colorName.apply {
@@ -188,7 +233,10 @@ class ColorCustomisationFragment: Fragment() {
                     hex
                 )
                 setTextColor(swatch.bodyTextColor)
-                compoundDrawableTintList = ColorStateList.valueOf(swatch.titleTextColor)
+                TextViewCompat.setCompoundDrawableTintList(
+                    this,
+                    ColorStateList.valueOf(swatch.titleTextColor)
+                )
             }
             colorCard.backgroundTintList = ColorStateList.valueOf(color)
         }
@@ -212,11 +260,5 @@ class ColorCustomisationFragment: Fragment() {
             navBar.previous.rippleColor = colorStateList
             navBar.next.backgroundTintList = colorStateList
         }
-    }
-
-    private fun navigateBack() {
-        if (args.fromHome) viewModel.accent.value = null
-        else init()
-        findNavController().navigateUp()
     }
 }
