@@ -1,10 +1,8 @@
 package app.akilesh.qacc.ui.backup
 
-import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
 import android.content.Context
-import android.content.Intent
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
@@ -13,37 +11,36 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EdgeEffect
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat.Type.systemBars
+import androidx.core.view.updatePadding
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
+import app.akilesh.qacc.Const.Colors.colorList
 import app.akilesh.qacc.Const.Paths.backupFolder
+import app.akilesh.qacc.Const.Paths.busyBox
 import app.akilesh.qacc.Const.Paths.modPath
 import app.akilesh.qacc.Const.Paths.overlayPath
-import app.akilesh.qacc.Const.busyBox
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.BackupRestoreFragmentBinding
-import app.akilesh.qacc.databinding.ColorPreviewBinding
-import app.akilesh.qacc.databinding.DialogTitleBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.BackupFile
 import app.akilesh.qacc.model.Colour
-import app.akilesh.qacc.ui.colorpicker.ColorListAdapter
+import app.akilesh.qacc.ui.home.accent.AccentViewModel
+import app.akilesh.qacc.utils.AppUtils.createBackup
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
-import app.akilesh.qacc.utils.AppUtils.showSnackbar
+import app.akilesh.qacc.utils.AppUtils.showSnackBar
 import app.akilesh.qacc.utils.AppUtils.toHex
 import app.akilesh.qacc.utils.SwipeToDelete
-import app.akilesh.qacc.ui.home.AccentViewModel
-import app.akilesh.qacc.utils.AppUtils.createBackup
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.io.SuFile
 import com.topjohnwu.superuser.io.SuFileOutputStream
@@ -60,12 +57,11 @@ class BackupRestoreFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = BackupRestoreFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    @SuppressLint("SetWorldReadable")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -73,72 +69,96 @@ class BackupRestoreFragment: Fragment() {
         val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
         if (useSystemAccent) setColor(requireContext().getColorAccent())
 
-        binding.newBackup.setOnClickListener {
-            if (createBackup(requireContext(), false)) {
-                Toast.makeText(requireContext(), getString(R.string.backup_created), Toast.LENGTH_SHORT)
-                    .show()
-                viewModel.backupFiles.value = getBackupFiles()
-            }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            v.updatePadding(
+                top = insets.getInsets(systemBars()).top,
+                bottom = insets.getInsets(systemBars()).bottom
+            )
+            insets
         }
-        binding.restore.setOnClickListener { selectBackupFile() }
-        tempFolder = requireContext().getDir("tmp", Context.MODE_PRIVATE)
 
-        val adapter = BackupListAdapter(
-            requireContext(), getBackupFiles(), { accents ->
-                val colorPreviewBinding = ColorPreviewBinding.inflate(layoutInflater)
-                val dialogTitleBinding = DialogTitleBinding.inflate(layoutInflater)
-                dialogTitleBinding.apply {
-                    titleText.text = String.format(resources.getString(R.string.backup_contents))
-                    titleIcon.setImageResource(R.drawable.ic_backup_contents)
+        val getContent = registerForActivityResult(OpenDocument()) { uri: Uri? ->
+            Log.d("selected-uri", uri.toString())
+            uri?.let {
+                Log.d("selected-path", uri.path.toString())
+                requireContext().contentResolver.getType(uri)?.let { mimeType ->
+                    Log.d("mime-type", mimeType)
                 }
-
-                val colorListAdapter = ColorListAdapter(accents) {}
-
-                colorPreviewBinding.recyclerViewColor.apply {
-                    adapter = colorListAdapter
-                    colorPreviewBinding.recyclerViewColor.layoutManager =
-                        GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-                    setHasFixedSize(true)
-                    if (useSystemAccent) {
-                        edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
-                            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
-                                return EdgeEffect(view.context).apply {
-                                    color = context.getColorAccent()
-                                }
+                if (uri.path.toString().endsWith(".tar.gz")) {
+                    val parcelFileDescriptor =
+                        uri.let {
+                            requireContext().contentResolver.openFileDescriptor(
+                                it,
+                                "r"
+                            )
+                        }
+                    val backupFile = File(requireContext().filesDir, "acc.tar.gz")
+                    parcelFileDescriptor?.let {
+                        val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+                        inputStream.use { stream ->
+                            SuFileOutputStream(backupFile.absolutePath).use {
+                                stream.copyTo(it)
                             }
                         }
                     }
+                    parcelFileDescriptor?.close()
+                    restore(backupFile)
                 }
+            }
+        }
 
-                MaterialAlertDialogBuilder(requireContext())
-                    .setCustomTitle(dialogTitleBinding.root)
-                    .setView(colorPreviewBinding.root)
-                    .create()
-                    .show()
+        binding.restore.setOnClickListener {
+            getContent.launch(arrayOf(
+                "application/gzip",
+                "application/x-gzip",
+                "application/octet-stream"
+            ))
+        }
+
+        tempFolder = requireContext().getDir("tmp", Context.MODE_PRIVATE)
+
+        val navController = findNavController()
+
+        val backupListAdapter = BackupListAdapter(
+            requireContext(), getBackupFiles(), { accents ->
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    colorList,
+                    accents
+                )
+                navController.navigate(R.id.color_picker_dialog)
             },
             {
                 val backupFile = File(backupFolder, it)
                 val temp = File(requireContext().filesDir, "acc.tar.gz")
                 Shell.su("cp -af ${backupFile.absolutePath} ${temp.absolutePath}").exec()
-                temp.setReadable(true, false)
                 restore(temp)
             }
         )
 
-        binding.recyclerViewBackupFiles.adapter = adapter
-        binding.recyclerViewBackupFiles.layoutManager = LinearLayoutManager(context)
+        binding.recyclerViewBackupFiles.apply {
+            adapter = backupListAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
 
-        viewModel.backupFiles.observe(viewLifecycleOwner, Observer { files ->
-            files.let { adapter.setFiles(it) }
-        })
+        binding.newBackup.setOnClickListener {
+            if (createBackup(requireContext(), false)) {
+                Toast.makeText(requireContext(), getString(R.string.backup_created), Toast.LENGTH_SHORT)
+                    .show()
+                backupListAdapter.setFiles(getBackupFiles())
+            }
+        }
 
         val swipeToDelete = object : SwipeToDelete(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val file = adapter.getFileAndRemoveAt(viewHolder.adapterPosition)
+                val file = backupListAdapter.getFileAndRemoveAt(viewHolder.bindingAdapterPosition)
                 val result = Shell.su(
                     "rm -f $backupFolder/$file"
                 ).exec()
-                if (result.isSuccess) Toast.makeText(context, getString(R.string.backup_deleted), Toast.LENGTH_SHORT).show()
+                if (result.isSuccess) Toast.makeText(
+                    requireContext(),
+                    getString(R.string.backup_deleted),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeToDelete)
@@ -159,7 +179,10 @@ class BackupRestoreFragment: Fragment() {
             ".$busyBox tar t -f $backupFolder/$file"
         ).exec().out
         contents.removeIf { it == "./" }
-        contents.replaceAll { s -> s.removePrefix("./hex").removePrefix("_").removeSuffix(".apk").substringBefore('_') }
+        contents.replaceAll { s ->
+            s.removePrefix("./hex").removePrefix("_")
+                .removeSuffix(".apk").substringBefore('_')
+        }
         Log.d(file, contents.toString())
         return contents
     }
@@ -182,49 +205,6 @@ class BackupRestoreFragment: Fragment() {
         return backupFiles
     }
 
-    private fun selectBackupFile() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "*/*"
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/x-gzip", "application/gzip", "application/octet-stream"))
-        startActivityForResult(intent, 3)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        try {
-            if (requestCode == 3 && resultCode == RESULT_OK && data != null) {
-                val selectedUri = data.data
-                Log.d("selected-uri", selectedUri.toString())
-                Log.d("selected-path", selectedUri?.path.toString())
-                Log.d("mime-type",
-                    selectedUri?.let { requireContext().contentResolver.getType(it) }.toString()
-                )
-                val parcelFileDescriptor =
-                    selectedUri?.let {
-                        requireContext().contentResolver.openFileDescriptor(
-                            it,
-                            "r"
-                        )
-                    }
-                val backupFile = File(requireContext().filesDir, "acc.tar.gz")
-                parcelFileDescriptor?.let {
-                    val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-                    inputStream.use { stream ->
-                        SuFileOutputStream(backupFile.absolutePath).use {
-                            stream.copyTo(it)
-                        }
-                    }
-                }
-                parcelFileDescriptor?.close()
-                restore(backupFile)
-            }
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-    }
-
     private fun getAppList(path: String): Array<SuFile>? {
         Shell.su(
             ".$busyBox tar x -zv -f $path -C ${tempFolder.absolutePath}"
@@ -235,53 +215,68 @@ class BackupRestoreFragment: Fragment() {
         }
     }
 
-    @SuppressLint("SetWorldReadable")
     private fun restore(backupFile: File) {
-        Toast.makeText(requireContext(), requireContext().getString(R.string.restoring_accents), Toast.LENGTH_SHORT).show()
-        if (SDK_INT >= P) {
-            val result = Shell.su("[ -d $modPath ]").exec()
-            if (!result.isSuccess) {
-                Shell.su("mkdir -p $overlayPath").exec()
-                Shell.su(requireContext().resources.openRawResource(R.raw.create_module)).exec()
-            }
-
-            val restoreResult = Shell.su(
-                ".$busyBox tar x -zv -f ${backupFile.absolutePath} -C $overlayPath"
-            ).exec()
-            Log.d("restore", restoreResult.out.toString())
-            if (restoreResult.isSuccess) {
-                insertToDB(getAppList(backupFile.absolutePath)?.map { it.absolutePath })
-                backupFile.delete()
-                Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
-                showSnackbar(requireView(), getString(R.string.accents_restored))
-            }
-        }
-        else {
-            Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
-            tempFolder = requireContext().getDir("tmp", Context.MODE_PRIVATE)
-            val apps = getAppList(backupFile.absolutePath)
-            apps?.forEach {
-                it.setReadable(true, false)
-            }
-            val filesList = apps?.map { it.absolutePath }?.toTypedArray()
-            Log.d("files-list", apps?.contentToString().toString())
-            if (filesList != null && filesList.isNotEmpty()) {
-                viewModel.restore(filesList)
-                viewModel.restoreWorkerId?.let { uuid ->
-                    viewModel.workManager.getWorkInfoByIdLiveData(uuid).observe(viewLifecycleOwner, Observer { workInfo ->
-                        Log.d("id", workInfo.id.toString())
-                        Log.d("state", workInfo.state.name)
-                        if (workInfo != null && workInfo.state.isFinished && workInfo.state == WorkInfo.State.SUCCEEDED) {
-                            backupFile.delete()
-                            showSnackbar(requireView(), getString(R.string.accents_restored))
-                            //Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
-                        }
-                        if (workInfo.state == WorkInfo.State.FAILED)
-                            Toast.makeText(requireContext(), getString(R.string.error_restoring), Toast.LENGTH_LONG).show()
-                    })
+        if (backupFile.extension == "gz") {
+            Toast.makeText(
+                requireContext(),
+                requireContext().getString(R.string.restoring_accents),
+                Toast.LENGTH_SHORT
+            ).show()
+            if (SDK_INT >= P) {
+                val result = Shell.su("[ -d $modPath ]").exec()
+                if (!result.isSuccess) {
+                    Shell.su("mkdir -p $overlayPath").exec()
+                    Shell.su(requireContext().resources.openRawResource(R.raw.create_module)).exec()
                 }
+
+                val restoreResult = Shell.su(
+                    ".$busyBox tar x -zv -f ${backupFile.absolutePath} -C $overlayPath"
+                ).exec()
+                Log.d("restore", restoreResult.out.toString())
+                if (restoreResult.isSuccess) {
+                    insertToDB(getAppList(backupFile.absolutePath)?.map { it.absolutePath })
+                    backupFile.delete()
+                    Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
+                    requireActivity().showSnackBar(getString(R.string.accents_restored))
+                }
+            } else {
+                Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
+                tempFolder = requireContext().getDir("tmp", Context.MODE_PRIVATE)
+
+                val apps = getAppList(backupFile.absolutePath)
+                val filesList = apps?.map { it.absolutePath }?.toTypedArray()
+                Log.d("files-list", apps?.contentToString().toString())
+
+                if (filesList != null && filesList.isNotEmpty()) {
+                    viewModel.restore(filesList)
+                    viewModel.restoreWorkerId?.let { uuid ->
+                        viewModel.workManager.getWorkInfoByIdLiveData(uuid)
+                            .observe(viewLifecycleOwner,
+                                { workInfo ->
+                                    Log.d("id", workInfo.id.toString())
+                                    Log.d("state", workInfo.state.name)
+                                    if (workInfo != null && workInfo.state.isFinished
+                                        && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                                        backupFile.delete()
+                                        requireActivity().showSnackBar(
+                                            getString(R.string.accents_restored)
+                                        )
+                                        //Shell.su("rm -rf ${tempFolder.absolutePath}").exec()
+                                    }
+                                    if (workInfo.state == WorkInfo.State.FAILED)
+                                        Toast.makeText(
+                                            requireContext(),
+                                            getString(R.string.error_restoring),
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                })
+                    }
+                } else Toast.makeText(
+                    requireContext(),
+                    getString(R.string.empty_backup),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-            else Toast.makeText(requireContext(), getString(R.string.empty_backup), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -295,8 +290,16 @@ class BackupRestoreFragment: Fragment() {
             val accentName = packageManager.getApplicationLabel(applicationInfo).toString()
             val pkgName = packageInfo.packageName.toString()
             val resources = packageManager.getResourcesForApplication(applicationInfo)
-            val accentLightId = resources.getIdentifier("accent_device_default_light", "color", pkgName)
-            val accentDarkId = resources.getIdentifier("accent_device_default_dark", "color", pkgName)
+            val accentLightId = resources.getIdentifier(
+                "accent_device_default_light",
+                "color",
+                pkgName
+            )
+            val accentDarkId = resources.getIdentifier(
+                "accent_device_default_dark",
+                "color",
+                pkgName
+            )
             if (accentLightId != 0 && accentDarkId != 0) {
                 val colorLight = resources.getColor(accentLightId, null)
                 val colorDark = resources.getColor(accentDarkId, null)
