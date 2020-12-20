@@ -12,23 +12,35 @@ import app.akilesh.qacc.model.BackupFile
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 
-class BackupListAdapter internal constructor(
+class BackupListAdapter(
     val context: Context,
     private var filesList: MutableList<BackupFile>,
-    val preview: (List<Colour>) -> Unit,
+    private val preview: (List<Colour>) -> Unit,
     val restore: (String) -> Unit
 ) : RecyclerView.Adapter<BackupListAdapter.BackupsViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BackupsViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = RecyclerviewItemBackupsBinding.inflate(layoutInflater, parent, false)
-        return BackupsViewHolder(binding)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BackupsViewHolder
+            = BackupsViewHolder.from(parent)
 
-    override fun onBindViewHolder(holder: BackupsViewHolder, position: Int) = holder.bind(filesList[position])
+    override fun onBindViewHolder(holder: BackupsViewHolder, position: Int)
+            = holder.bind(
+                filesList[position],
+                context,
+                preview,
+                restore
+            )
 
-    inner class BackupsViewHolder(private var binding: RecyclerviewItemBackupsBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(backupFile: BackupFile) {
+    override fun getItemCount() = filesList.size
+
+    class BackupsViewHolder private constructor(val binding: RecyclerviewItemBackupsBinding)
+        : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(
+            backupFile: BackupFile,
+            context: Context,
+            preview: (List<Colour>) -> Unit,
+            restore: (String) -> Unit
+        ) {
             binding.backupFile.text = backupFile.fileName.removeSuffix(".tar.gz").replace('-', ' ')
             binding.fileSize.text = backupFile.fileSize
             binding.viewContent.text =
@@ -52,19 +64,26 @@ class BackupListAdapter internal constructor(
                 }
             }
         }
+
+        companion object {
+            fun from(parent: ViewGroup): BackupsViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RecyclerviewItemBackupsBinding
+                    .inflate(layoutInflater, parent, false)
+                return BackupsViewHolder(binding)
+            }
+        }
     }
 
-    internal fun setFiles(files: MutableList<BackupFile>) {
+    fun setFiles(files: MutableList<BackupFile>) {
         this.filesList = files
         notifyDataSetChanged()
     }
 
-    internal fun getFileAndRemoveAt(position: Int): String {
+    fun getFileAndRemoveAt(position: Int): String {
         val current = filesList[position]
         filesList.removeAt(position)
         notifyItemRemoved(position)
         return current.fileName
     }
-
-    override fun getItemCount() = filesList.size
 }

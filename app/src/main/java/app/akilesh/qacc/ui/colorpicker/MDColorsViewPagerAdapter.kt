@@ -13,24 +13,21 @@ import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 
 class MDColorsViewPagerAdapter internal constructor(
-    val itemOnClick : (Colour) -> Unit
+    private val itemOnClick : (Colour) -> Unit
 ): RecyclerView.Adapter<MDColorsViewPagerAdapter.MDColorViewHolder>() {
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): MDColorsViewPagerAdapter.MDColorViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = ColorPreviewBinding.inflate(layoutInflater, parent, false)
-        return MDColorViewHolder(binding)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        MDColorViewHolder.from(parent)
 
     override fun getItemCount(): Int = mdColorPalette.count()
 
-    override fun onBindViewHolder(holder: MDColorsViewPagerAdapter.MDColorViewHolder, position: Int) = holder.bind(position)
+    override fun onBindViewHolder(holder: MDColorViewHolder, position: Int) =
+        holder.bind(position, itemOnClick)
 
-    inner class MDColorViewHolder(private var binding: ColorPreviewBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(position: Int) {
+    class MDColorViewHolder(val binding: ColorPreviewBinding)
+        : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(position: Int, itemOnClick: (Colour) -> Unit) {
             val colorListAdapter = ColorListAdapter(
                 mdColorPalette.getValue(position)
             ) { selectedColour ->
@@ -40,8 +37,14 @@ class MDColorsViewPagerAdapter internal constructor(
             binding.handle.visibility = View.GONE
             binding.recyclerViewColor.apply {
                 adapter = colorListAdapter
-                layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
+                layoutManager = GridLayoutManager(
+                    context,
+                    2,
+                    GridLayoutManager.VERTICAL,
+                    false
+                )
                 setHasFixedSize(true)
+
                 val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
                 val useSystemAccent = sharedPreferences.getBoolean("system_accent", false)
                 if (useSystemAccent) {
@@ -53,6 +56,14 @@ class MDColorsViewPagerAdapter internal constructor(
                         }
                     }
                 }
+            }
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): MDColorViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ColorPreviewBinding.inflate(layoutInflater, parent, false)
+                return MDColorViewHolder(binding)
             }
         }
     }

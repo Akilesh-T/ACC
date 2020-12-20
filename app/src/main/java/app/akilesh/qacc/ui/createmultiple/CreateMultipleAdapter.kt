@@ -3,57 +3,80 @@ package app.akilesh.qacc.ui.createmultiple
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
+import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.RecyclerviewItemColorPreviewBinding
+import app.akilesh.qacc.databinding.RecyclerviewItemCreateMultipleBinding
 import app.akilesh.qacc.model.Colour
 
-class CreateMultipleAdapter internal constructor() : RecyclerView.Adapter<CreateMultipleAdapter.CreateAllViewHolder>() {
+class CreateMultipleAdapter internal constructor()
+    : ListAdapter<Colour, CreateMultipleAdapter.CreateAllViewHolder>(ColourDiffCallback) {
 
-    var tracker: SelectionTracker<Long>? = null
-    var colours: MutableList<Colour> = mutableListOf()
     init {
         setHasStableIds(true)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreateAllViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = RecyclerviewItemColorPreviewBinding.inflate(layoutInflater, parent, false)
-        return CreateAllViewHolder(binding)
-    }
-
-    override fun getItemCount(): Int = colours.size
-
     override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun onBindViewHolder(holder: CreateAllViewHolder, position: Int) = holder.bind(position)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreateAllViewHolder
+            = CreateAllViewHolder.from(parent)
 
-    inner class CreateAllViewHolder(private var binding: RecyclerviewItemColorPreviewBinding) : RecyclerView.ViewHolder(binding.root) {
+    override fun onBindViewHolder(holder: CreateAllViewHolder, position: Int)
+            = holder.bind(getItem(position))
+
+    class CreateAllViewHolder private constructor(val binding: RecyclerviewItemCreateMultipleBinding)
+        : RecyclerView.ViewHolder(binding.root) {
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
             object : ItemDetailsLookup.ItemDetails<Long>() {
-                override fun getPosition(): Int = adapterPosition
-                override fun getSelectionKey(): Long? = itemId
+                override fun getPosition(): Int = bindingAdapterPosition
+                override fun getSelectionKey(): Long = itemId
+                override fun inSelectionHotspot(e: MotionEvent): Boolean = true
             }
 
-        fun bind(position: Int)  {
-            val colour = colours[position]
+        fun bind(colour: Colour)  {
             val backgroundColor = Color.parseColor(colour.hex)
             val textColor = Palette.Swatch(backgroundColor, 1).bodyTextColor
             binding.colorCard.backgroundTintList = ColorStateList.valueOf(backgroundColor)
-            binding.colorName.visibility = View.GONE
 
             binding.selection.apply {
-                visibility = View.VISIBLE
                 text = String.format(context.resources.getString(R.string.colour), colour.name, colour.hex)
                 setTextColor(textColor)
                 buttonTintList = ColorStateList.valueOf(Palette.Swatch(backgroundColor, 1).titleTextColor)
-                isChecked = tracker?.isSelected(position.toLong())!!
+                isChecked = tracker.isSelected(bindingAdapterPosition.toLong())
             }
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): CreateAllViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = RecyclerviewItemCreateMultipleBinding.inflate(
+                    layoutInflater, parent, false
+                )
+                return CreateAllViewHolder(binding)
+            }
+        }
+    }
+
+    private object ColourDiffCallback : DiffUtil.ItemCallback<Colour>() {
+        override fun areItemsTheSame(oldItem: Colour, newItem: Colour): Boolean {
+            return oldItem.hex == newItem.hex
+        }
+
+        override fun areContentsTheSame(oldItem: Colour, newItem: Colour): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    companion object {
+        private lateinit var tracker: SelectionTracker<Long>
+        fun initTracker(selectionTracker: SelectionTracker<Long>) {
+            tracker = selectionTracker
         }
     }
 }
