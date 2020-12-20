@@ -1,63 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardElevation="2dp"
-    app:cardUseCompatPadding="true"
     >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+        <import type="android.os.Build.VERSION" />
+        <import type="android.os.Build.VERSION_CODES" />
+        <import type="android.view.View" />
+
+        <variable
+            name="accent"
+            type="app.akilesh.qacc.model.Accent"
+            />
+        <variable
+            name="listener"
+            type="app.akilesh.qacc.ui.home.accent.AccentListAdapter.ClickListeners"
+            />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_gravity="center"
+        style="@style/Widget.App.MaterialCardView.Variant"
+        android:longClickable="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:checkable="true"
+        isEnabled="@{accent.pkgName}"
+        isChecked="@{accent.pkgName}"
+        android:onClick="@{() -> listener.onClick(accent.pkgName)}"
         >
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/color_name"
-            android:layout_width="0dp"
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
-            />
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            >
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/light_accent"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/color_name"
-            app:layout_constraintEnd_toEndOf="@id/color_name"
-            app:layout_constraintTop_toBottomOf="@id/color_name"
-            app:layout_constraintBottom_toTopOf="@id/dark_accent"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:drawableStart="@drawable/ic_palette_24dp"
-            android:drawablePadding="8dp"
-            android:singleLine="true"
-            android:ellipsize="end"
-            />
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:text="@{accent.name}"
+                />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/dark_accent"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/light_accent"
-            app:layout_constraintEnd_toEndOf="@id/light_accent"
-            app:layout_constraintStart_toStartOf="@id/light_accent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:drawableStart="@drawable/ic_outline_nights_stay"
-            android:drawablePadding="8dp"
-            android:singleLine="true"
-            android:ellipsize="end"
-            />
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:drawablePadding="8dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                drawable="@{VERSION.SDK_INT >= VERSION_CODES.Q}"
+                android:text="@{accent.colorLight}"
+                drawableTint="@{accent.colorLight}"
+                />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                app:drawableStartCompat="@drawable/ic_outline_nights_stay"
+                android:drawablePadding="8dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="@{accent.colorDark}"
+                drawableTint="@{accent.colorDark}"
+                android:visibility="@{VERSION.SDK_INT >= VERSION_CODES.Q ? View.VISIBLE : View.GONE}"
+                />
 
-</com.google.android.material.card.MaterialCardView>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>
