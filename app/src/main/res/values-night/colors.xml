@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="colorPrimary">#28BDD7</color>
-    <color name="remove">#CF6679</color>
-    <color name="colorBackground">@android:color/black</color>
-    <color name="colorBackgroundVariant">#171717</color>
-    <color name="colorSurfaceVariant">#171717</color>
-    <color name="textOnCard">#D9D9D9</color>
-</resources>

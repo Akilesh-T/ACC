@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#0C80A7</color>
-    <color name="colorPrimaryVariant">#006187</color>
-    <color name="colorAccent">#03DAC5</color>
-    <color name="remove">#B00020</color>
-    <color name="colorBackground">@android:color/white</color>
-    <color name="colorBackgroundVariant">#F5F5F5</color>
-    <color name="colorSurfaceVariant">#E8E8E8</color>
-    <color name="textOnCard">#434343</color>
+
+    <!--day-->
+    <color name="acc_ocean">#0C80A7</color>
+    <color name="acc_ocean_deep">#006187</color>
+    <color name="acc_red">#B00020</color>
+    <color name="acc_white">#FFFFFF</color>
+    <color name="acc_grey_100">#F5F5F5</color>
+    <color name="acc_grey_variant">#E8E8E8</color>
+    <color name="acc_on_card">#434343</color>
+
+    <!--night-->
+    <color name="acc_ocean_dark">#28BDD7</color>
+    <color name="acc_red_dark">#CF6679</color>
+    <color name="acc_black">#000000</color>
+    <color name="acc_grey_dark">#171717</color>
+    <color name="acc_on_card_dark">#D9D9D9</color>
+
+    <!--bars-->
+    <color name="system_bar">#5F000000</color>
 </resources>

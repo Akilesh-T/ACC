@@ -1,24 +1,5 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="android:colorBackground">@color/colorBackground</item>
-        <item name="colorSurface">@color/colorBackground</item>
-        <item name="android:statusBarColor">?colorSurface</item>
-        <item name="dialogCornerRadius">8dp</item>
-        <item name="materialCardViewStyle">@style/Widget.App.MaterialCardView</item>
-        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
-    </style>
-
-    <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
     <style name="ShapeAppearanceOverlay.App.MaterialCardView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
@@ -30,7 +11,7 @@
 
     <style name="Widget.App.MaterialCardView" parent="Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.MaterialCardView</item>
-        <item name="cardBackgroundColor">@color/colorBackgroundVariant</item>
+        <item name="cardBackgroundColor">?attr/colorSecondary</item>
         <item name="cardElevation">0dp</item>
         <item name="cardUseCompatPadding">true</item>
     </style>
@@ -40,9 +21,9 @@
     </style>
 
     <style name="Widget.App.MaterialCardView.Variant">
-        <item name="cardBackgroundColor">@color/colorBackground</item>
-        <item name="strokeColor">@color/colorSurfaceVariant</item>
-        <item name="strokeWidth">1.5dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <item name="strokeColor">?attr/colorSecondaryVariant</item>
+        <item name="strokeWidth">2dp</item>
     </style>
 
     <style name="ShapeAppearanceOverlay.BottomSheetDialog" parent="">
@@ -72,7 +53,7 @@
     </style>
 
     <style name="TextAppearance.Card.Body2" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">@color/textOnCard</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
     </style>
 
 </resources>
