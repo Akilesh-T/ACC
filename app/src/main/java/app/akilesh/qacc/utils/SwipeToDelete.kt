@@ -11,12 +11,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
+import app.akilesh.qacc.utils.AppUtils.getThemeColor
 
 abstract class SwipeToDelete(context: Context) :
     ItemTouchHelper.Callback() {
     private val clearPaint: Paint = Paint()
     private val background: ColorDrawable = ColorDrawable()
-    private val backgroundColor: Int = ContextCompat.getColor(context, R.color.remove)
+    private val backgroundColor: Int = context.getThemeColor(R.attr.colorError)
     private val deleteDrawable: Drawable?
     private val intrinsicWidth: Int
     private val intrinsicHeight: Int

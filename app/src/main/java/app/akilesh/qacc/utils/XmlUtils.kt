@@ -52,18 +52,13 @@ object XmlUtils {
 
         document.appendChild(rootElement)
 
-        try {
-            val transformer = transformerFactory.newTransformer()
-            transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8")
-            transformer.setOutputProperty(OutputKeys.STANDALONE, "no")
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes")
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4")
-            val source = DOMSource(document)
-            transformer.transform(source, StreamResult(file))
-        }
-        catch (e: Exception) {
-            throw RuntimeException("Cannot build the result", e)
-        }
+        val transformer = transformerFactory.newTransformer()
+        transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8")
+        transformer.setOutputProperty(OutputKeys.STANDALONE, "no")
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4")
+        val source = DOMSource(document)
+        transformer.transform(source, StreamResult(file))
     }
 
     fun createColors(file: File, colorLight: String, colorDark: String, hasNokiaBlue: Boolean) {
@@ -88,17 +83,12 @@ object XmlUtils {
         }
         document.appendChild(resourcesElement)
 
-        try {
-            val transformer = transformerFactory.newTransformer()
-            transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8")
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes")
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4")
-            val source = DOMSource(document)
-            transformer.transform(source, StreamResult(file))
-        }
-        catch (e: Exception) {
-            throw RuntimeException("Cannot build the result", e)
-        }
+        val transformer = transformerFactory.newTransformer()
+        transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8")
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4")
+        val source = DOMSource(document)
+        transformer.transform(source, StreamResult(file))
     }
 
     private fun addColor(document: Document, resourceElement: Element, name: String, value: String) {

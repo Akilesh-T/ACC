@@ -13,10 +13,9 @@ class LaunchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //Try to get root access
-        Shell.su().exec()
+        if (Shell.rootAccess().not()) Shell.su().exec()
 
-        if (!Shell.rootAccess()) {
+        if (Shell.rootAccess().not()) {
             Log.e("ACC-SU", "Unable to get root access")
             /* Possible scenarios:
              * The user might not have granted access

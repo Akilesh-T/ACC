@@ -10,9 +10,10 @@ import com.topjohnwu.superuser.Shell
 class App: Application() {
 
     init {
-        Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR)
-        Shell.Config.verboseLogging(true)
-        Shell.Config.setTimeout(10)
+        Shell.enableVerboseLogging = true
+        Shell.setDefaultBuilder(Shell.Builder.create()
+            .setFlags(Shell.FLAG_REDIRECT_STDERR)
+            .setTimeout(10))
     }
     
     override fun onCreate() {

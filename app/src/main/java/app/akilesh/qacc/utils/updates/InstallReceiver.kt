@@ -13,9 +13,10 @@ class InstallReceiver : BroadcastReceiver() {
         when (val status = intent.getIntExtra(PackageInstaller.EXTRA_STATUS, -1)) {
 
             PackageInstaller.STATUS_PENDING_USER_ACTION -> {
-                val activityIntent =
-                    intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
-                context.startActivity(activityIntent!!.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                val activityIntent = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
+                activityIntent?.let {
+                    context.startActivity(it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                }
             }
 
             // PackageInstaller.STATUS_SUCCESS -> {}

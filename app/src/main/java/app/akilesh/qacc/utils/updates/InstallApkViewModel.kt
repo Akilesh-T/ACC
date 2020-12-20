@@ -22,11 +22,11 @@ class InstallApkViewModel(app: Application) : AndroidViewModel(app) {
 
     fun install(apkUri: Uri) {
         viewModelScope.launch(Dispatchers.Main) {
-            installCoroutine(apkUri)
+            installUpdate(apkUri)
         }
     }
 
-    private suspend fun installCoroutine(apkUri: Uri) =
+    private suspend fun installUpdate(apkUri: Uri) =
         withContext(Dispatchers.IO) {
             resolver.openInputStream(apkUri)?.use { apkStream ->
                 val length =
