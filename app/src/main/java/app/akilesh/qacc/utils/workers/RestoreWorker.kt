@@ -3,8 +3,6 @@ package app.akilesh.qacc.utils.workers
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.O
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
@@ -12,7 +10,10 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import app.akilesh.qacc.R
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 class RestoreWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
@@ -25,15 +26,13 @@ class RestoreWorker(context: Context, params: WorkerParameters) : CoroutineWorke
     private val channelId = RestoreWorker::class.java.simpleName
 
     private fun createNotificationChannel() {
-        if (SDK_INT >= O) {
-            var notificationChannel =
-                notificationManager.getNotificationChannel(channelId)
-            if (notificationChannel == null) {
-                notificationChannel = NotificationChannel(
-                    channelId, name, NotificationManager.IMPORTANCE_LOW
-                )
-                notificationManager.createNotificationChannel(notificationChannel)
-            }
+        var notificationChannel =
+            notificationManager.getNotificationChannel(channelId)
+        if (notificationChannel == null) {
+            notificationChannel = NotificationChannel(
+                channelId, name, NotificationManager.IMPORTANCE_LOW
+            )
+            notificationManager.createNotificationChannel(notificationChannel)
         }
     }
 

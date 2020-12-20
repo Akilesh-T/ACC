@@ -3,8 +3,6 @@ package app.akilesh.qacc.utils.workers
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.O
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
@@ -31,15 +29,13 @@ class CreateAllWorker(context: Context, params: WorkerParameters) : CoroutineWor
     private val title = context.getString(R.string.creating)
 
     private fun createNotificationChannel() {
-        if (SDK_INT >= O) {
-            var notificationChannel =
-                notificationManager.getNotificationChannel(channelId)
-            if (notificationChannel == null) {
-                notificationChannel = NotificationChannel(
-                    channelId, name, NotificationManager.IMPORTANCE_LOW
-                )
-                notificationManager.createNotificationChannel(notificationChannel)
-            }
+        var notificationChannel =
+            notificationManager.getNotificationChannel(channelId)
+        if (notificationChannel == null) {
+            notificationChannel = NotificationChannel(
+                channelId, name, NotificationManager.IMPORTANCE_LOW
+            )
+            notificationManager.createNotificationChannel(notificationChannel)
         }
     }
 
