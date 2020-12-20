@@ -2,7 +2,8 @@ package app.akilesh.qacc.ui.colorpicker.sheets
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -11,13 +12,17 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.navGraphViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.palette.graphics.Palette
 import app.akilesh.qacc.Const.Colors.colorSpaces
+import app.akilesh.qacc.Const.Colors.customHex
+import app.akilesh.qacc.Const.Colors.editDark
+import app.akilesh.qacc.Const.Colors.editLight
+import app.akilesh.qacc.Const.Colors.editType
+import app.akilesh.qacc.Const.Colors.selectedColor
 import app.akilesh.qacc.R
 import app.akilesh.qacc.databinding.CustomColorPickerBinding
-import app.akilesh.qacc.model.Accent
-import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
+import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.colorpicker.ZoomOutPageTransformer
 import app.akilesh.qacc.ui.colorpicker.colorspace.ColorSpaceAdapter
 import app.akilesh.qacc.ui.colorpicker.colorspace.ColorSpaceViewModel
@@ -38,17 +43,13 @@ class CustomColorPicker : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = CustomColorPickerBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val viewModel: ColorPickerViewModel by navGraphViewModels(R.id.nav_graph)
-        val isDark = requireArguments().getBoolean("isDark")
-        val fromCustomise = requireArguments().getBoolean("fromCustomise", false)
 
         (dialog as BottomSheetDialog).behavior.state = BottomSheetBehavior.STATE_EXPANDED
         binding.pager.apply {
@@ -57,16 +58,14 @@ class CustomColorPicker : BottomSheetDialogFragment() {
             adapter = ColorSpaceAdapter(this@CustomColorPicker, colorSpaceViewModel)
         }
 
-        colorSpaceViewModel.selectColor(
-            if (fromCustomise)
-                Color.parseColor(
-                    if (isDark) requireArguments().getString("dark")
-                    else requireArguments().getString("light")
-                )
-            else requireContext().getColorAccent()
-        )
+        val previousStateHandle = findNavController().previousBackStackEntry?.savedStateHandle
 
-        setupTextInputLayout(colorSpaceViewModel.selectedColor.value!!.first)
+        val prevHex = previousStateHandle?.get<String>(customHex)
+        val color = if (prevHex != null && prevHex.isNotBlank()) Color.parseColor(prevHex)
+        else requireContext().getColorAccent()
+
+        colorSpaceViewModel.selectColor(color)
+        setupTextInputLayout(color)
 
         TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
             tab.text = colorSpaces[position]
@@ -74,41 +73,22 @@ class CustomColorPicker : BottomSheetDialogFragment() {
 
         binding.cancel.setOnClickListener { dismiss() }
         binding.ok.setOnClickListener {
-            val hex = if (colorSpaceViewModel.selectedColor.value != null)
-                toHex(colorSpaceViewModel.selectedColor.value!!.first)
-            else String()
-            if (fromCustomise) {
-                if (isDark)
-                    viewModel.accent.value = Accent(
-                        viewModel.accent.value!!.pkgName,
-                        viewModel.accent.value!!.name,
-                        viewModel.accent.value!!.colorLight,
-                        hex
-                    )
-                else
-                    viewModel.accent.value = Accent(
-                        viewModel.accent.value!!.pkgName,
-                        viewModel.accent.value!!.name,
-                        hex,
-                        viewModel.accent.value!!.colorDark
-                    )
-            } else {
-                if (isDark)
-                    viewModel.accent.value = Accent(
-                        String(),
-                        String(),
-                        viewModel.accent.value!!.colorLight,
-                        hex
-                    )
-                else
-                    viewModel.accent.value = Accent(
-                        String(),
-                        String(),
-                        hex,
-                        String()
-                    )
+            colorSpaceViewModel.selectedColor.value?.let {
+                val hex = toHex(it.first)
+
+                // Edit
+                when(previousStateHandle?.get<String>(editType)) {
+                    editLight -> previousStateHandle.set(editLight, hex)
+                    editDark -> previousStateHandle.set(editDark, hex)
+                }
+
+                // Select
+                previousStateHandle?.set(
+                    selectedColor, Colour(hex, getString(R.string.color_custom))
+                )
+
+                dismiss()
             }
-            dismiss()
         }
     }
 
@@ -166,7 +146,7 @@ class CustomColorPicker : BottomSheetDialogFragment() {
 
             hex.apply {
                 setTextColor(colorOnPreview)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (SDK_INT >= Q) {
                     textCursorDrawable?.setTintList(colorOnPreview)
                     textSelectHandle?.setTintList(colorOnPreview)
                     textSelectHandleLeft?.setTintList(colorOnPreview)
