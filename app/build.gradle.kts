@@ -1,14 +1,14 @@
 plugins {
     id(BuildPlugins.androidApplication)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.kotlinAndroidExtensions)
+    id(BuildPlugins.kotlinParcelize)
     id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.navigationSafeArgs)
 }
 
 android {
     compileSdkVersion(AndroidSdk.compile)
-    buildToolsVersion = "29.0.3"
+    buildToolsVersion = "30.0.2"
     defaultConfig {
         applicationId = "app.akilesh.qacc"
         minSdkVersion(AndroidSdk.min)
@@ -17,15 +17,13 @@ android {
         versionName = "1.91"
         vectorDrawables.useSupportLibrary = true
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = mapOf("room.incremental" to "true")
-            }
-        }
+        javaCompileOptions.annotationProcessorOptions.arguments(
+            mapOf("room.incremental" to "true")
+        )
     }
     buildFeatures {
+        dataBinding = true
         viewBinding = true
-        compose = false
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -54,10 +52,10 @@ dependencies {
     implementation(fileTree(mapOf( "dir" to "libs", "include" to listOf("*.jar"))))
     implementation(Libraries.kotlinStdLib)
     implementation(Libraries.appCompat)
-    implementation(Libraries.ktxCore)
+    implementation(Libraries.coreKtx)
     implementation(Libraries.constraintLayout)
-    implementation(Libraries.KtxPreference)
-    implementation(Libraries.KtxPalette)
+    implementation(Libraries.preferenceKtx)
+    implementation(Libraries.paletteKtx)
 
     // Room components
     implementation(Libraries.roomRuntime)
@@ -78,7 +76,8 @@ dependencies {
     implementation(Libraries.navigationFragment)
     implementation(Libraries.navigationUI)
 
-    implementation(Libraries.ktxFragment)
+    implementation(Libraries.activityKtx)
+    implementation(Libraries.fragmentKtx)
 
     implementation(Libraries.materialComponents)
 
@@ -87,6 +86,7 @@ dependencies {
 
     implementation(Libraries.assentCore)
     implementation(Libraries.assentRationales)
+    implementation(Libraries.assentCoroutines)
 
     implementation(Libraries.appUpdater)
 
@@ -103,4 +103,6 @@ dependencies {
 
     api(Libraries.bcProvider)
     api(Libraries.bcPKIX)
+
+    implementation(Libraries.paging)
 }
