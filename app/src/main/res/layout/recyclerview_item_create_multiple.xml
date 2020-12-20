@@ -7,13 +7,15 @@
     style="@style/Widget.App.MaterialCardView.Elevated"
     >
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/color_name"
-        style="@style/TextAppearance.MaterialComponents.Body2"
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/selection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:button="@drawable/create_all_selector"
+        android:clickable="false"
+        android:paddingHorizontal="8dp"
         android:layout_margin="8dp"
+        android:layout_gravity="center_vertical"
         />
 
 </com.google.android.material.card.MaterialCardView>

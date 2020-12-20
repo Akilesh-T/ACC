@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
     <com.google.android.material.card.MaterialCardView
@@ -28,7 +28,8 @@
             app:counterEnabled="true"
             app:counterMaxLength="6"
             android:importantForAutofill="noExcludeDescendants"
-            app:endIconMode="clear_text">
+            app:endIconMode="clear_text"
+            >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/hex"

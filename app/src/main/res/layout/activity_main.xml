@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -22,9 +25,10 @@
             app:layout_constraintBottom_toTopOf="@id/fragment"
             android:layout_margin="8dp"
             app:cardCornerRadius="8dp"
-            android:elevation="8dp"
+            android:elevation="6dp"
             app:strokeWidth="1dp"
-            app:strokeColor="?colorAccent">
+            app:strokeColor="?attr/colorAccent"
+            >
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -41,7 +45,8 @@
                     app:layout_constraintEnd_toStartOf="@id/update"
                     android:layout_margin="8dp"
                     style="@style/TextAppearance.MaterialComponents.Body2"
-                    android:text="@string/appupdater_update_available" />
+                    android:text="@string/appupdater_update_available"
+                    />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/update"
@@ -53,7 +58,8 @@
                     android:layout_margin="4dp"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     app:icon="@drawable/ic_round_update"
-                    android:text="@string/appupdater_btn_update" />
+                    android:text="@string/appupdater_btn_update"
+                    />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -69,7 +75,8 @@
             app:layout_constraintTop_toBottomOf="@id/update_card"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"
-            tools:ignore="FragmentTagUsage" />
+            tools:ignore="FragmentTagUsage"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
@@ -78,24 +85,20 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:hideOnScroll="true"
-        app:layout_scrollFlags="scroll|enterAlways"
         app:fabAlignmentMode="center"
         app:navigationIcon="@drawable/ic_twotone_home"
-        app:menu="@menu/main_menu"/>
+        app:menu="@menu/main_menu"
+        />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/x_fab"
+        android:id="@+id/fab"
         app:layout_anchor="@id/bottom_app_bar"
-        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
-        android:textAllCaps="false"
-        android:text="@string/create_new"
-        android:textColor="?colorPrimary"
-        app:iconTint="@null"
-        android:backgroundTint="@color/colorBackgroundVariant"
-        app:strokeWidth="1dp"
-        app:strokeColor="?colorPrimary"
-        app:icon="@drawable/ic_plus_google_colors"/>
+        app:backgroundTint="?attr/colorSurface"
+        app:tint="@null"
+        app:srcCompat="@drawable/ic_plus_google_colors"
+        android:contentDescription="@string/create_new"
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

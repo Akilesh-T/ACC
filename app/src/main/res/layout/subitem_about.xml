@@ -8,4 +8,5 @@
     android:layout_margin="12dp"
     android:drawablePadding="16dp"
     android:gravity="center_vertical"
+    android:drawableTint="?attr/colorPrimary"
     />

@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/accent_list_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:clipToPadding="false"
         tools:listitem="@layout/recyclerview_item_color_preview"
         />
 
@@ -36,6 +37,7 @@
         app:backgroundTint="?colorSurface"
         app:srcCompat="@drawable/ic_plus_google_colors"
         app:tint="@null"
+        android:contentDescription="@string/create_all"
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
