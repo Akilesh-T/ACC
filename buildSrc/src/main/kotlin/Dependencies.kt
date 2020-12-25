@@ -1,5 +1,5 @@
 const val kotlinVersion = "1.4.21"
-const val navigationVersion = "2.3.1"
+const val navigationVersion = "2.3.2"
 
 
 object BuildPlugins {
@@ -30,14 +30,14 @@ object Libraries {
     private object Versions {
         const val jetpack = "1.2.0"
         const val constraintLayout = "2.0.4"
-        const val core = "1.5.0-alpha04"
+        const val core = "1.5.0-alpha05"
         const val preference = "1.1.1"
         const val palette = "1.0.0"
-        const val room = "2.3.0-alpha03"
+        const val room = "2.3.0-alpha04"
         const val lifecycle = "2.2.0"
         const val coroutines = "1.4.2"
-        const val fragment = "1.3.0-beta01"
-        const val activity = "1.2.0-beta01"
+        const val fragment = "1.3.0-rc01"
+        const val activity = "1.2.0-rc01"
         const val material = "1.3.0-beta01"
         const val libSu = "3.0.2"
         const val assent = "3.0.0-RC4"
@@ -48,9 +48,9 @@ object Libraries {
         const val recyclerViewSelection = "1.1.0-rc03"
         const val viewpager2 = "1.0.0"
         const val andColorPicker = "0.5.0"
-        const val bouncyCastleProvider = "1.65.01"
-        const val bouncyCastlePKIX = "1.65"
-        const val paging = "3.0.0-alpha09"
+        const val bouncyCastleProvider = "1.67"
+        const val bouncyCastlePKIX = "1.67"
+        const val paging = "3.0.0-alpha11"
     }
 
     const val kotlinStdLib        = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"

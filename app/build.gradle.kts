@@ -8,7 +8,7 @@ plugins {
 
 android {
     compileSdkVersion(AndroidSdk.compile)
-    buildToolsVersion = "30.0.2"
+    buildToolsVersion = "30.0.3"
     defaultConfig {
         applicationId = "app.akilesh.qacc"
         minSdkVersion(AndroidSdk.min)
