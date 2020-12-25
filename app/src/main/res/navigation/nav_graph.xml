@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/home"
         android:name="app.akilesh.qacc.ui.home.HomeFragment"
-        tools:layout="@layout/home_fragment">
+        tools:layout="@layout/fragment_home">
 
         <action
             android:id="@+id/action_home_to_accent_info"
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/settings"
-        android:name="app.akilesh.qacc.ui.preferences.SettingsFragment" />
+        android:name="app.akilesh.qacc.ui.preference.SettingsFragment" />
 
     <fragment
         android:id="@+id/info"
@@ -27,7 +27,7 @@
     <fragment
         android:id="@+id/color_picker"
         android:name="app.akilesh.qacc.ui.colorpicker.ColorPickerFragment"
-        tools:layout="@layout/color_picker_fragment">
+        tools:layout="@layout/fragment_color_picker">
 
         <action
             android:id="@+id/to_dark"
@@ -43,7 +43,7 @@
     <fragment
         android:id="@+id/dark_accent"
         android:name="app.akilesh.qacc.ui.colorpicker.DarkColorPickerFragment"
-        tools:layout="@layout/color_picker_fragment">
+        tools:layout="@layout/fragment_color_picker">
 
         <argument
             android:name="colorLight"
@@ -54,7 +54,7 @@
     <fragment
         android:id="@+id/customisation"
         android:name="app.akilesh.qacc.ui.colorpicker.customise.ColorCustomisationFragment"
-        tools:layout="@layout/color_customisation_fragment">
+        tools:layout="@layout/fragment_color_customisation">
 
         <argument
             android:name="lightAccent"
@@ -73,12 +73,12 @@
     <fragment
         android:id="@+id/backup_fragment"
         android:name="app.akilesh.qacc.ui.backup.BackupRestoreFragment"
-        tools:layout="@layout/backup_restore_fragment" />
+        tools:layout="@layout/fragment_backup_restore" />
         
     <fragment
     	android:id="@+id/create_all_fragment"
-    	android:name="app.akilesh.qacc.ui.createmultiple.CreateAllFragment"
-    	tools:layout="@layout/create_all_fragment"
+    	android:name="app.akilesh.qacc.ui.createmultiple.CreateMultipleFragment"
+    	tools:layout="@layout/fragment_create_multiple"
      />
 
     <action android:id="@+id/action_global_home"
@@ -93,25 +93,25 @@
     <dialog
         android:id="@+id/color_picker_dialog"
         android:name="app.akilesh.qacc.ui.colorpicker.sheets.ColorPickerSheet"
-        tools:layout="@layout/color_preview"
+        tools:layout="@layout/sheet_color_preview"
         />
 
     <dialog
         android:id="@+id/color_palette_dialog"
         android:name="app.akilesh.qacc.ui.colorpicker.sheets.ColorPaletteSheet"
-        tools:layout="@layout/md_color_palette"
+        tools:layout="@layout/sheet_md_color_palette"
         />
 
     <dialog
         android:id="@+id/custom_color_picker"
         android:name="app.akilesh.qacc.ui.colorpicker.sheets.CustomColorPicker"
-        tools:layout="@layout/custom_color_picker"
+        tools:layout="@layout/sheet_custom_color_picker"
         />
 
     <dialog
         android:id="@+id/accent_info"
         android:name="app.akilesh.qacc.ui.home.accent.info.AccentInfoSheet"
-        tools:layout="@layout/accent_info_fragment"
+        tools:layout="@layout/sheet_accent_info"
         >
         <argument
             android:name="lightAccent"

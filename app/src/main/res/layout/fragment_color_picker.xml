@@ -207,7 +207,7 @@
 
     <include
         android:id="@+id/nav_bar"
-        layout="@layout/color_picker_nav_bar"
+        layout="@layout/layout_color_picker_nav_bar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"

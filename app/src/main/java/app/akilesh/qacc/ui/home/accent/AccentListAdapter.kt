@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import app.akilesh.qacc.databinding.RecyclerviewItemAccentsBinding
+import app.akilesh.qacc.databinding.ItemAccentsBinding
 import app.akilesh.qacc.model.Accent
 
 class AccentListAdapter internal constructor(
@@ -18,7 +18,7 @@ class AccentListAdapter internal constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         AccentViewHolder.from(parent)
 
-    class AccentViewHolder private constructor(val binding: RecyclerviewItemAccentsBinding):
+    class AccentViewHolder private constructor(val binding: ItemAccentsBinding):
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(nullableAccent: Accent?, listeners: ClickListeners) {
@@ -33,7 +33,7 @@ class AccentListAdapter internal constructor(
         companion object {
             fun from(parent: ViewGroup): AccentViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RecyclerviewItemAccentsBinding.inflate(
+                val binding = ItemAccentsBinding.inflate(
                     layoutInflater, parent, false
                 )
                 return AccentViewHolder(binding)

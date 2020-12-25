@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import app.akilesh.qacc.Const.Colors.mdColorPalette
 import app.akilesh.qacc.Const.Colors.selectedColor
-import app.akilesh.qacc.databinding.MdColorPaletteBinding
+import app.akilesh.qacc.databinding.SheetMdColorPaletteBinding
 import app.akilesh.qacc.ui.colorpicker.MDColorsViewPagerAdapter
 import app.akilesh.qacc.ui.colorpicker.ZoomOutPageTransformer
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
@@ -22,14 +22,14 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class ColorPaletteSheet: BottomSheetDialogFragment() {
 
-    private lateinit var binding: MdColorPaletteBinding
+    private lateinit var binding: SheetMdColorPaletteBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = MdColorPaletteBinding.inflate(layoutInflater, container, false)
+        binding = SheetMdColorPaletteBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

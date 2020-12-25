@@ -16,22 +16,22 @@ import app.akilesh.qacc.Const.Links.xdaThread
 import app.akilesh.qacc.Const.Paths.backupFolder
 import app.akilesh.qacc.Const.Paths.updatesFolder
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.InfoFragmentBinding
+import app.akilesh.qacc.databinding.FragmentInfoBinding
 import app.akilesh.qacc.model.Info.Header
 import app.akilesh.qacc.model.Info.InfoItem
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 import java.io.File
 
-private lateinit var binding: InfoFragmentBinding
-
 class InfoFragment: Fragment() {
+
+    private lateinit var binding: FragmentInfoBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = InfoFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
 

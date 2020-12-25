@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.RecyclerviewItemCreateMultipleBinding
+import app.akilesh.qacc.databinding.ItemCreateMultipleBinding
 import app.akilesh.qacc.model.Colour
 
 class CreateMultipleAdapter internal constructor()
@@ -30,7 +30,7 @@ class CreateMultipleAdapter internal constructor()
     override fun onBindViewHolder(holder: CreateAllViewHolder, position: Int)
             = holder.bind(getItem(position))
 
-    class CreateAllViewHolder private constructor(val binding: RecyclerviewItemCreateMultipleBinding)
+    class CreateAllViewHolder private constructor(val binding: ItemCreateMultipleBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
             object : ItemDetailsLookup.ItemDetails<Long>() {
@@ -55,7 +55,7 @@ class CreateMultipleAdapter internal constructor()
         companion object {
             fun from(parent: ViewGroup): CreateAllViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RecyclerviewItemCreateMultipleBinding.inflate(
+                val binding = ItemCreateMultipleBinding.inflate(
                     layoutInflater, parent, false
                 )
                 return CreateAllViewHolder(binding)

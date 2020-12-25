@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.HomeFragmentBinding
+import app.akilesh.qacc.databinding.FragmentHomeBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.ui.home.accent.AccentListAdapter
 import app.akilesh.qacc.ui.home.accent.AccentViewModel
@@ -43,14 +43,14 @@ import kotlinx.coroutines.withContext
 class HomeFragment: Fragment() {
 
     private val accentViewModel: AccentViewModel by viewModels()
-    private lateinit var binding: HomeFragmentBinding
+    private lateinit var binding: FragmentHomeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = HomeFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 

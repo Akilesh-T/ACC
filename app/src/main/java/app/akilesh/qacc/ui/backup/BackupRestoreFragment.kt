@@ -31,7 +31,7 @@ import app.akilesh.qacc.Const.Paths.busyBox
 import app.akilesh.qacc.Const.Paths.modPath
 import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.BackupRestoreFragmentBinding
+import app.akilesh.qacc.databinding.FragmentBackupRestoreBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.BackupFile
 import app.akilesh.qacc.model.Colour
@@ -49,7 +49,7 @@ import java.io.FileInputStream
 
 class BackupRestoreFragment: Fragment() {
 
-    private lateinit var binding: BackupRestoreFragmentBinding
+    private lateinit var binding: FragmentBackupRestoreBinding
     private val viewModel: BackupRestoreViewModel by viewModels()
     private lateinit var tempFolder: File
 
@@ -58,7 +58,7 @@ class BackupRestoreFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = BackupRestoreFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentBackupRestoreBinding.inflate(inflater, container, false)
         return binding.root
     }
 

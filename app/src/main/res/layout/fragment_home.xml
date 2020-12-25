@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recycler_view"
-        tools:listitem="@layout/recyclerview_item_accents"
+        tools:listitem="@layout/item_accents"
         android:clipToPadding="false"
         android:paddingHorizontal="8dp"
         android:paddingBottom="72dp"

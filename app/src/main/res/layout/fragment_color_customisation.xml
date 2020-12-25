@@ -19,7 +19,7 @@
 
             <include
                 android:id="@+id/preview_light"
-                layout="@layout/recyclerview_item_color_preview"
+                layout="@layout/item_color_preview"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
@@ -33,7 +33,7 @@
 
             <include
                 android:id="@+id/preview_dark"
-                layout="@layout/recyclerview_item_color_preview"
+                layout="@layout/item_color_preview"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
@@ -89,7 +89,7 @@
 
     <include
         android:id="@+id/nav_bar"
-        layout="@layout/color_picker_nav_bar"
+        layout="@layout/layout_color_picker_nav_bar"
         android:layout_alignParentBottom="true"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"

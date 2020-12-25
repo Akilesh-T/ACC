@@ -1,4 +1,4 @@
-package app.akilesh.qacc.ui.preferences
+package app.akilesh.qacc.ui.preference
 
 import android.content.res.ColorStateList
 import android.os.Build.VERSION.SDK_INT

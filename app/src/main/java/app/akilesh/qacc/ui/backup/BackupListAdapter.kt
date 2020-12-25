@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.RecyclerviewItemBackupsBinding
+import app.akilesh.qacc.databinding.ItemBackupsBinding
 import app.akilesh.qacc.model.BackupFile
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
@@ -32,7 +32,7 @@ class BackupListAdapter(
 
     override fun getItemCount() = filesList.size
 
-    class BackupsViewHolder private constructor(val binding: RecyclerviewItemBackupsBinding)
+    class BackupsViewHolder private constructor(val binding: ItemBackupsBinding)
         : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
@@ -68,7 +68,7 @@ class BackupListAdapter(
         companion object {
             fun from(parent: ViewGroup): BackupsViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RecyclerviewItemBackupsBinding
+                val binding = ItemBackupsBinding
                     .inflate(layoutInflater, parent, false)
                 return BackupsViewHolder(binding)
             }

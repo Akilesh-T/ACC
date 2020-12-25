@@ -32,7 +32,7 @@ import app.akilesh.qacc.Const.Colors.brandColors
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.Const.selected
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.CreateAllFragmentBinding
+import app.akilesh.qacc.databinding.FragmentCreateMultipleBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.home.accent.AccentViewModel
@@ -45,9 +45,9 @@ import com.afollestad.assent.rationale.createDialogRationale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CreateAllFragment: Fragment() {
+class CreateMultipleFragment: Fragment() {
 
-    private lateinit var binding: CreateAllFragmentBinding
+    private lateinit var binding: FragmentCreateMultipleBinding
     private val viewModel: CreateMultipleViewModel by viewModels()
 
     override fun onCreateView(
@@ -55,7 +55,7 @@ class CreateAllFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = CreateAllFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentCreateMultipleBinding.inflate(inflater, container, false)
         return binding.root
     }
 

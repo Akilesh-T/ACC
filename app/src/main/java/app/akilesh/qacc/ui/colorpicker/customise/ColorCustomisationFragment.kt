@@ -32,7 +32,7 @@ import app.akilesh.qacc.Const.Colors.editLight
 import app.akilesh.qacc.Const.Colors.editType
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.ColorCustomisationFragmentBinding
+import app.akilesh.qacc.databinding.FragmentColorCustomisationBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.ui.colorpicker.ColorPickerViewModel
 import app.akilesh.qacc.ui.home.accent.AccentViewModel
@@ -41,7 +41,7 @@ import app.akilesh.qacc.utils.AppUtils.showSnackBar
 
 class ColorCustomisationFragment: Fragment() {
 
-    private lateinit var binding: ColorCustomisationFragmentBinding
+    private lateinit var binding: FragmentColorCustomisationBinding
     private val args: ColorCustomisationFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -49,7 +49,7 @@ class ColorCustomisationFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ColorCustomisationFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentColorCustomisationBinding.inflate(inflater, container, false)
         return binding.root
     }
 

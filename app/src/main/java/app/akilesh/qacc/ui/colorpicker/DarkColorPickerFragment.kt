@@ -28,7 +28,7 @@ import app.akilesh.qacc.Const.Colors.customHex
 import app.akilesh.qacc.Const.Colors.selectedColor
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
+import app.akilesh.qacc.databinding.FragmentColorPickerBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.home.accent.AccentViewModel
@@ -43,14 +43,14 @@ import com.afollestad.assent.runWithPermissions
 
 class DarkColorPickerFragment: Fragment() {
 
-    private lateinit var binding: ColorPickerFragmentBinding
+    private lateinit var binding: FragmentColorPickerBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ColorPickerFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentColorPickerBinding.inflate(inflater, container, false)
         return binding.root
     }
 

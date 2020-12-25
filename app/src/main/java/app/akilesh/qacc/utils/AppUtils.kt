@@ -29,7 +29,7 @@ import app.akilesh.qacc.Const.Paths.busyBox
 import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.ColorPickerFragmentBinding
+import app.akilesh.qacc.databinding.FragmentColorPickerBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.utils.XmlUtils.createColors
@@ -129,7 +129,7 @@ object AppUtils {
     }
 
     fun setPreview(
-        binding: ColorPickerFragmentBinding,
+        binding: FragmentColorPickerBinding,
         colour: Colour?,
         isSystem: Boolean = false
     ) {

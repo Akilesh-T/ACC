@@ -21,7 +21,7 @@ import androidx.navigation.fragment.navArgs
 import app.akilesh.qacc.Const.Paths.overlayPath
 import app.akilesh.qacc.Const.prefix
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.AccentInfoFragmentBinding
+import app.akilesh.qacc.databinding.SheetAccentInfoBinding
 import app.akilesh.qacc.model.Accent
 import app.akilesh.qacc.model.AccentInfo
 import app.akilesh.qacc.ui.home.accent.AccentViewModel
@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 
 class AccentInfoSheet: BottomSheetDialogFragment() {
 
-    private lateinit var binding: AccentInfoFragmentBinding
+    private lateinit var binding: SheetAccentInfoBinding
     private val navArgs: AccentInfoSheetArgs by navArgs()
     private lateinit var navController: NavController
 
@@ -41,7 +41,7 @@ class AccentInfoSheet: BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = AccentInfoFragmentBinding.inflate(layoutInflater, container, false)
+        binding = SheetAccentInfoBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

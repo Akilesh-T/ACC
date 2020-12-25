@@ -11,8 +11,8 @@ import androidx.core.widget.TextViewCompat
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.AppInfoBinding
 import app.akilesh.qacc.databinding.ItemAboutBinding
+import app.akilesh.qacc.databinding.ItemAppInfoBinding
 import app.akilesh.qacc.model.Info
 
 private const val ITEM_VIEW_TYPE_HEADER = 0
@@ -90,7 +90,7 @@ class InfoAdapter(
         }
     }
 
-    class HeaderViewHolder private constructor(val binding: AppInfoBinding)
+    class HeaderViewHolder private constructor(val binding: ItemAppInfoBinding)
         : RecyclerView.ViewHolder(binding.root) {
         private val context: Context = binding.root.context
         private val packageName: String = context.packageName
@@ -110,7 +110,7 @@ class InfoAdapter(
         companion object {
             fun from(parent: ViewGroup): HeaderViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = AppInfoBinding.inflate(layoutInflater, parent, false)
+                val binding = ItemAppInfoBinding.inflate(layoutInflater, parent, false)
                 return HeaderViewHolder(binding)
             }
         }

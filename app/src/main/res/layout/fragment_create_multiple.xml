@@ -15,7 +15,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="16dp"
         android:clipToPadding="false"
-        tools:listitem="@layout/recyclerview_item_color_preview"
+        tools:listitem="@layout/item_color_preview"
         />
 
     <com.google.android.material.bottomappbar.BottomAppBar

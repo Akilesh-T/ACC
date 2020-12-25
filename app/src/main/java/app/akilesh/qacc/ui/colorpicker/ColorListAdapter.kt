@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.RecyclerviewItemColorPreviewBinding
+import app.akilesh.qacc.databinding.ItemColorPreviewBinding
 import app.akilesh.qacc.model.Colour
 
 class ColorListAdapter internal constructor(
@@ -17,22 +17,32 @@ class ColorListAdapter internal constructor(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = RecyclerviewItemColorPreviewBinding.inflate(layoutInflater, parent, false)
+        val binding = ItemColorPreviewBinding.inflate(layoutInflater, parent, false)
         return ColorViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ColorViewHolder, position: Int) = holder.bind(colours[position])
+    override fun onBindViewHolder(holder: ColorViewHolder, position: Int) =
+        holder.bind(colours[position])
 
-    inner class ColorViewHolder(val binding: RecyclerviewItemColorPreviewBinding) : RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.colorCard.setOnClickListener {  adapterOnClick(colours[bindingAdapterPosition]) }
-        }
+    inner class ColorViewHolder(val binding: ItemColorPreviewBinding)
+        : RecyclerView.ViewHolder(binding.root) {
         fun bind(colour: Colour) {
             val backgroundColor = Color.parseColor(colour.hex)
             val textColor = Palette.Swatch(backgroundColor, 1).bodyTextColor
-            binding.colorCard.backgroundTintList = ColorStateList.valueOf(backgroundColor)
-            binding.colorName.text = binding.colorName.context.resources.getString(R.string.colour, colour.name, colour.hex)
-            binding.colorName.setTextColor(textColor)
+            binding.colorCard.apply {
+                backgroundTintList = ColorStateList.valueOf(backgroundColor)
+                setOnClickListener {
+                    adapterOnClick(colours[bindingAdapterPosition])
+                }
+            }
+            binding.colorName.apply {
+                text = context.resources.getString(
+                    R.string.colour,
+                    colour.name,
+                    colour.hex
+                )
+                setTextColor(textColor)
+            }
         }
     }
 

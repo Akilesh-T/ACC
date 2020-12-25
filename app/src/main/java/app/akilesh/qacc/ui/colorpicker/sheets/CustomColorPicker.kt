@@ -21,7 +21,7 @@ import app.akilesh.qacc.Const.Colors.editLight
 import app.akilesh.qacc.Const.Colors.editType
 import app.akilesh.qacc.Const.Colors.selectedColor
 import app.akilesh.qacc.R
-import app.akilesh.qacc.databinding.CustomColorPickerBinding
+import app.akilesh.qacc.databinding.SheetCustomColorPickerBinding
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.colorpicker.ZoomOutPageTransformer
 import app.akilesh.qacc.ui.colorpicker.colorspace.ColorSpaceAdapter
@@ -36,7 +36,7 @@ import com.google.android.material.textfield.TextInputEditText
 
 class CustomColorPicker : BottomSheetDialogFragment() {
 
-    private lateinit var binding: CustomColorPickerBinding
+    private lateinit var binding: SheetCustomColorPickerBinding
     private val colorSpaceViewModel: ColorSpaceViewModel by viewModels()
 
     override fun onCreateView(
@@ -44,7 +44,7 @@ class CustomColorPicker : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = CustomColorPickerBinding.inflate(layoutInflater, container, false)
+        binding = SheetCustomColorPickerBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

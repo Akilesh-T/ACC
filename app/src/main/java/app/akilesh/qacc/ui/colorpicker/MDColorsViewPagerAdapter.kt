@@ -8,7 +8,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.Const.Colors.mdColorPalette
-import app.akilesh.qacc.databinding.ColorPreviewBinding
+import app.akilesh.qacc.databinding.SheetColorPreviewBinding
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
 
@@ -24,7 +24,7 @@ class MDColorsViewPagerAdapter internal constructor(
     override fun onBindViewHolder(holder: MDColorViewHolder, position: Int) =
         holder.bind(position, itemOnClick)
 
-    class MDColorViewHolder(val binding: ColorPreviewBinding)
+    class MDColorViewHolder(val binding: SheetColorPreviewBinding)
         : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(position: Int, itemOnClick: (Colour) -> Unit) {
@@ -62,7 +62,7 @@ class MDColorsViewPagerAdapter internal constructor(
         companion object {
             fun from(parent: ViewGroup): MDColorViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ColorPreviewBinding.inflate(layoutInflater, parent, false)
+                val binding = SheetColorPreviewBinding.inflate(layoutInflater, parent, false)
                 return MDColorViewHolder(binding)
             }
         }

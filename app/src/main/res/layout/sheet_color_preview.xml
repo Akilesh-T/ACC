@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:padding="8dp"
-        tools:listitem="@layout/recyclerview_item_color_preview"
+        tools:listitem="@layout/item_color_preview"
         android:layout_below="@id/handle"
         />
 

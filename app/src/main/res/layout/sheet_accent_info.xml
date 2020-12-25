@@ -29,7 +29,7 @@
         android:layout_marginVertical="8dp"
         android:nestedScrollingEnabled="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/accent_info_items"
+        tools:listitem="@layout/item_accent_info"
         />
 
     <com.google.android.material.button.MaterialButton

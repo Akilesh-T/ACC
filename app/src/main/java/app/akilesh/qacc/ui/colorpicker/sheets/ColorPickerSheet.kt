@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.akilesh.qacc.Const.Colors.colorList
 import app.akilesh.qacc.Const.Colors.selectedColor
-import app.akilesh.qacc.databinding.ColorPreviewBinding
+import app.akilesh.qacc.databinding.SheetColorPreviewBinding
 import app.akilesh.qacc.model.Colour
 import app.akilesh.qacc.ui.colorpicker.ColorListAdapter
 import app.akilesh.qacc.utils.AppUtils.getColorAccent
@@ -19,14 +19,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ColorPickerSheet: BottomSheetDialogFragment() {
 
-    private lateinit var binding: ColorPreviewBinding
+    private lateinit var binding: SheetColorPreviewBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ColorPreviewBinding.inflate(layoutInflater, container, false)
+        binding = SheetColorPreviewBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
