@@ -7,7 +7,8 @@
         app:key="general_category"
         app:title="@string/general_header"
         app:allowDividerBelow="false"
-        app:initialExpandedChildrenCount="2">
+        app:initialExpandedChildrenCount="2"
+        >
 
         <ListPreference
             app:key="themePref"
@@ -15,9 +16,10 @@
             app:icon="@drawable/ic_outline_nights_stay"
             app:defaultValue="default"
             app:dialogTitle="@string/display_title"
-            app:entries="@array/themeListArray"
-            app:entryValues="@array/themeEntryArray"
-            app:useSimpleSummaryProvider="true"/>
+            app:entries="@array/themePrefEntries"
+            app:entryValues="@array/themePrefEntryValues"
+            app:useSimpleSummaryProvider="true"
+            />
 
         <app.akilesh.qacc.ui.preference.StyledSwitchPreferenceCompat
             app:key="system_accent"
@@ -34,7 +36,8 @@
         app:key="accents_category"
         app:title="@string/accents_header"
         app:allowDividerAbove="false"
-        app:initialExpandedChildrenCount="1">
+        app:initialExpandedChildrenCount="1"
+        >
 
         <app.akilesh.qacc.ui.preference.StyledSwitchPreferenceCompat
             app:key="separate_accent"
@@ -42,7 +45,8 @@
             app:title="@string/separate_accents_title"
             app:defaultValue="false"
             app:summaryOff="@string/separate_accent_summary_off"
-            app:summaryOn="@string/separate_accent_summary_on"/>
+            app:summaryOn="@string/separate_accent_summary_on"
+            />
 
 
         <app.akilesh.qacc.ui.preference.StyledSwitchPreferenceCompat
@@ -66,13 +70,15 @@
         app:key="backups_category"
         app:title="@string/backup_folder"
         app:allowDividerAbove="false"
-        app:initialExpandedChildrenCount="1">
+        app:initialExpandedChildrenCount="1"
+        >
 
         <Preference
             app:key="backups"
             app:icon="@drawable/ic_round_settings_backup_restore"
             app:title="@string/backup_restore"
-            app:summary="@string/backup_restore_summary"/>
+            app:summary="@string/backup_restore_summary"
+            />
 
         <app.akilesh.qacc.ui.preference.StyledSwitchPreferenceCompat
             app:key="auto_backup"
