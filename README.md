@@ -1,23 +1,28 @@
 # ACC
 
-**Custom accent colour creator**  
+**Accent Colour Creator**  
 
-[![Downloads](https://img.shields.io/github/v/release/Akilesh-T/ACC.svg?logo=github)](https://github.com/Akilesh-T/QACC/releases/latest) &nbsp; [![XDA thread](https://img.shields.io/badge/XDA-Thread-orange)](https://forum.xda-developers.com/android/apps-games/app-magisk-module-qacc-custom-accent-t4011747) &nbsp; [![Telegram](https://img.shields.io/badge/Telegram-Group-blue?logo=telegram)](https://t.me/AccentColourCreator)
+[![Latest Release](https://img.shields.io/github/v/release/Akilesh-T/ACC.svg?logo=github)](https://github.com/Akilesh-T/ACC/releases/latest) [![Downloads](https://img.shields.io/github/downloads/Akilesh-T/ACC/total.svg)](https://github.com/Akilesh-T/ACC/releases) [![XDA thread](https://img.shields.io/badge/XDA-Thread-orange.svg?logo=xda-developers)](https://forum.xda-developers.com/android/apps-games/app-magisk-module-qacc-custom-accent-t4011747) [![Telegram group](https://img.shields.io/badge/Telegram-Group-blue.svg?logo=telegram)](https://t.me/AccentColourCreator) [![Telegram channel](https://img.shields.io/badge/Telegram-Channel-blue.svg?logo=telegram)](https://t.me/ACC_Releases)
 
-Set any colour as your system accent! The app gets your choice of colours (along with a name) and creates an overlay targeting android (framework-res). A Magisk module is created by the app, which injects the created overlay to the system.
+Accent Colour Creator (ACC) is an android app which lets you set any colour as the system accent. 
 
 **Features**
 
-* You can select colours from your wallpaper, presets in the app or set your own custom colour.
-* Multiple accents can be created.
-* Separate accents for dark & light theme [Android 10 only].
-* Adjust Hue, saturation & lightness of the chosen colours to your liking. Android 10 users can use this to create desaturated dark theme accent.
-* Enable/disable accents.
-* Remove created accents (swipe from the sides).
+* You can set the accent using: 
+	* Your own custom colour (HEX, RGB or HSL).
+	* Wallpaper colours
+	* Presets in the app
+	* Brand colours
+* Wallpaper, brand & preset colours can be customised.
+* On Android 10 & above, separate accent colours can be set for dark & light themes.
+* Backup & restore.
+	* Automatic backups with a customisable interval (ex: once in 2 days). Option to delete old backups when a new one is created.
+* Change the accent to a random one daily.
+* Systemless install using a Magisk module.
 
 **Requirements**
 
-* Android 8+
-* Magisk  
+* Android Oreo and above.
+* Latest Magisk.
 
 [Screenshots](https://forum.xda-developers.com/devdb/project/?id=35917#screenshots)
